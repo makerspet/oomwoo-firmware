@@ -4,7 +4,7 @@
 
 *Open-source robot vacuum you build yourself.*
 
-STM32G473 · Arduino/STM32duino · FreeRTOS · Safety · Motors · Sensors · Charging
+STM32G473 · Arduino · FreeRTOS · Safety · Motors · Sensors · Charging
 
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![Status](https://img.shields.io/badge/status-RFC%20%C2%B7%20not%20started-orange)
