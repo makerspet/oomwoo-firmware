@@ -1,4 +1,16 @@
-# oomwoo-io-firmware
+<div align="center">
+
+# OOMWOO I/O Firmware
+
+*Open-source robot vacuum you build yourself.*
+
+STM32G473 · Arduino (STM32duino) · FreeRTOS · Real-time safety core · Motors · Sensors · Charging
+
+![License](https://img.shields.io/badge/license-Apache--2.0-blue)
+![Status](https://img.shields.io/badge/status-RFC%20%C2%B7%20not%20started-orange)
+[![Part of OOMWOO](https://img.shields.io/badge/part%20of-OOMWOO-5eead4)](https://github.com/makerspet/oomwoo)
+
+</div>
 
 MCU firmware for the OOMWOO [I/O board](https://github.com/makerspet/oomwoo-io-board),
 targeting an **STM32G473VCT6**. Arduino (STM32duino) API on top, FreeRTOS for task
