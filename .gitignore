@@ -4,3 +4,6 @@ compile_commands.json
 *.d
 *.o
 *.out
+build/
+__pycache__/
+*.pyc
