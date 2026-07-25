@@ -1,0 +1,26 @@
+name: CPU watchdog
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  host-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Run C and C++ tests with sanitizers
+        run: make test
+
+  cortex-m4-compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Cross-compile the freestanding core
+        run: >-
+          make arm-check
+          ARM_CC=clang
+          'ARM_TARGET_FLAGS=--target=arm-none-eabi -mcpu=cortex-m4 -mthumb -ffreestanding'
