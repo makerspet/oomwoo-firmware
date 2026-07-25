@@ -7,7 +7,7 @@
 STM32G473 · Arduino · FreeRTOS · Safety · Motors · Sensors · Charging
 
 ![License](https://img.shields.io/badge/License-Apache--2.0-blue)
-![Status](https://img.shields.io/badge/Status-Spec%20WIP-orange)
+![Status](https://img.shields.io/badge/Status-Protocol%20Bring--up-orange)
 [![Part of OOMWOO](https://img.shields.io/badge/Part%20of-OOMWOO-5eead4)](https://github.com/makerspet/oomwoo)
 
 </div>
@@ -16,8 +16,9 @@ MCU firmware for the OOMWOO [I/O board](https://github.com/makerspet/oomwoo-io-b
 targeting an **STM32G473VCT6**. Arduino (STM32duino) API on top, FreeRTOS for task
 structure, and a HAL/timer-ISR real-time core underneath.
 
-> **Status — RFC / not started.** This is a request for contribution: the plan
-> below is the design intent, and the code doesn't exist yet. Say hi in
+> **Status — RFC / protocol bring-up.** The framing core and a Nucleo G474RE
+> serial echo now exist; motor control, hard-safety inputs, charging, and the
+> production FreeRTOS task structure do not. Say hi in
 > [Discussions](https://github.com/makerspet/oomwoo/discussions) or on
 > [Discord](https://discord.gg/3y2JKz5T25) if you want to build it.
 
@@ -121,14 +122,40 @@ MCU serial tool in [oomwoo-install](https://github.com/makerspet/oomwoo-install)
 - **FreeRTOS** via `STM32FreeRTOS`.
 - **SWD** debug (ST-Link) on the board's `SWDIO`/`SWCLK` header; test/program pads.
 
+## Current protocol bring-up
+
+The first milestone-2 slice is intentionally independent of motors and the
+board HAL:
+
+- heap-free C frame encoder/decoder and CRC-16/CCITT-FALSE
+- bounded incremental UART decoder with corruption and receive-gap recovery
+- Nucleo G474RE Arduino serial frame-echo harness
+- native Unity tests and a strict C11 sanitizer test
+- pinned PlatformIO cross-build for the Cortex-M4F target
+
+```bash
+python -m pip install platformio==6.1.19
+pio test -e native
+pio pkg install -e nucleo_g474re
+pio run -e nucleo_g474re
+```
+
+See [CPU/MCU protocol bring-up](docs/protocol-bringup.md) for memory ownership,
+failure behavior, compatibility, and the explicit safety boundary. The current
+wire-version decision is tracked in
+[`oomwoo-io-firmware#1`](https://github.com/makerspet/oomwoo-io-firmware/issues/1).
+
+> The serial echo harness is only a framing bench tool. It does not implement a
+> CPU watchdog or authorize any actuator.
+
 ## Request for contribution — bring-up milestones
 
 Phased, each testable on the bench before the board even exists (start on a
 Nucleo-G474, move to the real board when it's fabbed):
 
 1. **Blink + SWD + serial echo** on a G473 dev board.
-2. **CPU serial link** — implement the io-board-interface framing + health/watchdog
-   handshake; loopback and echo tests green.
+2. **CPU serial link** — framing and serial echo are in bring-up; the
+   health/watchdog handshake and hardware loopback still remain.
 3. **One drive motor, closed loop** — H-bridge PWM + encoder capture + velocity PID
    in the real-time core. This is the pattern every other motor follows.
 4. **All actuators** — fan (BLDC + FG), brushes, LiDAR spin, pump, mop motors/servos,

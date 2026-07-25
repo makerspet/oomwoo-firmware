@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  protocol:
+    name: C protocol conformance
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Compile and run with sanitizers
+        run: |
+          cc -std=c11 -Wall -Wextra -Werror -pedantic \
+            -fsanitize=address,undefined \
+            -Iinclude \
+            src/oomwoo_protocol.c \
+            tests/protocol_conformance.c \
+            -o /tmp/oomwoo_protocol_conformance
+          /tmp/oomwoo_protocol_conformance
+
+      - name: Check C++ compatibility
+        run: |
+          c++ -std=c++17 -Wall -Wextra -Werror -pedantic \
+            -Iinclude -x c++ src/oomwoo_protocol.c \
+            -c -o /tmp/oomwoo_protocol_cpp.o
+
+  platformio:
+    name: PlatformIO native + Nucleo G474
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: ${{ runner.os }}-pio-${{ hashFiles('platformio.ini') }}
+          restore-keys: |
+            ${{ runner.os }}-pio-
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install pinned PlatformIO
+        run: python -m pip install platformio==6.1.19
+
+      - name: Run native Unity tests
+        run: pio test -e native
+
+      - name: Resolve pinned STM32 toolchain
+        run: pio pkg install -e nucleo_g474re
+
+      - name: Cross-build Nucleo G474RE
+        run: pio run -e nucleo_g474re
+
+      - name: Verify firmware image
+        run: test -s .pio/build/nucleo_g474re/firmware.bin
