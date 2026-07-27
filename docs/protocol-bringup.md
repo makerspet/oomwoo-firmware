@@ -46,11 +46,14 @@ The framing implementation is version-agnostic at source level:
 OOMWOO_PROTOCOL_VERSION=<wire version>
 ```
 
-The current PlatformIO environments compile with candidate wire version `2`,
-matching
-[`xbattlax/oomwoo-mcu-bridge@v0.1.0`](https://github.com/xbattlax/oomwoo-mcu-bridge/releases/tag/v0.1.0).
-The final v1-extension versus v2 decision remains tracked in
-[`oomwoo-io-firmware#1`](https://github.com/makerspet/oomwoo-io-firmware/issues/1).
+The source and default PlatformIO environments compile wire version `1`, which
+is the version in the accepted interface draft. Parallel `native_v2` and
+`nucleo_g474re_v2` environments prove that candidate version `2` remains a
+compile-time override matching
+[`oomwoo-mcu-bridge@v0.1.0`](https://github.com/xbattlax/oomwoo-mcu-bridge/releases/tag/v0.1.0).
+The final v1-extension versus v2 payload decision remains tracked in
+[`oomwoo-io-firmware#1`](https://github.com/makerspet/oomwoo-io-firmware/issues/1),
+but it no longer blocks review of this payload-agnostic framing core.
 
 Changing the macro changes frame acceptance and CRC golden vectors. Payload
 layouts must be reviewed separately; this module does not reinterpret them.
@@ -72,7 +75,8 @@ before writing any setpoint.
 
 ## Verification
 
-Host conformance with sanitizers:
+Host conformance with sanitizers, first using the v1 default and then the v2
+override:
 
 ```bash
 cc -std=c11 -Wall -Wextra -Werror -pedantic \
@@ -80,14 +84,22 @@ cc -std=c11 -Wall -Wextra -Werror -pedantic \
   -Iinclude src/oomwoo_protocol.c tests/protocol_conformance.c \
   -o /tmp/oomwoo_protocol_conformance
 /tmp/oomwoo_protocol_conformance
+
+cc -std=c11 -Wall -Wextra -Werror -pedantic \
+  -DOOMWOO_PROTOCOL_VERSION=2 \
+  -DOOMWOO_PROTOCOL_EXPECTED_VERSION=2 \
+  -fsanitize=address,undefined \
+  -Iinclude src/oomwoo_protocol.c tests/protocol_conformance.c \
+  -o /tmp/oomwoo_protocol_conformance_v2
+/tmp/oomwoo_protocol_conformance_v2
 ```
 
 PlatformIO:
 
 ```bash
-pio test -e native
+pio test -e native -e native_v2
 pio pkg install -e nucleo_g474re
-pio run -e nucleo_g474re
+pio run -e nucleo_g474re -e nucleo_g474re_v2
 ```
 
 Hardware loopback, UART electrical validation, measured timing, and fault

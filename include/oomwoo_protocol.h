@@ -12,7 +12,11 @@ extern "C" {
 #define OOMWOO_PROTOCOL_MAGIC_1 ((uint8_t)'W')
 
 #ifndef OOMWOO_PROTOCOL_VERSION
-#define OOMWOO_PROTOCOL_VERSION ((uint8_t)2)
+#define OOMWOO_PROTOCOL_VERSION 1u
+#endif
+
+#if OOMWOO_PROTOCOL_VERSION < 1 || OOMWOO_PROTOCOL_VERSION > 255
+#error "OOMWOO_PROTOCOL_VERSION must fit in one non-zero wire byte"
 #endif
 
 #define OOMWOO_PROTOCOL_HEADER_SIZE ((size_t)10)

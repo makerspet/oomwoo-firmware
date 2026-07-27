@@ -10,14 +10,24 @@ permissions:
 
 jobs:
   protocol:
-    name: C protocol conformance
+    name: C protocol conformance (${{ matrix.name }})
     runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - name: v1 default
+            version_flag: -DOOMWOO_PROTOCOL_EXPECTED_VERSION=1
+          - name: v2 override
+            version_flag: >-
+              -DOOMWOO_PROTOCOL_VERSION=2
+              -DOOMWOO_PROTOCOL_EXPECTED_VERSION=2
     steps:
       - uses: actions/checkout@v6
 
       - name: Compile and run with sanitizers
         run: |
           cc -std=c11 -Wall -Wextra -Werror -pedantic \
+            ${{ matrix.version_flag }} \
             -fsanitize=address,undefined \
             -Iinclude \
             src/oomwoo_protocol.c \
@@ -28,6 +38,7 @@ jobs:
       - name: Check C++ compatibility
         run: |
           c++ -std=c++17 -Wall -Wextra -Werror -pedantic \
+            ${{ matrix.version_flag }} \
             -Iinclude -x c++ src/oomwoo_protocol.c \
             -c -o /tmp/oomwoo_protocol_cpp.o
 
@@ -53,14 +64,16 @@ jobs:
       - name: Install pinned PlatformIO
         run: python -m pip install platformio==6.1.19
 
-      - name: Run native Unity tests
-        run: pio test -e native
+      - name: Run native Unity tests for wire v1 and v2
+        run: pio test -e native -e native_v2
 
       - name: Resolve pinned STM32 toolchain
         run: pio pkg install -e nucleo_g474re
 
-      - name: Cross-build Nucleo G474RE
-        run: pio run -e nucleo_g474re
+      - name: Cross-build Nucleo G474RE for wire v1 and v2
+        run: pio run -e nucleo_g474re -e nucleo_g474re_v2
 
-      - name: Verify firmware image
-        run: test -s .pio/build/nucleo_g474re/firmware.bin
+      - name: Verify firmware images
+        run: |
+          test -s .pio/build/nucleo_g474re/firmware.bin
+          test -s .pio/build/nucleo_g474re_v2/firmware.bin

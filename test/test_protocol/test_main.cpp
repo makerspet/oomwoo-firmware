@@ -4,6 +4,13 @@
 
 #include "oomwoo_protocol.h"
 
+#ifndef OOMWOO_PROTOCOL_EXPECTED_VERSION
+#define OOMWOO_PROTOCOL_EXPECTED_VERSION 1u
+#endif
+
+static_assert(OOMWOO_PROTOCOL_VERSION == OOMWOO_PROTOCOL_EXPECTED_VERSION,
+              "unexpected wire version");
+
 namespace {
 
 struct Capture {
@@ -40,17 +47,24 @@ size_t encode(uint16_t type, const uint8_t *payload, uint16_t payload_length,
 void test_crc_and_cross_language_golden_vector() {
   static const uint8_t input[] = "123456789";
   static const uint8_t payload[] = {0x78u, 0x56u, 0x34u, 0x12u, 0x01u};
-  static const uint8_t expected[] = {
+  static const uint8_t expected_v1[] = {
+      0x4fu, 0x57u, 0x01u, 0x00u, 0x2au, 0x00u, 0x01u, 0x00u, 0x05u,
+      0x00u, 0x78u, 0x56u, 0x34u, 0x12u, 0x01u, 0xaau, 0xf8u};
+  static const uint8_t expected_v2[] = {
       0x4fu, 0x57u, 0x02u, 0x00u, 0x2au, 0x00u, 0x01u, 0x00u, 0x05u,
       0x00u, 0x78u, 0x56u, 0x34u, 0x12u, 0x01u, 0x0fu, 0x37u};
+  const uint8_t *expected =
+      OOMWOO_PROTOCOL_VERSION == 1u ? expected_v1 : expected_v2;
   uint8_t output[OOMWOO_PROTOCOL_MAX_FRAME_SIZE];
   const size_t output_length =
       encode(0x0001u, payload, sizeof(payload), 0x002au, output);
 
+  TEST_ASSERT_TRUE(OOMWOO_PROTOCOL_VERSION == 1u ||
+                   OOMWOO_PROTOCOL_VERSION == 2u);
   TEST_ASSERT_EQUAL_HEX16(0x29b1u,
                           oomwoo_crc16_ccitt_false(input, 9u));
-  TEST_ASSERT_EQUAL_UINT32(sizeof(expected), output_length);
-  TEST_ASSERT_EQUAL_UINT8_ARRAY(expected, output, sizeof(expected));
+  TEST_ASSERT_EQUAL_UINT32(sizeof(expected_v1), output_length);
+  TEST_ASSERT_EQUAL_UINT8_ARRAY(expected, output, sizeof(expected_v1));
 }
 
 void test_stream_recovers_from_noise_and_split_input() {
@@ -108,7 +122,7 @@ void test_wrong_version_is_counted_and_rejected() {
   Capture capture{};
   const size_t frame_length = encode(0x7001u, nullptr, 0u, 3u, frame);
 
-  frame[2] = 1u;
+  frame[2] = OOMWOO_PROTOCOL_VERSION == 1u ? 2u : 1u;
   oomwoo_stream_decoder_init(&decoder);
   TEST_ASSERT_EQUAL_UINT32(
       0u, oomwoo_stream_decoder_feed(&decoder, frame, frame_length,

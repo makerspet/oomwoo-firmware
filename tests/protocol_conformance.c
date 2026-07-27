@@ -4,6 +4,13 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifndef OOMWOO_PROTOCOL_EXPECTED_VERSION
+#define OOMWOO_PROTOCOL_EXPECTED_VERSION 1u
+#endif
+
+_Static_assert(OOMWOO_PROTOCOL_VERSION == OOMWOO_PROTOCOL_EXPECTED_VERSION,
+               "unexpected wire version");
+
 typedef struct {
   size_t count;
   uint16_t sequence;
@@ -27,20 +34,27 @@ static size_t encode(uint16_t type, uint16_t sequence, uint8_t *output) {
 
 static void test_golden_heartbeat(void) {
   static const uint8_t payload[] = {0x78u, 0x56u, 0x34u, 0x12u, 0x01u};
-  static const uint8_t expected[] = {
+  static const uint8_t expected_v1[] = {
+      0x4fu, 0x57u, 0x01u, 0x00u, 0x2au, 0x00u, 0x01u, 0x00u, 0x05u,
+      0x00u, 0x78u, 0x56u, 0x34u, 0x12u, 0x01u, 0xaau, 0xf8u};
+  static const uint8_t expected_v2[] = {
       0x4fu, 0x57u, 0x02u, 0x00u, 0x2au, 0x00u, 0x01u, 0x00u, 0x05u,
       0x00u, 0x78u, 0x56u, 0x34u, 0x12u, 0x01u, 0x0fu, 0x37u};
+  const uint8_t *expected =
+      OOMWOO_PROTOCOL_VERSION == 1u ? expected_v1 : expected_v2;
   uint8_t output[OOMWOO_PROTOCOL_MAX_FRAME_SIZE];
   size_t output_length = 0u;
   oomwoo_decoded_frame_t decoded;
 
+  assert(OOMWOO_PROTOCOL_VERSION == 1u ||
+         OOMWOO_PROTOCOL_VERSION == 2u);
   assert(oomwoo_crc16_ccitt_false((const uint8_t *)"123456789", 9u) ==
          0x29b1u);
   assert(oomwoo_encode_frame(0x0001u, payload, sizeof(payload), 0x002au, 0u,
                              output, sizeof(output), &output_length) ==
          OOMWOO_PROTOCOL_OK);
-  assert(output_length == sizeof(expected));
-  assert(memcmp(output, expected, sizeof(expected)) == 0);
+  assert(output_length == sizeof(expected_v1));
+  assert(memcmp(output, expected, sizeof(expected_v1)) == 0);
   assert(oomwoo_decode_frame(output, output_length, &decoded) ==
          OOMWOO_PROTOCOL_OK);
   assert(decoded.sequence == 0x002au);
