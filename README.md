@@ -6,9 +6,9 @@
 
 STM32G473 · Arduino · FreeRTOS · Safety · Motors · Sensors · Charging
 
-![License](https://img.shields.io/badge/license-Apache--2.0-blue)
-![Status](https://img.shields.io/badge/status-RFC%20%C2%B7%20not%20started-orange)
-[![Part of OOMWOO](https://img.shields.io/badge/part%20of-OOMWOO-5eead4)](https://github.com/makerspet/oomwoo)
+![License](https://img.shields.io/badge/License-Apache--2.0-blue)
+![Status](https://img.shields.io/badge/Status-Spec%20WIP-orange)
+[![Part of OOMWOO](https://img.shields.io/badge/Part%20of-OOMWOO-5eead4)](https://github.com/makerspet/oomwoo)
 
 </div>
 
