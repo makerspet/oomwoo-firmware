@@ -2,7 +2,7 @@
 
 # OOMWOO I/O Firmware
 
-*Open-source robot vacuum you build yourself.*
+*Open-source robot vacuum you build yourself*
 
 STM32G473 · Arduino · FreeRTOS · Safety · Motors · Sensors · Charging
 
