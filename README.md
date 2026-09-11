@@ -157,6 +157,11 @@ tracked in
 > The identity harness is only a protocol bench tool. It does not acknowledge
 > commands, implement a CPU watchdog, or authorize any actuator.
 
+The watchdog draft includes a
+[Nucleo G474RE hardware-in-the-loop harness](docs/watchdog-hil.md). It exercises
+a real 1 kHz timer ISR, a direct-register stop output, serial-link loss, and a
+deliberately blocked Arduino loop without connecting a motor load.
+
 ## Request for contribution — bring-up milestones
 
 Phased, each testable on the bench before the board even exists (start on a

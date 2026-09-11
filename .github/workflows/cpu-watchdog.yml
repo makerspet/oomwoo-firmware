@@ -24,3 +24,19 @@ jobs:
           make arm-check
           ARM_CC=clang
           'ARM_TARGET_FLAGS=--target=arm-none-eabi -mcpu=cortex-m4 -mthumb -ffreestanding'
+
+  nucleo-hil-build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install pinned PlatformIO
+        run: python -m pip install platformio==6.1.19
+      - name: Build the Nucleo G474RE watchdog HIL harness
+        run: pio run -c platformio-watchdog-hil.ini -e nucleo_g474re_watchdog_hil
+      - name: Verify the firmware image and host scenario runner
+        run: |
+          test -s build/platformio-watchdog-hil/nucleo_g474re_watchdog_hil/firmware.bin
+          python -m py_compile tools/watchdog_hil_host.py
