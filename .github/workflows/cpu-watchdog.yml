@@ -14,6 +14,8 @@ jobs:
       - uses: actions/checkout@v6
       - name: Run C and C++ tests with sanitizers
         run: make test
+      - name: Test the ISR disassembly verifier
+        run: python -m unittest discover -s tests -p 'test_*.py'
 
   cortex-m4-compile:
     runs-on: ubuntu-latest
@@ -36,6 +38,15 @@ jobs:
         run: python -m pip install platformio==6.1.19
       - name: Build the Nucleo G474RE watchdog HIL harness
         run: pio run -c platformio-watchdog-hil.ini -e nucleo_g474re_watchdog_hil
+      - name: Verify the hard-stop callback remains a leaf function
+        run: |
+          "$HOME/.platformio/packages/toolchain-gccarmnoneeabi/bin/arm-none-eabi-objdump" \
+            -d -C \
+            build/platformio-watchdog-hil/nucleo_g474re_watchdog_hil/firmware.elf \
+            > build/platformio-watchdog-hil/nucleo_g474re_watchdog_hil/firmware.disassembly
+          python tools/check_isr_disassembly.py \
+            build/platformio-watchdog-hil/nucleo_g474re_watchdog_hil/firmware.disassembly \
+            hard_stop_isr
       - name: Verify the firmware image and host scenario runner
         run: |
           test -s build/platformio-watchdog-hil/nucleo_g474re_watchdog_hil/firmware.bin

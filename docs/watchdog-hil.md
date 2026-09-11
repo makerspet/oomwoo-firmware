@@ -31,7 +31,8 @@ analyzer or oscilloscope sharing board ground.
 
 PA8 and PA9 are test points only. The stop callback writes PA8 through the
 STM32 `BSRR` register and performs no Arduino, serial, allocation, queue, or
-locking operation.
+locking operation. CI also disassembles the linked ARM image and fails if the
+callback contains an ARM `bl` or `blx` call instruction.
 
 ## Build and flash
 
@@ -39,6 +40,17 @@ locking operation.
 python3 -m pip install platformio==6.1.19
 pio run -c platformio-watchdog-hil.ini -e nucleo_g474re_watchdog_hil
 pio run -c platformio-watchdog-hil.ini -e nucleo_g474re_watchdog_hil -t upload
+```
+
+To repeat the leaf-function check locally after building:
+
+```bash
+~/.platformio/packages/toolchain-gccarmnoneeabi/bin/arm-none-eabi-objdump \
+  -d -C build/platformio-watchdog-hil/nucleo_g474re_watchdog_hil/firmware.elf \
+  > build/platformio-watchdog-hil/nucleo_g474re_watchdog_hil/firmware.disassembly
+python3 tools/check_isr_disassembly.py \
+  build/platformio-watchdog-hil/nucleo_g474re_watchdog_hil/firmware.disassembly \
+  hard_stop_isr
 ```
 
 The ST-Link serial port runs at 115200 baud. The firmware accepts one-character
