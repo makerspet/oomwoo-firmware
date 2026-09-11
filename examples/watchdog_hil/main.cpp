@@ -34,7 +34,7 @@ void toggle_heartbeat_marker() {
 
 void hard_stop_isr(void *context, oomwoo_cpu_stop_reason_t reason) {
   (void)context;
-  set_motor_enable_direct(false);
+  GPIOA->BSRR = static_cast<uint32_t>(GPIO_PIN_8) << 16U;
   g_motor_command_latched = 0U;
   g_last_stop_reason = static_cast<uint32_t>(reason);
 }
