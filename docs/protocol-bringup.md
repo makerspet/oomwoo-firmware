@@ -13,11 +13,42 @@ The portable C module provides:
 - strict complete-frame validation
 - a bounded incremental stream decoder
 - counters for CRC, version, length, discarded-byte, and receive-gap failures
+- typed encode/decode for every payload defined by the accepted wire-v1 contract
+- exact payload-length, direction, and contract-range validation
 - no heap allocation and no HAL or Arduino dependency
 
 The stream decoder owns one 524-byte maximum-frame buffer. A decoded payload
 pointer is valid only during the synchronous callback. The callback must copy
 anything that needs to outlive it.
+
+## Typed messages
+
+`oomwoo_messages` is a side-effect-free translation layer between payload bytes
+and typed C structures. It does not dispatch commands, refresh a watchdog, call
+application callbacks, or write hardware. Callers must perform those operations
+only after successful decode and after checking the current MCU safety state.
+
+The codec validates the accepted contract and reference-codec bounds. Its
+current fail-closed mode policy is aligned with the watchdog draft:
+
+- heartbeat mode must be the watchdog's `DISARMED` or `STACK_HEALTHY` value
+- E-stop and safety-event active fields are boolean
+- drive velocity is within +/-500 mm/s and +/-4000 mrad/s
+- drive command validity is 1-250 ms
+- cleaning, LiDAR, and LED percentages are 0-100
+- safety events fit the current 16-bit safety mask
+
+Wrong lengths, invalid field values, unknown IDs, and the still-open
+`POWER_TELEMETRY` and `MCU_DIAGNOSTIC` payloads fail closed. Decode clears the
+destination structure before returning an error, while encode reports a zero
+output length. Direction metadata also lets a future dispatcher reject a valid
+message sent by the wrong endpoint before it reaches application code.
+
+The 23 canonical frames in `tests/conformance/golden_vectors_v1.json` and their
+manifest are an unchanged snapshot from the accepted interface contract in
+`makerspet/oomwoo` merge commit
+`90324ec79491a1f71eaadd86fce0d92b0e13c15a`. The generator validates coverage,
+status, IDs, and packed sizes before producing the C fixture used by tests.
 
 ## Bench sketch
 
@@ -53,10 +84,14 @@ compile-time override matching
 [`oomwoo-mcu-bridge@v0.1.0`](https://github.com/xbattlax/oomwoo-mcu-bridge/releases/tag/v0.1.0).
 The final v1-extension versus v2 payload decision remains tracked in
 [`oomwoo-io-firmware#1`](https://github.com/makerspet/oomwoo-io-firmware/issues/1),
-but it no longer blocks review of this payload-agnostic framing core.
+but it no longer blocks review of the framing core or the accepted wire-v1
+payload snapshot.
 
-Changing the macro changes frame acceptance and CRC golden vectors. Payload
-layouts must be reviewed separately; this module does not reinterpret them.
+Changing the macro changes frame acceptance and CRC golden vectors. The typed
+payload byte layouts are version-independent in code, but exact full-frame
+canonical-vector conformance is intentionally pinned to wire v1. A future
+payload revision must update the contract snapshot and codec in one reviewed
+change.
 
 ## Failure behavior
 
@@ -68,6 +103,9 @@ layouts must be reviewed separately; this module does not reinterpret them.
 | Bad CRC | Reject and increment `crc_errors` |
 | Incomplete frame followed by a receive gap | Reset and increment `gap_resets` |
 | Valid frame after corruption | Resynchronize and invoke the callback once |
+| Known message with wrong payload length | Reject and clear typed output |
+| Payload field outside its contract bound | Reject and clear typed output |
+| Unknown or still-open message payload | Reject without dispatching |
 
 No malformed input can authorize an actuator because this slice has no actuator
 output. Later command handling must validate payload bounds and MCU safety state
@@ -92,6 +130,15 @@ cc -std=c11 -Wall -Wextra -Werror -pedantic \
   -Iinclude src/oomwoo_protocol.c tests/protocol_conformance.c \
   -o /tmp/oomwoo_protocol_conformance_v2
 /tmp/oomwoo_protocol_conformance_v2
+
+python3 tools/generate_message_vectors.py --check
+cc -std=c11 -Wall -Wextra -Werror -pedantic \
+  -fsanitize=address,undefined \
+  -Iinclude \
+  src/oomwoo_protocol.c src/oomwoo_messages.c \
+  tests/message_conformance.c \
+  -o /tmp/oomwoo_message_conformance
+/tmp/oomwoo_message_conformance
 ```
 
 PlatformIO:

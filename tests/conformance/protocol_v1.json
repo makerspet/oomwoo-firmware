@@ -1,0 +1,146 @@
+{
+  "schema_version": 1,
+  "wire_version": 1,
+  "magic_ascii": "OW",
+  "byte_order": "little",
+  "crc": "CRC-16/CCITT-FALSE",
+  "messages": [
+    {
+      "name": "HEARTBEAT",
+      "id": 1,
+      "direction": "cpu_to_mcu",
+      "payload_status": "defined",
+      "struct_format": "<IB",
+      "samples": [{"name": "heartbeat", "sequence": 1, "flags": 0, "values": [305419896, 1]}]
+    },
+    {
+      "name": "ESTOP_SET",
+      "id": 2,
+      "direction": "cpu_to_mcu",
+      "payload_status": "defined",
+      "struct_format": "<BH",
+      "samples": [{"name": "estop_set", "sequence": 2, "flags": 0, "values": [1, 4660]}]
+    },
+    {
+      "name": "CLEAR_LATCHED_FAULT",
+      "id": 3,
+      "direction": "cpu_to_mcu",
+      "payload_status": "defined",
+      "struct_format": "<H",
+      "samples": [{"name": "clear_latched_fault", "sequence": 3, "flags": 0, "values": [768]}]
+    },
+    {
+      "name": "IDENTIFY_REQUEST",
+      "id": 4,
+      "direction": "cpu_to_mcu",
+      "payload_status": "defined",
+      "struct_format": "",
+      "samples": [{"name": "identify_request", "sequence": 4, "flags": 0, "values": []}]
+    },
+    {
+      "name": "DRIVE_SETPOINT",
+      "id": 257,
+      "direction": "cpu_to_mcu",
+      "payload_status": "defined",
+      "struct_format": "<hhH",
+      "samples": [{"name": "drive_setpoint", "sequence": 5, "flags": 0, "values": [-120, 500, 100]}]
+    },
+    {
+      "name": "CLEANING_MOTORS_SET",
+      "id": 258,
+      "direction": "cpu_to_mcu",
+      "payload_status": "defined",
+      "struct_format": "<BBBB",
+      "samples": [{"name": "cleaning_motors_set", "sequence": 6, "flags": 0, "values": [20, 30, 40, 0]}]
+    },
+    {
+      "name": "LIDAR_MOTOR_SET",
+      "id": 259,
+      "direction": "cpu_to_mcu",
+      "payload_status": "defined",
+      "struct_format": "<B",
+      "samples": [{"name": "lidar_motor_set", "sequence": 7, "flags": 0, "values": [55]}]
+    },
+    {
+      "name": "LED_SET",
+      "id": 260,
+      "direction": "cpu_to_mcu",
+      "payload_status": "defined",
+      "struct_format": "<BBB",
+      "samples": [{"name": "led_set", "sequence": 8, "flags": 0, "values": [2, 1, 75]}]
+    },
+    {
+      "name": "ACK",
+      "id": 28673,
+      "direction": "both",
+      "payload_status": "defined",
+      "struct_format": "<HH",
+      "samples": [{"name": "ack", "sequence": 9, "flags": 0, "values": [42, 0]}]
+    },
+    {
+      "name": "NACK",
+      "id": 28674,
+      "direction": "both",
+      "payload_status": "defined",
+      "struct_format": "<HH",
+      "samples": [{"name": "nack", "sequence": 10, "flags": 0, "values": [43, 3]}]
+    },
+    {
+      "name": "MCU_HELLO",
+      "id": 32768,
+      "direction": "mcu_to_cpu",
+      "payload_status": "defined",
+      "struct_format": "<HHI",
+      "samples": [{"name": "mcu_hello", "sequence": 11, "flags": 0, "values": [1, 2, 305419896]}]
+    },
+    {
+      "name": "FAST_TELEMETRY",
+      "id": 32769,
+      "direction": "mcu_to_cpu",
+      "payload_status": "defined",
+      "struct_format": "<IiiBBBBBH",
+      "samples": [{"name": "fast_telemetry", "sequence": 12, "flags": 0, "values": [20, -10, 11, 1, 2, 0, 3, 1, 15100]}]
+    },
+    {
+      "name": "SAFETY_EVENT",
+      "id": 32770,
+      "direction": "mcu_to_cpu",
+      "payload_status": "defined",
+      "struct_format": "<HBH",
+      "samples": [
+        {"name": "safety_event_1", "sequence": 13, "flags": 0, "values": [1, 1, 0]},
+        {"name": "safety_event_2", "sequence": 14, "flags": 0, "values": [2, 1, 0]},
+        {"name": "safety_event_3", "sequence": 15, "flags": 0, "values": [3, 1, 0]},
+        {"name": "safety_event_4", "sequence": 16, "flags": 0, "values": [4, 1, 0]},
+        {"name": "safety_event_5", "sequence": 17, "flags": 0, "values": [5, 1, 0]},
+        {"name": "safety_event_6", "sequence": 18, "flags": 0, "values": [6, 1, 0]},
+        {"name": "safety_event_7", "sequence": 19, "flags": 0, "values": [7, 1, 1]},
+        {"name": "safety_event_8", "sequence": 20, "flags": 0, "values": [8, 1, 0]},
+        {"name": "safety_event_9", "sequence": 21, "flags": 0, "values": [9, 1, 0]},
+        {"name": "safety_event_10", "sequence": 22, "flags": 0, "values": [10, 1, 42]}
+      ]
+    },
+    {
+      "name": "POWER_TELEMETRY",
+      "id": 32771,
+      "direction": "mcu_to_cpu",
+      "payload_status": "open",
+      "open_reason": "Battery, charger, current, and thermal field semantics require board bring-up measurements."
+    },
+    {
+      "name": "MCU_DIAGNOSTIC",
+      "id": 32772,
+      "direction": "mcu_to_cpu",
+      "payload_status": "open",
+      "open_reason": "Watchdog, reset-reason, loop-timing, and counter fields are not frozen yet."
+    },
+    {
+      "name": "SAFETY_STATE",
+      "id": 32773,
+      "direction": "mcu_to_cpu",
+      "payload_status": "defined",
+      "struct_format": "<IHH",
+      "samples": [{"name": "safety_state_events_9_10", "sequence": 23, "flags": 0, "values": [151, 256, 768]}]
+    }
+  ]
+}
