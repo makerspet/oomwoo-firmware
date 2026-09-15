@@ -50,6 +50,19 @@ manifest are an unchanged snapshot from the accepted interface contract in
 `90324ec79491a1f71eaadd86fce0d92b0e13c15a`. The generator validates coverage,
 status, IDs, and packed sizes before producing the C fixture used by tests.
 
+## CPU ingress gate
+
+`oomwoo_cpu_ingress` composes the stream decoder and typed codec for the MCU's
+receive path. A consumer callback runs only after framing, wire version,
+endpoint direction, exact payload length, and semantic value validation all
+succeed. CRC-valid MCU-to-CPU messages received on this path are counted and
+dropped rather than dispatched.
+
+Framing counters remain in the embedded stream decoder, while the ingress layer
+separately counts accepted messages and each semantic rejection class. See
+[CPU ingress gate](cpu-ingress.md) for the API, memory ownership, and integration
+boundary.
+
 ## Bench sketch
 
 `src/main.cpp` is a serial framing echo for a Nucleo G474RE. It starts no
@@ -106,6 +119,7 @@ change.
 | Known message with wrong payload length | Reject and clear typed output |
 | Payload field outside its contract bound | Reject and clear typed output |
 | Unknown or still-open message payload | Reject without dispatching |
+| Valid MCU-to-CPU message on CPU ingress | Count and reject wrong direction |
 
 No malformed input can authorize an actuator because this slice has no actuator
 output. Later command handling must validate payload bounds and MCU safety state

@@ -77,6 +77,30 @@ jobs:
             -o /tmp/oomwoo_message_conformance_cpp
           /tmp/oomwoo_message_conformance_cpp
 
+      - name: Compile and run CPU ingress as strict C11
+        run: |
+          cc -std=c11 -Wall -Wextra -Werror -pedantic \
+            -fsanitize=address,undefined \
+            -Iinclude \
+            src/oomwoo_protocol.c \
+            src/oomwoo_messages.c \
+            src/oomwoo_cpu_ingress.c \
+            tests/cpu_ingress_conformance.c \
+            -o /tmp/oomwoo_cpu_ingress_conformance
+          /tmp/oomwoo_cpu_ingress_conformance
+
+      - name: Compile and run CPU ingress as C++17
+        run: |
+          c++ -std=c++17 -Wall -Wextra -Werror -pedantic \
+            -fsanitize=address,undefined \
+            -Iinclude -x c++ \
+            src/oomwoo_protocol.c \
+            src/oomwoo_messages.c \
+            src/oomwoo_cpu_ingress.c \
+            tests/cpu_ingress_conformance.c \
+            -o /tmp/oomwoo_cpu_ingress_conformance_cpp
+          /tmp/oomwoo_cpu_ingress_conformance_cpp
+
   platformio:
     name: PlatformIO native + Nucleo G474
     runs-on: ubuntu-24.04
