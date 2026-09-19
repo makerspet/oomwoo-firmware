@@ -129,8 +129,10 @@ board HAL:
 
 - heap-free C frame encoder/decoder and CRC-16/CCITT-FALSE
 - bounded incremental UART decoder with corruption and receive-gap recovery
+- heap-free typed payload codec with exact lengths and contract-defined bounds
+- all 23 canonical wire-v1 vectors imported from the accepted interface contract
 - Nucleo G474RE Arduino serial frame-echo harness
-- native Unity tests and strict C11 sanitizer tests for wire v1 and v2
+- native Unity tests plus strict C11/C++17 sanitizer conformance tests
 - pinned PlatformIO cross-builds for both versions on the Cortex-M4F target
 
 ```bash
@@ -141,9 +143,10 @@ pio run -e nucleo_g474re -e nucleo_g474re_v2
 ```
 
 See [CPU/MCU protocol bring-up](docs/protocol-bringup.md) for memory ownership,
-failure behavior, compatibility, and the explicit safety boundary. Wire v1 is
-the build default; candidate v2 remains an explicitly tested override while the
-payload-version decision is tracked in
+failure behavior, typed payload validation, compatibility, and the explicit
+safety boundary. Wire v1 is the build default; candidate v2 remains an
+explicitly tested framing override while the payload-version decision is
+tracked in
 [`oomwoo-io-firmware#1`](https://github.com/makerspet/oomwoo-io-firmware/issues/1).
 
 > The serial echo harness is only a framing bench tool. It does not implement a

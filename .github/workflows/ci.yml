@@ -42,6 +42,41 @@ jobs:
             -Iinclude -x c++ src/oomwoo_protocol.c \
             -c -o /tmp/oomwoo_protocol_cpp.o
 
+  messages:
+    name: Typed message conformance
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Verify generated canonical vectors
+        run: python3 tools/generate_message_vectors.py --check
+
+      - name: Compile and run as strict C11
+        run: |
+          cc -std=c11 -Wall -Wextra -Werror -pedantic \
+            -fsanitize=address,undefined \
+            -Iinclude \
+            src/oomwoo_protocol.c \
+            src/oomwoo_messages.c \
+            tests/message_conformance.c \
+            -o /tmp/oomwoo_message_conformance
+          /tmp/oomwoo_message_conformance
+
+      - name: Compile and run as C++17
+        run: |
+          c++ -std=c++17 -Wall -Wextra -Werror -pedantic \
+            -fsanitize=address,undefined \
+            -Iinclude -x c++ \
+            src/oomwoo_protocol.c \
+            src/oomwoo_messages.c \
+            tests/message_conformance.c \
+            -o /tmp/oomwoo_message_conformance_cpp
+          /tmp/oomwoo_message_conformance_cpp
+
   platformio:
     name: PlatformIO native + Nucleo G474
     runs-on: ubuntu-24.04

@@ -1,0 +1,225 @@
+{
+  "generated_from": "protocol_v1.json",
+  "wire_version": 1,
+  "vectors": [
+    {
+      "name": "heartbeat",
+      "message_name": "HEARTBEAT",
+      "message_type": 1,
+      "sequence": 1,
+      "flags": 0,
+      "payload_hex": "7856341201",
+      "frame_hex": "4f5701000100010005007856341201a488"
+    },
+    {
+      "name": "estop_set",
+      "message_name": "ESTOP_SET",
+      "message_type": 2,
+      "sequence": 2,
+      "flags": 0,
+      "payload_hex": "013412",
+      "frame_hex": "4f570100020002000300013412d80d"
+    },
+    {
+      "name": "clear_latched_fault",
+      "message_name": "CLEAR_LATCHED_FAULT",
+      "message_type": 3,
+      "sequence": 3,
+      "flags": 0,
+      "payload_hex": "0003",
+      "frame_hex": "4f5701000300030002000003d4c6"
+    },
+    {
+      "name": "identify_request",
+      "message_name": "IDENTIFY_REQUEST",
+      "message_type": 4,
+      "sequence": 4,
+      "flags": 0,
+      "payload_hex": "",
+      "frame_hex": "4f5701000400040000009df3"
+    },
+    {
+      "name": "drive_setpoint",
+      "message_name": "DRIVE_SETPOINT",
+      "message_type": 257,
+      "sequence": 5,
+      "flags": 0,
+      "payload_hex": "88fff4016400",
+      "frame_hex": "4f57010005000101060088fff4016400eed4"
+    },
+    {
+      "name": "cleaning_motors_set",
+      "message_name": "CLEANING_MOTORS_SET",
+      "message_type": 258,
+      "sequence": 6,
+      "flags": 0,
+      "payload_hex": "141e2800",
+      "frame_hex": "4f570100060002010400141e280003d8"
+    },
+    {
+      "name": "lidar_motor_set",
+      "message_name": "LIDAR_MOTOR_SET",
+      "message_type": 259,
+      "sequence": 7,
+      "flags": 0,
+      "payload_hex": "37",
+      "frame_hex": "4f570100070003010100371afa"
+    },
+    {
+      "name": "led_set",
+      "message_name": "LED_SET",
+      "message_type": 260,
+      "sequence": 8,
+      "flags": 0,
+      "payload_hex": "02014b",
+      "frame_hex": "4f57010008000401030002014b296e"
+    },
+    {
+      "name": "ack",
+      "message_name": "ACK",
+      "message_type": 28673,
+      "sequence": 9,
+      "flags": 0,
+      "payload_hex": "2a000000",
+      "frame_hex": "4f5701000900017004002a0000005923"
+    },
+    {
+      "name": "nack",
+      "message_name": "NACK",
+      "message_type": 28674,
+      "sequence": 10,
+      "flags": 0,
+      "payload_hex": "2b000300",
+      "frame_hex": "4f5701000a00027004002b0003000479"
+    },
+    {
+      "name": "mcu_hello",
+      "message_name": "MCU_HELLO",
+      "message_type": 32768,
+      "sequence": 11,
+      "flags": 0,
+      "payload_hex": "0100020078563412",
+      "frame_hex": "4f5701000b0000800800010002007856341241ba"
+    },
+    {
+      "name": "fast_telemetry",
+      "message_name": "FAST_TELEMETRY",
+      "message_type": 32769,
+      "sequence": 12,
+      "flags": 0,
+      "payload_hex": "14000000f6ffffff0b0000000102000301fc3a",
+      "frame_hex": "4f5701000c000180130014000000f6ffffff0b0000000102000301fc3afc30"
+    },
+    {
+      "name": "safety_event_1",
+      "message_name": "SAFETY_EVENT",
+      "message_type": 32770,
+      "sequence": 13,
+      "flags": 0,
+      "payload_hex": "0100010000",
+      "frame_hex": "4f5701000d000280050001000100009517"
+    },
+    {
+      "name": "safety_event_2",
+      "message_name": "SAFETY_EVENT",
+      "message_type": 32770,
+      "sequence": 14,
+      "flags": 0,
+      "payload_hex": "0200010000",
+      "frame_hex": "4f5701000e00028005000200010000bd81"
+    },
+    {
+      "name": "safety_event_3",
+      "message_name": "SAFETY_EVENT",
+      "message_type": 32770,
+      "sequence": 15,
+      "flags": 0,
+      "payload_hex": "0300010000",
+      "frame_hex": "4f5701000f00028005000300010000a5f3"
+    },
+    {
+      "name": "safety_event_4",
+      "message_name": "SAFETY_EVENT",
+      "message_type": 32770,
+      "sequence": 16,
+      "flags": 0,
+      "payload_hex": "0400010000",
+      "frame_hex": "4f57010010000280050004000100007f4a"
+    },
+    {
+      "name": "safety_event_5",
+      "message_name": "SAFETY_EVENT",
+      "message_type": 32770,
+      "sequence": 17,
+      "flags": 0,
+      "payload_hex": "0500010000",
+      "frame_hex": "4f57010011000280050005000100006738"
+    },
+    {
+      "name": "safety_event_6",
+      "message_name": "SAFETY_EVENT",
+      "message_type": 32770,
+      "sequence": 18,
+      "flags": 0,
+      "payload_hex": "0600010000",
+      "frame_hex": "4f57010012000280050006000100004fae"
+    },
+    {
+      "name": "safety_event_7",
+      "message_name": "SAFETY_EVENT",
+      "message_type": 32770,
+      "sequence": 19,
+      "flags": 0,
+      "payload_hex": "0700010100",
+      "frame_hex": "4f570100130002800500070001010066ef"
+    },
+    {
+      "name": "safety_event_8",
+      "message_name": "SAFETY_EVENT",
+      "message_type": 32770,
+      "sequence": 20,
+      "flags": 0,
+      "payload_hex": "0800010000",
+      "frame_hex": "4f57010014000280050008000100001390"
+    },
+    {
+      "name": "safety_event_9",
+      "message_name": "SAFETY_EVENT",
+      "message_type": 32770,
+      "sequence": 21,
+      "flags": 0,
+      "payload_hex": "0900010000",
+      "frame_hex": "4f57010015000280050009000100000be2"
+    },
+    {
+      "name": "safety_event_10",
+      "message_name": "SAFETY_EVENT",
+      "message_type": 32770,
+      "sequence": 22,
+      "flags": 0,
+      "payload_hex": "0a00012a00",
+      "frame_hex": "4f5701001600028005000a00012a000e9d"
+    },
+    {
+      "name": "safety_state_events_9_10",
+      "message_name": "SAFETY_STATE",
+      "message_type": 32773,
+      "sequence": 23,
+      "flags": 0,
+      "payload_hex": "9700000000010003",
+      "frame_hex": "4f5701001700058008009700000000010003ce78"
+    }
+  ],
+  "open_messages": [
+    {
+      "name": "POWER_TELEMETRY",
+      "message_type": 32771,
+      "reason": "Battery, charger, current, and thermal field semantics require board bring-up measurements."
+    },
+    {
+      "name": "MCU_DIAGNOSTIC",
+      "message_type": 32772,
+      "reason": "Watchdog, reset-reason, loop-timing, and counter fields are not frozen yet."
+    }
+  ]
+}
