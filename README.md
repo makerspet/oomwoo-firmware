@@ -131,6 +131,8 @@ board HAL:
 - bounded incremental UART decoder with corruption and receive-gap recovery
 - heap-free typed payload codec with exact lengths and contract-defined bounds
 - all 23 canonical wire-v1 vectors imported from the accepted interface contract
+- CPU ingress gate that dispatches only CRC-, direction-, and payload-valid
+  messages
 - Nucleo G474RE Arduino serial frame-echo harness
 - native Unity tests plus strict C11/C++17 sanitizer conformance tests
 - pinned PlatformIO cross-builds for both versions on the Cortex-M4F target
@@ -142,9 +144,10 @@ pio pkg install -e nucleo_g474re
 pio run -e nucleo_g474re -e nucleo_g474re_v2
 ```
 
-See [CPU/MCU protocol bring-up](docs/protocol-bringup.md) for memory ownership,
-failure behavior, typed payload validation, compatibility, and the explicit
-safety boundary. Wire v1 is the build default; candidate v2 remains an
+See [CPU/MCU protocol bring-up](docs/protocol-bringup.md) and the
+[CPU ingress gate](docs/cpu-ingress.md) for memory ownership, failure behavior,
+typed payload validation, compatibility, and the explicit safety boundary.
+Wire v1 is the build default; candidate v2 remains an
 explicitly tested framing override while the payload-version decision is
 tracked in
 [`oomwoo-io-firmware#1`](https://github.com/makerspet/oomwoo-io-firmware/issues/1).
