@@ -150,7 +150,7 @@ typed payload validation, compatibility, and the explicit safety boundary.
 Wire v1 is the build default; candidate v2 remains an
 explicitly tested framing override while the payload-version decision is
 tracked in
-[`oomwoo-io-firmware#1`](https://github.com/makerspet/oomwoo-io-firmware/issues/1).
+[`oomwoo-firmware#1`](https://github.com/makerspet/oomwoo-firmware/issues/1).
 
 > The serial echo harness is only a framing bench tool. It does not implement a
 > CPU watchdog or authorize any actuator.

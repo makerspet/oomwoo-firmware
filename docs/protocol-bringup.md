@@ -96,7 +96,7 @@ is the version in the accepted interface draft. Parallel `native_v2` and
 compile-time override matching
 [`oomwoo-mcu-bridge@v0.1.0`](https://github.com/xbattlax/oomwoo-mcu-bridge/releases/tag/v0.1.0).
 The final v1-extension versus v2 payload decision remains tracked in
-[`oomwoo-io-firmware#1`](https://github.com/makerspet/oomwoo-io-firmware/issues/1),
+[`oomwoo-firmware#1`](https://github.com/makerspet/oomwoo-firmware/issues/1),
 but it no longer blocks review of the framing core or the accepted wire-v1
 payload snapshot.
 
