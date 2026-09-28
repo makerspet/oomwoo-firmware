@@ -17,7 +17,7 @@ targeting an **STM32G473VCT6**. Arduino (STM32duino) API on top, FreeRTOS for ta
 structure, and a HAL/timer-ISR real-time core underneath.
 
 > **Status — RFC / protocol bring-up.** The framing core and a Nucleo G474RE
-> serial echo now exist; motor control, hard-safety inputs, charging, and the
+> identity handshake now exist; motor control, hard-safety inputs, charging, and the
 > production FreeRTOS task structure do not. Say hi in
 > [Discussions](https://github.com/makerspet/oomwoo/discussions) or on
 > [Discord](https://discord.gg/3y2JKz5T25) if you want to build it.
@@ -133,7 +133,7 @@ board HAL:
 - all 23 canonical wire-v1 vectors imported from the accepted interface contract
 - CPU ingress gate that dispatches only CRC-, direction-, and payload-valid
   messages
-- Nucleo G474RE Arduino serial frame-echo harness
+- reconnect-safe `MCU_HELLO` identity service on the Nucleo G474RE harness
 - native Unity tests plus strict C11/C++17 sanitizer conformance tests
 - pinned PlatformIO cross-builds for both versions on the Cortex-M4F target
 
@@ -146,22 +146,24 @@ pio run -e nucleo_g474re -e nucleo_g474re_v2
 
 See [CPU/MCU protocol bring-up](docs/protocol-bringup.md) and the
 [CPU ingress gate](docs/cpu-ingress.md) for memory ownership, failure behavior,
-typed payload validation, compatibility, and the explicit safety boundary.
+typed payload validation, compatibility, and the explicit safety boundary. The
+[MCU identity handshake](docs/identity-handshake.md) documents startup and
+reconnect behavior.
 Wire v1 is the build default; candidate v2 remains an
 explicitly tested framing override while the payload-version decision is
 tracked in
-[`oomwoo-io-firmware#1`](https://github.com/makerspet/oomwoo-io-firmware/issues/1).
+[`oomwoo-firmware#1`](https://github.com/makerspet/oomwoo-firmware/issues/1).
 
-> The serial echo harness is only a framing bench tool. It does not implement a
-> CPU watchdog or authorize any actuator.
+> The identity harness is only a protocol bench tool. It does not acknowledge
+> commands, implement a CPU watchdog, or authorize any actuator.
 
 ## Request for contribution — bring-up milestones
 
 Phased, each testable on the bench before the board even exists (start on a
 Nucleo-G474, move to the real board when it's fabbed):
 
-1. **Blink + SWD + serial echo** on a G473 dev board.
-2. **CPU serial link** — framing and serial echo are in bring-up; the
+1. **Blink + SWD + identity handshake** on a G473 dev board.
+2. **CPU serial link** — framing, typed ingress, and identity are in bring-up; the
    health/watchdog handshake and hardware loopback still remain.
 3. **One drive motor, closed loop** — H-bridge PWM + encoder capture + velocity PID
    in the real-time core. This is the pattern every other motor follows.
