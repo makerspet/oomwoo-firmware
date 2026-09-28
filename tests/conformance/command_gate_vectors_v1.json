@@ -1,0 +1,465 @@
+{
+  "schema_version": 1,
+  "targets_contract": {
+    "wire_version": 1,
+    "contract_manifest": "contributions/io-board-interface/xbattlax/conformance/protocol_v1.json"
+  },
+  "vectors": [
+    {
+      "name": "heartbeat_ok",
+      "message_type": 1,
+      "version": 1,
+      "payload_hex": "40e2010001",
+      "expect": "OK",
+      "reason": "OK"
+    },
+    {
+      "name": "estop_set_ok",
+      "message_type": 2,
+      "version": 1,
+      "payload_hex": "010000",
+      "expect": "OK",
+      "reason": "OK"
+    },
+    {
+      "name": "clear_latched_fault_ok",
+      "message_type": 3,
+      "version": 1,
+      "payload_hex": "ff00",
+      "expect": "OK",
+      "reason": "OK"
+    },
+    {
+      "name": "identify_request_ok",
+      "message_type": 4,
+      "version": 1,
+      "payload_hex": "",
+      "expect": "OK",
+      "reason": "OK"
+    },
+    {
+      "name": "drive_setpoint_ok",
+      "message_type": 257,
+      "version": 1,
+      "payload_hex": "88fff4016400",
+      "expect": "OK",
+      "reason": "OK"
+    },
+    {
+      "name": "cleaning_motors_ok",
+      "message_type": 258,
+      "version": 1,
+      "payload_hex": "323c4600",
+      "expect": "OK",
+      "reason": "OK"
+    },
+    {
+      "name": "lidar_motor_ok",
+      "message_type": 259,
+      "version": 1,
+      "payload_hex": "50",
+      "expect": "OK",
+      "reason": "OK"
+    },
+    {
+      "name": "led_set_ok",
+      "message_type": 260,
+      "version": 1,
+      "payload_hex": "020364",
+      "expect": "OK",
+      "reason": "OK"
+    },
+    {
+      "name": "ack_ok",
+      "message_type": 28673,
+      "version": 1,
+      "payload_hex": "01010000",
+      "expect": "OK",
+      "reason": "OK"
+    },
+    {
+      "name": "nack_ok",
+      "message_type": 28674,
+      "version": 1,
+      "payload_hex": "01010500",
+      "expect": "OK",
+      "reason": "OK"
+    },
+    {
+      "name": "bad_version_heartbeat",
+      "message_type": 1,
+      "version": 2,
+      "payload_hex": "0000000001",
+      "expect": "REJECT",
+      "reason": "BAD_VERSION"
+    },
+    {
+      "name": "bad_version_beats_unknown_type",
+      "message_type": 2457,
+      "version": 2,
+      "payload_hex": "",
+      "expect": "REJECT",
+      "reason": "BAD_VERSION"
+    },
+    {
+      "name": "bad_version_beats_value",
+      "message_type": 257,
+      "version": 0,
+      "payload_hex": "0f2700006400",
+      "expect": "REJECT",
+      "reason": "BAD_VERSION"
+    },
+    {
+      "name": "bad_version_beats_length",
+      "message_type": 1,
+      "version": 2,
+      "payload_hex": "01",
+      "expect": "REJECT",
+      "reason": "BAD_VERSION"
+    },
+    {
+      "name": "unknown_type",
+      "message_type": 2457,
+      "version": 1,
+      "payload_hex": "",
+      "expect": "REJECT",
+      "reason": "UNKNOWN_TYPE"
+    },
+    {
+      "name": "wrong_dir_mcu_hello",
+      "message_type": 32768,
+      "version": 1,
+      "payload_hex": "",
+      "expect": "REJECT",
+      "reason": "WRONG_DIRECTION"
+    },
+    {
+      "name": "wrong_dir_fast_telemetry",
+      "message_type": 32769,
+      "version": 1,
+      "payload_hex": "",
+      "expect": "REJECT",
+      "reason": "WRONG_DIRECTION"
+    },
+    {
+      "name": "wrong_dir_safety_event",
+      "message_type": 32770,
+      "version": 1,
+      "payload_hex": "",
+      "expect": "REJECT",
+      "reason": "WRONG_DIRECTION"
+    },
+    {
+      "name": "wrong_dir_power_telemetry_open",
+      "message_type": 32771,
+      "version": 1,
+      "payload_hex": "",
+      "expect": "REJECT",
+      "reason": "WRONG_DIRECTION"
+    },
+    {
+      "name": "wrong_dir_mcu_diagnostic_open",
+      "message_type": 32772,
+      "version": 1,
+      "payload_hex": "",
+      "expect": "REJECT",
+      "reason": "WRONG_DIRECTION"
+    },
+    {
+      "name": "wrong_dir_safety_state",
+      "message_type": 32773,
+      "version": 1,
+      "payload_hex": "",
+      "expect": "REJECT",
+      "reason": "WRONG_DIRECTION"
+    },
+    {
+      "name": "wrong_dir_beats_length",
+      "message_type": 32768,
+      "version": 1,
+      "payload_hex": "aabbcc",
+      "expect": "REJECT",
+      "reason": "WRONG_DIRECTION"
+    },
+    {
+      "name": "len_heartbeat_zero",
+      "message_type": 1,
+      "version": 1,
+      "payload_hex": "",
+      "expect": "REJECT",
+      "reason": "WRONG_PAYLOAD_LENGTH"
+    },
+    {
+      "name": "len_heartbeat_minus1",
+      "message_type": 1,
+      "version": 1,
+      "payload_hex": "01020304",
+      "expect": "REJECT",
+      "reason": "WRONG_PAYLOAD_LENGTH"
+    },
+    {
+      "name": "len_heartbeat_plus1",
+      "message_type": 1,
+      "version": 1,
+      "payload_hex": "010203040506",
+      "expect": "REJECT",
+      "reason": "WRONG_PAYLOAD_LENGTH"
+    },
+    {
+      "name": "len_heartbeat_overlong",
+      "message_type": 1,
+      "version": 1,
+      "payload_hex": "0000000000000000000000000000000000000000",
+      "expect": "REJECT",
+      "reason": "WRONG_PAYLOAD_LENGTH"
+    },
+    {
+      "name": "len_identify_plus1",
+      "message_type": 4,
+      "version": 1,
+      "payload_hex": "00",
+      "expect": "REJECT",
+      "reason": "WRONG_PAYLOAD_LENGTH"
+    },
+    {
+      "name": "len_drive_minus1",
+      "message_type": 257,
+      "version": 1,
+      "payload_hex": "0102030405",
+      "expect": "REJECT",
+      "reason": "WRONG_PAYLOAD_LENGTH"
+    },
+    {
+      "name": "len_cleaning_plus1",
+      "message_type": 258,
+      "version": 1,
+      "payload_hex": "0102030405",
+      "expect": "REJECT",
+      "reason": "WRONG_PAYLOAD_LENGTH"
+    },
+    {
+      "name": "hb_mode0_ok",
+      "message_type": 1,
+      "version": 1,
+      "payload_hex": "0000000000",
+      "expect": "OK",
+      "reason": "OK"
+    },
+    {
+      "name": "hb_mode1_ok",
+      "message_type": 1,
+      "version": 1,
+      "payload_hex": "0000000001",
+      "expect": "OK",
+      "reason": "OK"
+    },
+    {
+      "name": "hb_mode2_oor",
+      "message_type": 1,
+      "version": 1,
+      "payload_hex": "0000000002",
+      "expect": "REJECT",
+      "reason": "VALUE_OUT_OF_RANGE"
+    },
+    {
+      "name": "estop_active0_ok",
+      "message_type": 2,
+      "version": 1,
+      "payload_hex": "000000",
+      "expect": "OK",
+      "reason": "OK"
+    },
+    {
+      "name": "estop_active1_ok",
+      "message_type": 2,
+      "version": 1,
+      "payload_hex": "010000",
+      "expect": "OK",
+      "reason": "OK"
+    },
+    {
+      "name": "estop_active2_oor",
+      "message_type": 2,
+      "version": 1,
+      "payload_hex": "020000",
+      "expect": "REJECT",
+      "reason": "VALUE_OUT_OF_RANGE"
+    },
+    {
+      "name": "drive_linear_max_ok",
+      "message_type": 257,
+      "version": 1,
+      "payload_hex": "f40100000100",
+      "expect": "OK",
+      "reason": "OK"
+    },
+    {
+      "name": "drive_linear_over_oor",
+      "message_type": 257,
+      "version": 1,
+      "payload_hex": "f50100000100",
+      "expect": "REJECT",
+      "reason": "VALUE_OUT_OF_RANGE"
+    },
+    {
+      "name": "drive_linear_min_ok",
+      "message_type": 257,
+      "version": 1,
+      "payload_hex": "0cfe00000100",
+      "expect": "OK",
+      "reason": "OK"
+    },
+    {
+      "name": "drive_linear_under_oor",
+      "message_type": 257,
+      "version": 1,
+      "payload_hex": "0bfe00000100",
+      "expect": "REJECT",
+      "reason": "VALUE_OUT_OF_RANGE"
+    },
+    {
+      "name": "drive_angular_max_ok",
+      "message_type": 257,
+      "version": 1,
+      "payload_hex": "0000a00f0100",
+      "expect": "OK",
+      "reason": "OK"
+    },
+    {
+      "name": "drive_angular_over_oor",
+      "message_type": 257,
+      "version": 1,
+      "payload_hex": "0000a10f0100",
+      "expect": "REJECT",
+      "reason": "VALUE_OUT_OF_RANGE"
+    },
+    {
+      "name": "drive_angular_min_ok",
+      "message_type": 257,
+      "version": 1,
+      "payload_hex": "000060f00100",
+      "expect": "OK",
+      "reason": "OK"
+    },
+    {
+      "name": "drive_angular_under_oor",
+      "message_type": 257,
+      "version": 1,
+      "payload_hex": "00005ff00100",
+      "expect": "REJECT",
+      "reason": "VALUE_OUT_OF_RANGE"
+    },
+    {
+      "name": "drive_duration_min_ok",
+      "message_type": 257,
+      "version": 1,
+      "payload_hex": "000000000100",
+      "expect": "OK",
+      "reason": "OK"
+    },
+    {
+      "name": "drive_duration_max_ok",
+      "message_type": 257,
+      "version": 1,
+      "payload_hex": "00000000fa00",
+      "expect": "OK",
+      "reason": "OK"
+    },
+    {
+      "name": "drive_duration_zero_oor",
+      "message_type": 257,
+      "version": 1,
+      "payload_hex": "000000000000",
+      "expect": "REJECT",
+      "reason": "VALUE_OUT_OF_RANGE"
+    },
+    {
+      "name": "drive_duration_over_oor",
+      "message_type": 257,
+      "version": 1,
+      "payload_hex": "00000000fb00",
+      "expect": "REJECT",
+      "reason": "VALUE_OUT_OF_RANGE"
+    },
+    {
+      "name": "cleaning_all_max_ok",
+      "message_type": 258,
+      "version": 1,
+      "payload_hex": "64646464",
+      "expect": "OK",
+      "reason": "OK"
+    },
+    {
+      "name": "cleaning_main_over_oor",
+      "message_type": 258,
+      "version": 1,
+      "payload_hex": "65000000",
+      "expect": "REJECT",
+      "reason": "VALUE_OUT_OF_RANGE"
+    },
+    {
+      "name": "cleaning_side_over_oor",
+      "message_type": 258,
+      "version": 1,
+      "payload_hex": "00650000",
+      "expect": "REJECT",
+      "reason": "VALUE_OUT_OF_RANGE"
+    },
+    {
+      "name": "cleaning_fan_over_oor",
+      "message_type": 258,
+      "version": 1,
+      "payload_hex": "00006500",
+      "expect": "REJECT",
+      "reason": "VALUE_OUT_OF_RANGE"
+    },
+    {
+      "name": "cleaning_pump_over_oor",
+      "message_type": 258,
+      "version": 1,
+      "payload_hex": "00000065",
+      "expect": "REJECT",
+      "reason": "VALUE_OUT_OF_RANGE"
+    },
+    {
+      "name": "lidar_max_ok",
+      "message_type": 259,
+      "version": 1,
+      "payload_hex": "64",
+      "expect": "OK",
+      "reason": "OK"
+    },
+    {
+      "name": "lidar_over_oor",
+      "message_type": 259,
+      "version": 1,
+      "payload_hex": "65",
+      "expect": "REJECT",
+      "reason": "VALUE_OUT_OF_RANGE"
+    },
+    {
+      "name": "led_brightness_max_ok",
+      "message_type": 260,
+      "version": 1,
+      "payload_hex": "000064",
+      "expect": "OK",
+      "reason": "OK"
+    },
+    {
+      "name": "led_brightness_over_oor",
+      "message_type": 260,
+      "version": 1,
+      "payload_hex": "000065",
+      "expect": "REJECT",
+      "reason": "VALUE_OUT_OF_RANGE"
+    },
+    {
+      "name": "led_id_mode_unchecked_ok",
+      "message_type": 260,
+      "version": 1,
+      "payload_hex": "ffff32",
+      "expect": "OK",
+      "reason": "OK"
+    }
+  ]
+}
