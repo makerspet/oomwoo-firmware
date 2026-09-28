@@ -15,6 +15,7 @@ The portable C module provides:
 - counters for CRC, version, length, discarded-byte, and receive-gap failures
 - typed encode/decode for every payload defined by the accepted wire-v1 contract
 - exact payload-length, direction, and contract-range validation
+- startup and reconnect-safe MCU identity responses
 - no heap allocation and no HAL or Arduino dependency
 
 The stream decoder owns one 524-byte maximum-frame buffer. A decoded payload
@@ -63,16 +64,20 @@ separately counts accepted messages and each semantic rejection class. See
 [CPU ingress gate](cpu-ingress.md) for the API, memory ownership, and integration
 boundary.
 
-## Bench sketch
+## Identity handshake
 
-`src/main.cpp` is a serial framing echo for a Nucleo G474RE. It starts no
-actuator and re-encodes each valid frame byte-for-byte. Corrupt, truncated, or
-wrong-version input is dropped.
+`src/main.cpp` is an identity-handshake harness for a Nucleo G474RE. It emits
+`MCU_HELLO` once at startup and after each validated `IDENTIFY_REQUEST`. This
+makes reconnect independent of whether the CPU observed the startup frame.
+Corrupt, truncated, wrong-version, wrong-direction, and malformed input is
+dropped.
 
-The harness deliberately emits no `ACK`: frame integrity does not mean that a
-message type, payload, or requested action has been accepted. A future command
-dispatcher may acknowledge a command only after payload and safety-state
-validation.
+All other valid messages are ignored. The harness deliberately emits no `ACK`:
+frame integrity does not mean that a message type, payload, or requested action
+has been accepted. It does not arm the MCU, refresh a watchdog, replay a
+response, or touch hardware beyond the serial transport. See
+[MCU identity handshake](identity-handshake.md) for the exact API and sequence
+rules.
 
 The sketch resets an incomplete candidate after a 50 ms receive gap. This
 prevents a corrupted but in-range length field from holding later traffic
