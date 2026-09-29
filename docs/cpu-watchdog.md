@@ -69,6 +69,12 @@ wait on a lock, use a queue that can block, or call Arduino APIs.
 Timeout comparison uses unsigned subtraction, so a wrapping 32-bit tick is
 handled correctly. `timeout_ticks` must be in the range `1..UINT32_MAX/2`.
 
+The current production-board adapter is documented in
+[STM32G473 production safety HAL](stm32g473-safety-hal.md). It drives PE10 high
+through `GPIOE->BSRR` to disable the active-low `VM-VBAT` enable and feeds the
+external RC watchdog on PD8 from foreground context. The firmware intentionally
+does not yet expose a motor-rail enable operation.
+
 With a 1 ms timer and no higher-priority ISR delay, hard stop is requested on
 the first watchdog ISR for which:
 

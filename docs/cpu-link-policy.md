@@ -43,8 +43,11 @@ remain fail-closed until their contracts are reviewed.
 
 ## Implementation status
 
-The identity service, validated CPU ingress, and bounded ingress-to-watchdog
-bridge are implemented. The heartbeat safe-stop core and wire-v1 Nucleo HIL
-harness are under safety review. Production HAL shutdown wiring, disarmed
-telemetry scheduling, CPU reset supervision, physical fault injection, and
-measured electrical cutoff latency remain open work.
+The identity service, validated CPU ingress, bounded ingress-to-watchdog bridge,
+and compile-tested STM32G473 shutdown HAL are implemented. The production target
+maps PD8 to the external `WDI`, maps PE10 to active-low `VM-VBAT` enable, runs the
+heartbeat deadline from TIM7, and leaves the motor rail disabled. The watchdog
+core, production HAL, and wire-v1 Nucleo HIL harness remain under safety review.
+Disarmed telemetry scheduling, CPU reset supervision, physical fault injection,
+command-latch integration, and measured electrical cutoff latency remain open
+work.

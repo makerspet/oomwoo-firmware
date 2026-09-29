@@ -135,8 +135,9 @@ Copy this table into the PR comment when running the physical test:
 
 ## Evidence still required
 
-- Replace PA8 with the reviewed production GPIO/PWM shutdown sequence for the
-  final OOMWOO PCB and verify every motion-capable output.
+- Exercise the compile-tested production PE10 `~VM-VBAT-EN` shutdown path on a
+  manufactured OOMWOO PCB and verify every motion-capable output. The Nucleo's
+  PA8 remains only a repeatable logic-level test point.
 - Measure worst-case ISR jitter and electrical cutoff latency under maximum
   firmware and motor load.
 - Verify command-latch invalidation at the production control-loop boundary.

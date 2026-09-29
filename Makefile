@@ -12,11 +12,11 @@ CXXFLAGS := -std=c++17 $(COMMON_WARNINGS) -Iinclude
 SANITIZERS := -fsanitize=address,undefined -fno-omit-frame-pointer
 ARM_TARGET_FLAGS ?= -mcpu=cortex-m4 -mthumb -ffreestanding
 
-.PHONY: all test host-test cpp-test bridge-test arm-check hil-build clean
+.PHONY: all test host-test cpp-test bridge-test board-safety-test arm-check hil-build clean
 
 all: test
 
-test: host-test cpp-test bridge-test
+test: host-test cpp-test bridge-test board-safety-test
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
@@ -48,9 +48,18 @@ $(BUILD_DIR)/cpu_watchdog_bridge_conformance: \
 bridge-test: $(BUILD_DIR)/cpu_watchdog_bridge_conformance
 	./$(BUILD_DIR)/cpu_watchdog_bridge_conformance
 
+$(BUILD_DIR)/test_stm32g473_safety: \
+		src/oomwoo_stm32g473_safety.c \
+		tests/test_stm32g473_safety.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) $(SANITIZERS) $^ -o $@
+
+board-safety-test: $(BUILD_DIR)/test_stm32g473_safety
+	./$(BUILD_DIR)/test_stm32g473_safety
+
 arm-check: | $(BUILD_DIR)
 	$(ARM_CC) $(CFLAGS) $(ARM_TARGET_FLAGS) -c src/oomwoo_cpu_watchdog.c -o $(BUILD_DIR)/oomwoo_cpu_watchdog_arm.o
 	$(ARM_CC) $(CFLAGS) $(ARM_TARGET_FLAGS) -c src/oomwoo_cpu_watchdog_bridge.c -o $(BUILD_DIR)/oomwoo_cpu_watchdog_bridge_arm.o
+	$(ARM_CC) $(CFLAGS) $(ARM_TARGET_FLAGS) -c src/oomwoo_stm32g473_safety.c -o $(BUILD_DIR)/oomwoo_stm32g473_safety_arm.o
 
 hil-build:
 	$(PIO) run -c platformio-watchdog-hil.ini -e nucleo_g474re_watchdog_hil

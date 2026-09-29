@@ -41,7 +41,7 @@ needs headroom the earlier STM32G0 (Cortex-M0+, no FPU) didn't comfortably have:
 - **5× 12-bit ADCs** — the board has many simultaneous analog channels (per-motor
   current sense, `VBat`, source current, 4× cliff IR, 2× dock IR, 2× side IR); five
   ADCs let safety-critical currents be sampled fast and independently.
-- **CORDIC + FMAC** math accelerators, 512 KB flash / 128 KB RAM, **LQFP100** (hand-
+- **CORDIC + FMAC** math accelerators, 256 KB flash / 128 KB RAM, **LQFP100** (hand-
   solderable, JLCPCB-friendly).
 
 STM32duino supports the G4 family (Nucleo-G474 is a good bring-up board), and
@@ -126,8 +126,8 @@ MCU serial tool in [oomwoo-install](https://github.com/makerspet/oomwoo-install)
 
 ## Current protocol bring-up
 
-The first milestone-2 slice is intentionally independent of motors and the
-board HAL:
+The first milestone-2 slice remains independent of motor control, but now
+includes the fail-closed production-board heartbeat shutdown boundary:
 
 - heap-free C frame encoder/decoder and CRC-16/CCITT-FALSE
 - bounded incremental UART decoder with corruption and receive-gap recovery
@@ -137,15 +137,18 @@ board HAL:
   messages
 - bounded ingress-to-watchdog bridge with end-to-end corrupt-frame and
   invalid-mode deadline tests
+- STM32G473 HAL mapping for PD8 `WDI` and active-low PE10 `VM-VBAT` enable,
+  with direct-register hard stop and foreground-owned watchdog edges
 - reconnect-safe `MCU_HELLO` identity service on the Nucleo G474RE harness
 - native Unity tests plus strict C11/C++17 sanitizer conformance tests
-- pinned PlatformIO cross-builds for both versions on the Cortex-M4F target
+- pinned PlatformIO cross-builds for both Nucleo protocol versions and the
+  real STM32G473VCT6 target
 
 ```bash
 python -m pip install platformio==6.1.19
 pio test -e native -e native_v2
 pio pkg install -e nucleo_g474re
-pio run -e nucleo_g474re -e nucleo_g474re_v2
+pio run -e nucleo_g474re -e nucleo_g474re_v2 -e oomwoo_stm32g473vc
 ```
 
 See [CPU/MCU protocol bring-up](docs/protocol-bringup.md) and the
@@ -155,13 +158,16 @@ typed payload validation, compatibility, and the explicit safety boundary. The
 reconnect behavior. The [CPU link safety policy](docs/cpu-link-policy.md) fixes
 the initial heartbeat deadline, the separate CPU-reset boundary, and the
 non-actuating return channel while disarmed.
+The [STM32G473 production safety HAL](docs/stm32g473-safety-hal.md) records the
+schematic provenance, exact GPIO behavior, and remaining physical evidence.
 Wire v1 is the build default; candidate v2 remains an
 explicitly tested framing override while the payload-version decision is
 tracked in
 [`oomwoo-firmware#1`](https://github.com/makerspet/oomwoo-firmware/issues/1).
 
-> The identity harness is only a protocol bench tool. It does not acknowledge
-> commands, implement a CPU watchdog, or authorize any actuator.
+> The Nucleo identity builds remain protocol-only bench tools. The dedicated
+> `oomwoo_stm32g473vc` image connects validated heartbeats to TIM7 and the
+> fail-closed board HAL, but still has no operation that enables an actuator.
 
 The watchdog draft includes a
 [Nucleo G474RE hardware-in-the-loop harness](docs/watchdog-hil.md). It exercises
