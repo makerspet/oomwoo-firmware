@@ -55,9 +55,10 @@ Passing this gate means only that bytes match the protocol contract. It does not
 mean an actuator command is safe to execute.
 
 A later dispatcher must still check the current MCU state, fault latches,
-command freshness, and actuator-specific limits. Only a validated
-`STACK_HEALTHY` heartbeat may be submitted to the watchdog, and doing so must
-remain separate from arbitrary message receipt. Hard-stop behavior stays in the
+command freshness, and actuator-specific limits. A validated `STACK_HEALTHY`
+heartbeat may refresh the watchdog deadline; a validated `DISARMED` heartbeat
+must submit the disarm request so the next watchdog tick forces hard stop. No
+other message receipt may refresh the deadline. Hard-stop behavior stays in the
 reviewed timer-ISR/HAL layer.
 
 ## Verification

@@ -8,6 +8,9 @@
 extern "C" {
 #endif
 
+/* Confirmed initial bring-up deadline at the HIL harness's 1 kHz tick rate. */
+#define OOMWOO_CPU_WATCHDOG_INITIAL_TIMEOUT_TICKS_1KHZ UINT32_C(150)
+
 /*
  * Values intentionally match the draft CPU/MCU HEARTBEAT cpu_mode field.
  * Parse and validate the serial frame before calling this module.

@@ -75,8 +75,10 @@ layer:
 - **Bumper / cliff / wheel-drop → immediate motor stop**, at ISR level.
 - **Per-motor overcurrent limiting** — a stuck brush, jammed wheel, or stall is
   current-limited or cut before thermal/mechanical damage.
-- **CPU watchdog** — if the CPU's periodic health packets stop, the MCU stops the
-  motors and can assert the CPU-reset line.
+- **CPU heartbeat watchdog** — if periodic healthy heartbeats stop, the MCU
+  forces motors and actuators safe after the initial 150 ms deadline. It never
+  resets the CPU over a short gap; CPU reset supervision is a separate, much
+  longer mechanism, initially around five minutes.
 - **MCU independent watchdog (IWDG)**, static memory allocation, and *measured,
   documented* worst-case reaction times.
 
@@ -148,7 +150,9 @@ See [CPU/MCU protocol bring-up](docs/protocol-bringup.md) and the
 [CPU ingress gate](docs/cpu-ingress.md) for memory ownership, failure behavior,
 typed payload validation, compatibility, and the explicit safety boundary. The
 [MCU identity handshake](docs/identity-handshake.md) documents startup and
-reconnect behavior.
+reconnect behavior. The [CPU link safety policy](docs/cpu-link-policy.md) fixes
+the initial heartbeat deadline, the separate CPU-reset boundary, and the
+non-actuating return channel while disarmed.
 Wire v1 is the build default; candidate v2 remains an
 explicitly tested framing override while the payload-version decision is
 tracked in
@@ -177,8 +181,9 @@ Nucleo-G474, move to the real board when it's fabbed):
 5. **All sensors** — cliff/dock/side IR (ADC), bumpers, wheel-drop, IMU (SPI),
    current channels.
 6. **Safety layer** — ISR-level cliff/bumper/wheel-drop stop, overcurrent limiting,
-   IWDG, CPU watchdog/reset; **measure and document** each cutoff's worst-case
-   reaction time; hazard note.
+   IWDG, the CPU heartbeat safe-stop, and separate long-timeout CPU-reset
+   supervision; **measure and document** each cutoff's worst-case reaction time;
+   hazard note.
 7. **Charging supervisor** — power-path charger control, 0.5C cap, input DPM,
    insufficient-charger handling.
 8. **Integration** — run end-to-end against the CPU (or the simulated MCU serial

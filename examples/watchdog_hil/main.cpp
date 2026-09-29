@@ -8,7 +8,8 @@
 namespace {
 
 constexpr uint32_t kWatchdogFrequencyHz = 1000U;
-constexpr uint32_t kWatchdogTimeoutTicks = 150U;
+constexpr uint32_t kWatchdogTimeoutTicks =
+    OOMWOO_CPU_WATCHDOG_INITIAL_TIMEOUT_TICKS_1KHZ;
 constexpr uint32_t kMotorEnablePin = PA8;  // Nucleo D7
 constexpr uint32_t kHeartbeatMarkerPin = PA9;  // Nucleo D8
 

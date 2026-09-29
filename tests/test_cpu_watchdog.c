@@ -68,7 +68,9 @@ static bool test_timeout_boundary_and_single_stop(void) {
   oomwoo_cpu_watchdog_t watchdog;
   stop_probe_t probe = {0U, OOMWOO_CPU_STOP_NONE};
 
-  CHECK(init_watchdog(&watchdog, &probe, 150U));
+  CHECK(init_watchdog(
+      &watchdog, &probe,
+      OOMWOO_CPU_WATCHDOG_INITIAL_TIMEOUT_TICKS_1KHZ));
   CHECK(oomwoo_cpu_watchdog_submit_heartbeat(
       &watchdog, OOMWOO_CPU_MODE_STACK_HEALTHY));
   CHECK(!oomwoo_cpu_watchdog_motion_permitted(&watchdog));
@@ -212,14 +214,20 @@ static bool test_tick_wraparound(void) {
   stop_probe_t probe = {0U, OOMWOO_CPU_STOP_NONE};
   const uint32_t start = UINT32_MAX - 50U;
 
-  CHECK(init_watchdog(&watchdog, &probe, 150U));
+  CHECK(init_watchdog(
+      &watchdog, &probe,
+      OOMWOO_CPU_WATCHDOG_INITIAL_TIMEOUT_TICKS_1KHZ));
   CHECK(oomwoo_cpu_watchdog_submit_heartbeat(
       &watchdog, OOMWOO_CPU_MODE_STACK_HEALTHY));
   CHECK(!oomwoo_cpu_watchdog_tick_isr(&watchdog, start));
-  CHECK(!oomwoo_cpu_watchdog_tick_isr(&watchdog,
-                                      (uint32_t)(start + 149U)));
-  CHECK(oomwoo_cpu_watchdog_tick_isr(&watchdog,
-                                     (uint32_t)(start + 150U)));
+  CHECK(!oomwoo_cpu_watchdog_tick_isr(
+      &watchdog,
+      (uint32_t)(start +
+                 OOMWOO_CPU_WATCHDOG_INITIAL_TIMEOUT_TICKS_1KHZ - 1U)));
+  CHECK(oomwoo_cpu_watchdog_tick_isr(
+      &watchdog,
+      (uint32_t)(start +
+                 OOMWOO_CPU_WATCHDOG_INITIAL_TIMEOUT_TICKS_1KHZ)));
   CHECK(oomwoo_cpu_watchdog_timeout_count(&watchdog) == 1U);
   return true;
 }

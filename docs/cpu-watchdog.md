@@ -14,9 +14,16 @@ CRC, message type, payload length, and `cpu_mode` have been validated. The
 watchdog uses the MCU's local tick; the untrusted `cpu_time_ms` value cannot
 extend the deadline.
 
-At a 1 kHz timer rate, configure `timeout_ticks = 150` for the current 150 ms
-bench proposal. This value remains subject to the decision in firmware issue
-#1.
+At a 1 kHz timer rate, configure
+`timeout_ticks = OOMWOO_CPU_WATCHDOG_INITIAL_TIMEOUT_TICKS_1KHZ` for the
+confirmed initial 150 ms bring-up deadline. The production value may be tuned
+only after measuring worst-case ISR-to-electrical-cutoff latency under load.
+
+This heartbeat deadline is not the CPU reset timeout. A missed heartbeat makes
+motors and actuators safe; it must never reset the CPU over a short gap. CPU
+reset supervision is a separate, much longer mechanism, initially around five
+minutes so the CPU has time to boot. This module has no CPU-reset output or
+reset side effect. See [CPU link safety policy](cpu-link-policy.md).
 
 The states are:
 

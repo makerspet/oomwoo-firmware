@@ -17,7 +17,7 @@ int main() {
   oomwoo_cpu_watchdog_t watchdog{};
   std::uint32_t stop_count = 0;
   const oomwoo_cpu_watchdog_config_t config{
-      150U,
+      OOMWOO_CPU_WATCHDOG_INITIAL_TIMEOUT_TICKS_1KHZ,
       hard_stop,
       &stop_count,
   };

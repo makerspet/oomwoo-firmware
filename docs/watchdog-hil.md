@@ -15,8 +15,14 @@ target MCU family. It verifies that:
 - a fresh heartbeat after a stop opens only the health gate and never replays
   the invalidated motor command.
 
-The 150 ms value remains a bring-up proposal pending firmware issue #1. This
-harness provides a repeatable way to measure it; it does not make it final.
+The 150 ms value is the confirmed initial bring-up deadline. This harness
+provides a repeatable way to measure the full ISR-to-electrical-cutoff path;
+that evidence may justify final tuning before motor loads are enabled.
+
+The harness exercises only the actuator-safe heartbeat deadline. It does not
+drive the CPU-reset line: short heartbeat loss must never reset the CPU. CPU
+reset supervision is a separate mechanism with a much longer initial timeout
+of approximately five minutes.
 
 ## Pins and equipment
 

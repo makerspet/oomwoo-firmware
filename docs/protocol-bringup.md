@@ -87,6 +87,22 @@ This Arduino loop is a bring-up harness, not the final communication task. The
 production UART path should feed the same decoder from a statically allocated
 DMA/ring buffer owned by a FreeRTOS task.
 
+## Confirmed link safety policy
+
+The protocol policy now distinguishes two independent liveness mechanisms:
+
+- a missing healthy heartbeat forces motors and actuators safe after the
+  initial 150 ms bring-up deadline, without resetting the CPU;
+- CPU reset supervision uses a separate timeout of approximately five minutes,
+  long enough for CPU boot, and is not implemented by the heartbeat watchdog.
+
+While disarmed, the MCU continues emitting `SAFETY_STATE` at its normal
+periodic/event rate, plus `MCU_DIAGNOSTIC` and `POWER_TELEMETRY` after those
+payloads are defined. These messages cannot arm outputs, replay commands, clear
+latched faults, or refresh the heartbeat deadline. See
+[CPU link safety policy](cpu-link-policy.md) for the normative rules and current
+implementation status.
+
 ## Compatibility
 
 The framing implementation is version-agnostic at source level:

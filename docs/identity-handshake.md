@@ -46,6 +46,8 @@ wire-v1 `MCU_HELLO` vector. They also cover reconnect requests through the full
 stream-decoder and typed-ingress path, silent CRC rejection, ignored heartbeat,
 undersized output, and sequence wraparound in strict C11 and C++17 builds.
 
-This remains a non-actuating bring-up service. Watchdog timing, disarmed
-telemetry policy, hardware UART loopback, and the production FreeRTOS transport
-remain separate review and bench-validation steps.
+This remains a non-actuating bring-up service. The confirmed watchdog timing
+and disarmed return-channel rules are documented in
+[CPU link safety policy](cpu-link-policy.md); their runtime integration remains
+separate from identity. Hardware UART loopback and the production FreeRTOS
+transport also remain review and bench-validation steps.
