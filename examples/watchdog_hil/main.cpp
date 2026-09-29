@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <HardwareTimer.h>
 
-#include "oomwoo_cpu_watchdog.h"
+#include "oomwoo_cpu_watchdog_bridge.h"
 
 #include <stdint.h>
 
@@ -10,14 +10,20 @@ namespace {
 constexpr uint32_t kWatchdogFrequencyHz = 1000U;
 constexpr uint32_t kWatchdogTimeoutTicks =
     OOMWOO_CPU_WATCHDOG_INITIAL_TIMEOUT_TICKS_1KHZ;
+constexpr uint32_t kFramingGapMs = 50U;
+constexpr uint8_t kBlockForegroundControl = static_cast<uint8_t>('B');
+constexpr uint8_t kStatusControl = static_cast<uint8_t>('S');
 constexpr uint32_t kMotorEnablePin = PA8;  // Nucleo D7
 constexpr uint32_t kHeartbeatMarkerPin = PA9;  // Nucleo D8
 
 oomwoo_cpu_watchdog_t g_watchdog;
+oomwoo_cpu_watchdog_bridge_t g_watchdog_bridge;
+oomwoo_cpu_ingress_t g_ingress;
 HardwareTimer g_watchdog_timer(TIM7);
 volatile uint32_t g_tick_count = 0U;
 volatile uint32_t g_motor_command_latched = 0U;
 volatile uint32_t g_last_stop_reason = OOMWOO_CPU_STOP_NONE;
+uint32_t g_last_rx_ms = 0U;
 bool g_marker_high = false;
 
 void set_motor_enable_direct(bool enabled) {
@@ -73,12 +79,18 @@ void print_status() {
   Serial.print(" timeout_latched=");
   Serial.print(oomwoo_cpu_watchdog_timeout_latched(&g_watchdog) ? 1 : 0);
   Serial.print(" stop_reason=");
-  Serial.println(g_last_stop_reason);
+  Serial.print(g_last_stop_reason);
+  Serial.print(" submitted_heartbeats=");
+  Serial.print(g_watchdog_bridge.submitted_heartbeats);
+  Serial.print(" crc_errors=");
+  Serial.print(g_ingress.decoder.stats.crc_errors);
+  Serial.print(" value_errors=");
+  Serial.println(g_ingress.stats.value_out_of_range);
 }
 
 void print_help() {
   Serial.println(
-      "OOMWOO watchdog HIL: H=healthy M=motor D=disarm B=block S=status ?=help");
+      "OOMWOO watchdog HIL: binary frames; B=block S=status");
 }
 
 void block_foreground_forever() {
@@ -89,46 +101,24 @@ void block_foreground_forever() {
   }
 }
 
-void handle_command(char command) {
-  switch (command) {
-    case 'H':
-    case 'h':
+void handle_message(const oomwoo_decoded_frame_t *,
+                    const oomwoo_message_t *message, void *) {
+  const oomwoo_cpu_watchdog_bridge_result_t bridge_result =
+      oomwoo_cpu_watchdog_bridge_handle_message(&g_watchdog_bridge, message);
+
+  if (message->type == OOMWOO_MESSAGE_HEARTBEAT) {
+    if (bridge_result != OOMWOO_CPU_WATCHDOG_BRIDGE_SUBMITTED) {
+      Serial.println("HEARTBEAT rejected");
+    } else if (message->payload.heartbeat.cpu_mode ==
+               OOMWOO_CPU_MODE_STACK_HEALTHY) {
       toggle_heartbeat_marker();
-      Serial.println(oomwoo_cpu_watchdog_submit_heartbeat(
-                         &g_watchdog, OOMWOO_CPU_MODE_STACK_HEALTHY)
-                         ? "HEARTBEAT queued"
-                         : "HEARTBEAT rejected");
-      break;
-    case 'M':
-    case 'm':
-      Serial.println(request_motor_enable() ? "MOTOR enabled" : "MOTOR rejected");
-      break;
-    case 'D':
-    case 'd':
-      Serial.println(oomwoo_cpu_watchdog_submit_heartbeat(
-                         &g_watchdog, OOMWOO_CPU_MODE_DISARMED)
-                         ? "DISARM queued"
-                         : "DISARM rejected");
-      break;
-    case 'B':
-    case 'b':
-      block_foreground_forever();
-      break;
-    case 'S':
-    case 's':
-      print_status();
-      break;
-    case '?':
-      print_help();
-      break;
-    case '\r':
-    case '\n':
-    case ' ':
-    case '\t':
-      break;
-    default:
-      Serial.println("UNKNOWN command");
-      break;
+      Serial.println("HEARTBEAT queued");
+    } else {
+      Serial.println("DISARM queued");
+    }
+  } else if (message->type == OOMWOO_MESSAGE_DRIVE_SETPOINT) {
+    Serial.println(request_motor_enable() ? "MOTOR enabled"
+                                         : "MOTOR rejected");
   }
 }
 
@@ -153,6 +143,13 @@ void setup() {
       __WFI();
     }
   }
+  if (!oomwoo_cpu_watchdog_bridge_init(&g_watchdog_bridge, &g_watchdog)) {
+    Serial.println("FATAL watchdog bridge init failed");
+    for (;;) {
+      __WFI();
+    }
+  }
+  oomwoo_cpu_ingress_init(&g_ingress, handle_message, nullptr);
 
   g_watchdog_timer.setOverflow(kWatchdogFrequencyHz, HERTZ_FORMAT);
   g_watchdog_timer.attachInterrupt(watchdog_tick_isr);
@@ -164,6 +161,26 @@ void setup() {
 
 void loop() {
   while (Serial.available() > 0) {
-    handle_command(static_cast<char>(Serial.read()));
+    const int value = Serial.read();
+    if (value >= 0) {
+      const uint8_t byte = static_cast<uint8_t>(value);
+      if (g_ingress.decoder.buffered_bytes == 0U &&
+          byte == kBlockForegroundControl) {
+        print_status();
+        block_foreground_forever();
+      }
+      if (g_ingress.decoder.buffered_bytes == 0U &&
+          byte == kStatusControl) {
+        print_status();
+        continue;
+      }
+      g_last_rx_ms = millis();
+      (void)oomwoo_cpu_ingress_feed(&g_ingress, &byte, 1U);
+    }
+  }
+
+  if (g_ingress.decoder.buffered_bytes != 0U &&
+      static_cast<uint32_t>(millis() - g_last_rx_ms) > kFramingGapMs) {
+    oomwoo_cpu_ingress_reset_incomplete(&g_ingress);
   }
 }

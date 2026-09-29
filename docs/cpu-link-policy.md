@@ -43,7 +43,8 @@ remain fail-closed until their contracts are reviewed.
 
 ## Implementation status
 
-The identity service and validated CPU ingress are implemented. The heartbeat
-safe-stop core and Nucleo HIL harness are under safety review. Production HAL
-shutdown wiring, disarmed telemetry scheduling, CPU reset supervision, physical
-fault injection, and measured electrical cutoff latency remain open work.
+The identity service, validated CPU ingress, and bounded ingress-to-watchdog
+bridge are implemented. The heartbeat safe-stop core and wire-v1 Nucleo HIL
+harness are under safety review. Production HAL shutdown wiring, disarmed
+telemetry scheduling, CPU reset supervision, physical fault injection, and
+measured electrical cutoff latency remain open work.

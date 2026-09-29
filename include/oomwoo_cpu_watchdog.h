@@ -1,6 +1,8 @@
 #ifndef OOMWOO_CPU_WATCHDOG_H
 #define OOMWOO_CPU_WATCHDOG_H
 
+#include "oomwoo_cpu_mode.h"
+
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -10,15 +12,6 @@ extern "C" {
 
 /* Confirmed initial bring-up deadline at the HIL harness's 1 kHz tick rate. */
 #define OOMWOO_CPU_WATCHDOG_INITIAL_TIMEOUT_TICKS_1KHZ UINT32_C(150)
-
-/*
- * Values intentionally match the draft CPU/MCU HEARTBEAT cpu_mode field.
- * Parse and validate the serial frame before calling this module.
- */
-typedef enum {
-  OOMWOO_CPU_MODE_DISARMED = 0,
-  OOMWOO_CPU_MODE_STACK_HEALTHY = 1
-} oomwoo_cpu_mode_t;
 
 typedef enum {
   OOMWOO_CPU_STOP_NONE = 0,

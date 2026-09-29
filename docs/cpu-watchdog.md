@@ -14,6 +14,12 @@ CRC, message type, payload length, and `cpu_mode` have been validated. The
 watchdog uses the MCU's local tick; the untrusted `cpu_time_ms` value cannot
 extend the deadline.
 
+`oomwoo_cpu_watchdog_bridge` is the bounded task-context adapter for that path.
+It receives only messages accepted by `oomwoo_cpu_ingress`, forwards validated
+heartbeats through the single-producer mailbox, and counts all other messages
+without refreshing the deadline. The watchdog core remains independent of the
+protocol parser and hardware layer.
+
 At a 1 kHz timer rate, configure
 `timeout_ticks = OOMWOO_CPU_WATCHDOG_INITIAL_TIMEOUT_TICKS_1KHZ` for the
 confirmed initial 150 ms bring-up deadline. The production value may be tuned
@@ -83,7 +89,7 @@ delay to the hazard record.
 | Linux/ROS 2 hangs while motors move | Local MCU deadline; stop is ISR-owned. | Fault-inject a CPU/serial hang under maximum firmware load. |
 | Arduino or FreeRTOS task stalls | Timer ISR owns expiry and direct stop callback. | Deliberately hang the task layer and measure stop latency. |
 | Stale command resumes after reconnect | Stop callback must invalidate commands; heartbeat alone never writes PWM. | Verify a new setpoint is required after recovery. |
-| Corrupt frame refreshes watchdog | Only the validated decoder may submit a mode. | CRC, length, version, and invalid-mode integration tests. |
+| Corrupt frame refreshes watchdog | Validated ingress plus the dedicated bridge are the only message path to the mailbox. | Host end-to-end tests pass; repeat CRC and invalid-mode scenarios on physical Nucleo. |
 | Tick counter wraps | Unsigned elapsed-time comparison. | Host wraparound test and Cortex-M4 build. |
 | Stop callback blocks or misses an output | Callback contract is ISR-safe and direct. | Maintainer HAL review plus GPIO/PWM and motor-power bench tests. |
 

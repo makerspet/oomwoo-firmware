@@ -135,6 +135,8 @@ board HAL:
 - all 23 canonical wire-v1 vectors imported from the accepted interface contract
 - CPU ingress gate that dispatches only CRC-, direction-, and payload-valid
   messages
+- bounded ingress-to-watchdog bridge with end-to-end corrupt-frame and
+  invalid-mode deadline tests
 - reconnect-safe `MCU_HELLO` identity service on the Nucleo G474RE harness
 - native Unity tests plus strict C11/C++17 sanitizer conformance tests
 - pinned PlatformIO cross-builds for both versions on the Cortex-M4F target
@@ -163,8 +165,9 @@ tracked in
 
 The watchdog draft includes a
 [Nucleo G474RE hardware-in-the-loop harness](docs/watchdog-hil.md). It exercises
-a real 1 kHz timer ISR, a direct-register stop output, serial-link loss, and a
-deliberately blocked Arduino loop without connecting a motor load.
+real wire-v1 heartbeat and drive frames, a 1 kHz timer ISR, a direct-register
+stop output, corrupt and invalid input, serial-link loss, and a deliberately
+blocked Arduino loop without connecting a motor load.
 
 ## Request for contribution — bring-up milestones
 
@@ -172,8 +175,8 @@ Phased, each testable on the bench before the board even exists (start on a
 Nucleo-G474, move to the real board when it's fabbed):
 
 1. **Blink + SWD + identity handshake** on a G473 dev board.
-2. **CPU serial link** — framing, typed ingress, and identity are in bring-up; the
-   health/watchdog handshake and hardware loopback still remain.
+2. **CPU serial link** — framing, typed ingress, identity, and the end-to-end
+   health/watchdog path are in bring-up; physical UART loopback still remains.
 3. **One drive motor, closed loop** — H-bridge PWM + encoder capture + velocity PID
    in the real-time core. This is the pattern every other motor follows.
 4. **All actuators** — fan (BLDC + FG), brushes, LiDAR spin, pump, mop motors/servos,

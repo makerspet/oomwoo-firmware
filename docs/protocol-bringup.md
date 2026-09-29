@@ -64,6 +64,12 @@ separately counts accepted messages and each semantic rejection class. See
 [CPU ingress gate](cpu-ingress.md) for the API, memory ownership, and integration
 boundary.
 
+The watchdog draft adds a bounded `oomwoo_cpu_watchdog_bridge` after this gate.
+It forwards only validated heartbeat modes into the watchdog's single-producer
+mailbox and counts every other accepted message without refreshing the
+deadline. Raw-frame integration tests cover valid, fragmented, CRC-invalid,
+semantically invalid, disarmed, and unrelated-message paths.
+
 ## Identity handshake
 
 `src/main.cpp` is an identity-handshake harness for a Nucleo G474RE. It emits
