@@ -1,6 +1,8 @@
 #ifndef OOMWOO_MESSAGES_H
 #define OOMWOO_MESSAGES_H
 
+#include "oomwoo_cpu_mode.h"
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -49,11 +51,6 @@ typedef enum {
   OOMWOO_MESSAGE_OUTPUT_TOO_SMALL,
   OOMWOO_MESSAGE_VALUE_OUT_OF_RANGE
 } oomwoo_message_result_t;
-
-typedef enum {
-  OOMWOO_CPU_MODE_DISARMED = 0,
-  OOMWOO_CPU_MODE_STACK_HEALTHY = 1
-} oomwoo_cpu_mode_t;
 
 typedef enum {
   OOMWOO_SAFETY_BUMPER_LEFT = 1,
