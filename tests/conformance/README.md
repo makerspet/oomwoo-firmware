@@ -21,8 +21,8 @@ accept/reject corpus authored in `makerspet/oomwoo`
 (`contributions/io-board-interface/smailzhu`, commit `d83c13f`, PR #70). Its 57
 vectors pin how the CPU->MCU command gate must accept or reject each decoded
 frame. `tests/command_gate_conformance.c` runs them against
-`oomwoo_cpu_ingress_validate_frame`, so the firmware gate and the upstream host
-oracle cannot drift.
+`oomwoo_cpu_ingress_validate_frame`, establishing that the firmware gate agrees
+with this vendored snapshot of the host oracle's corpus.
 
 The copy is integrity-pinned: `tools/generate_gate_vectors.py` refuses to run
 unless the file's SHA-256 matches the pin, then emits the C fixture.
@@ -31,5 +31,17 @@ unless the file's SHA-256 matches the pin, then emits the C fixture.
 python3 tools/generate_gate_vectors.py
 ```
 
-Update `EXPECTED_SHA256` (and review the corpus) only when deliberately syncing
-a newer upstream revision.
+The pin and `--check` protect this snapshot, but cannot notice when the upstream
+corpus is *updated*. The scheduled `corpus-sync-check` workflow
+(`tools/check_corpus_sync.py`) fetches the upstream copy and flags divergence
+from the pin for review.
+
+### Deliberate sync
+
+When upstream changes and the diff is reviewed and accepted:
+
+1. Replace `tests/conformance/command_gate_vectors_v1.json` with the new copy.
+2. Update `EXPECTED_SHA256` (and `EXPECTED_COUNT` / `SOURCE_REF` if they changed)
+   in `tools/generate_gate_vectors.py`, and refresh the provenance note.
+3. Regenerate the fixture: `python3 tools/generate_gate_vectors.py`.
+4. Re-run the conformance test (C11 + C++17) and commit the updated header.
