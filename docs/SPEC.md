@@ -31,7 +31,7 @@ Target: the v1 board [`oomwoo-pcb/kicad/main-phone`](https://github.com/makerspe
   - Run as a sink with Rd by default, so the phone attaches as host and power source.
   - To charge the phone while it stays host, negotiate a PD power-role swap (PR_Swap) to become the source. Phone support varies; phones that refuse it alternate between charging and data.
   - Dead-battery pull-downs: on the G4, PA9/PA10 control the PB6/PB4 dead-battery Rd. PA9 is the IMU SCL (pulled up, so Rd on CC1 is active during reset); PA10 is unused. Call `HAL_PWREx_DisableUCPDDeadBattery()` only after UCPD is configured, so CC never floats.
-- **Sourcing 5 V to the phone (`PWR_EN`, PC10).** High turns on the TMI6240 and the reverse-block FET Q7101 together. **Never set PWR_EN while the phone is sourcing VBUS**: the TMI6240 doesn't block reverse current, and Q7101 must be off to stop the phone back-feeding the robot 5 V. Check VBUS sense first.
+- **Sourcing 5 V to the phone (`PWR_EN`, PC10).** High turns on the TMI6240 and the reverse-block FET Q7101 together. Hardware won't let the robot drive VBUS while the phone is sourcing it: a lockout holds the switch off if VBUS is present when PWR_EN goes high, and it turns on by itself once VBUS drops to ~0 V (as in a PD power-role swap). Firmware should still check VBUS sense first, and use it to confirm the switch actually turned on.
 - **VBUS sense (PA7, ADC).** 100k/47k divider: VBUS = V_adc x 147/47. 5 V reads ~1.6 V.
 - **Firmware updates from the phone.** Jump to the built-in system bootloader (USB DFU) on command; no BOOT0 wiring is needed. (Pi board: the CM reflashes the STM32 over the UART bootloader with BOOT0/NRST from CM GPIOs, or over SWD from CM GPIOs.)
 
