@@ -56,7 +56,9 @@ Target: the v1 board [`oomwoo-pcb/kicad/main-phone`](https://github.com/makerspe
   - `VL-I2C-RESET` is PC0 (shared, 47k pull-down; high = reset).
   - LPn is PB13 (left) and PE8 (right): bring the sensors up one at a time to set their I2C addresses.
   - INT is PD12 (left) and PC8 (right), with 47k pull-ups.
-- **Right side sensor:** GPIO PE2, CE PE3, docking IR receive PD6. There is no left side sensor on v1.
+- **Right side sensor:** VL53L0X on I2C4, GPIO1 (interrupt, open drain, 10k pull-up) PE2, XSHUT PE3 (10k pull-up; low = off); docking IR receiver (IRM-H638T, top-looking) PD6. There is no left side sensor on v1.
+  - The VL53L0X also starts at address 0x52: at boot, hold both VL53L7 LPn low (their I2C off), move the VL53L0X to a new address, then bring the front sensors up one at a time. All addresses are lost on power-off; after an MCU-only reset the sensors keep theirs, so probe the new addresses first.
+  - Its I/Os run at 3.3 V: set the ST API to 2V8 I/O mode (the default is 1V8).
 - **Docking IR receivers** (38 kHz, NEC): front left PE15 (U7501) and front right PB11 (U7502), right side PD6. The two front receivers have a baffle between them: both receiving = dock straight ahead, one = steer to that side. Decode with timer input capture or EXTI plus the µs timer; any pin works.
 - **IMU ICM-42607-P on I2C2** (PA8 SDA, PA9 SCL, 10k pull-ups); INT1 PD3, INT2 PD7, FSYNC PD4.
 - **Wheel encoders:** one channel each, PE13 (left) and PE14 (right). Wheel-drop switches: PB1 (left), PB0 (right).
