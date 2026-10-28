@@ -57,7 +57,7 @@ Target: the v1 board [`oomwoo-pcb/kicad/main-phone`](https://github.com/makerspe
   - LPn is PB13 (left) and PE8 (right): bring the sensors up one at a time to set their I2C addresses.
   - INT is PD12 (left) and PC8 (right), with 47k pull-ups.
 - **Right side sensor:** GPIO PE2, CE PE3, docking IR receive PD6. There is no left side sensor on v1.
-- **Docking IR receivers** (38 kHz, NEC): front PE15 and PB11, right side PD6. Decode with timer input capture or EXTI plus the µs timer; any pin works.
+- **Docking IR receivers** (38 kHz, NEC): front left PE15 (U7501) and front right PB11 (U7502), right side PD6. The two front receivers have a baffle between them: both receiving = dock straight ahead, one = steer to that side. Decode with timer input capture or EXTI plus the µs timer; any pin works.
 - **IMU ICM-42607-P on I2C2** (PA8 SDA, PA9 SCL, 10k pull-ups); INT1 PD3, INT2 PD7, FSYNC PD4.
 - **Wheel encoders:** one channel each, PE13 (left) and PE14 (right). Wheel-drop switches: PB1 (left), PB0 (right).
 - **Cliff sensors** (Roomba-compatible harness): analog PA0-PA3 (RR, RF, LR, LF). Cliff LED enable PC1.
