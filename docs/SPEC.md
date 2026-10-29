@@ -6,8 +6,7 @@ Target: the v1 board [`oomwoo-pcb/kicad/main-phone`](https://github.com/makerspe
 
 - **RC watchdog (WDI, PD8).** Toggle WDI from the control loop, in software, only while the loop is healthy: 50-1000 Hz, ~50% duty. Never drive it from a timer or PWM, which keeps running after the CPU hangs. If WDI stops, WD_OK falls below 1 V in ~100 ms and the motor rail, the LiDAR and (Pi board) the water pump lose power.
 - **Gated rails are WD_OK AND an active-low enable:**
-  - `~VM-VBAT-EN` (PE10): wheels, brushes, fan
-  - `LiDAR-EN` (PD9): the whole LiDAR, laser included. **Low = on.**
+  - `~VM-VBAT-EN` (PE10): wheels, brushes, fan, and the whole LiDAR, laser included. **Low = on.** (Changed 2026-10-28: the LiDAR rail used to have its own enable on PD9; now one pin drives both, so the LiDAR is on whenever the motor rail is. Stop just the LiDAR motor with its PWM, PC2.)
   - (Pi board) `WATER-PUMPU-CTRL`: the pump
   - A 100k pull-up holds each one off while pins float (reset, flashing). Configure these pins as outputs, driven high, before anything else, so start-up never glitches them on.
 - **MCU reset path.** There is no external reset supervisor. Enable the IWDG through the hardware-watchdog option byte, and set the DBGMCU freeze bits so the IWDG and WDI timing stop at breakpoints. On v1 the phone cannot pulse NRST; the IWDG is the only automatic reset.
@@ -30,8 +29,8 @@ Target: the v1 board [`oomwoo-pcb/kicad/main-phone`](https://github.com/makerspe
 - **USB-C / PD (UCPD1).** CC1 = PB6, CC2 = PB4.
   - Run as a sink with Rd by default, so the phone attaches as host and power source.
   - To charge the phone while it stays host, negotiate a PD power-role swap (PR_Swap) to become the source. Phone support varies; phones that refuse it alternate between charging and data.
-  - Dead-battery pull-downs: on the G4, PA9/PA10 control the PB6/PB4 dead-battery Rd. PA9 is the IMU SCL (pulled up, so Rd on CC1 is active during reset); PA10 is unused. Call `HAL_PWREx_DisableUCPDDeadBattery()` only after UCPD is configured, so CC never floats.
-- **Sourcing 5 V to the phone (`PWR_EN`, PC10).** High turns on the TMI6240 and the reverse-block FET Q7101 together. Hardware won't let the robot drive VBUS while the phone is sourcing it: a lockout holds the switch off if VBUS is present when PWR_EN goes high, and it turns on by itself once VBUS drops to ~0 V (as in a PD power-role swap). Firmware should still check VBUS sense first, and use it to confirm the switch actually turned on.
+  - Dead-battery pull-downs: on the G4, PA9/PA10 control the PB6/PB4 dead-battery Rd. PA9 is a spare with its own 10k pull-up (R7315), so Rd on CC1 is active during reset; PA10 is unused. Using PA9 as a spare output only after start-up is fine. Call `HAL_PWREx_DisableUCPDDeadBattery()` only after UCPD is configured, so CC never floats.
+- **Sourcing 5 V to the phone (`PWR_EN`, PD7; was PC10).** High turns on the TMI6240 and the reverse-block FET Q7101 together. Hardware won't let the robot drive VBUS while the phone is sourcing it: a lockout holds the switch off if VBUS is present when PWR_EN goes high, and it turns on by itself once VBUS drops to ~0 V (as in a PD power-role swap). Firmware should still check VBUS sense first, and use it to confirm the switch actually turned on.
 - **VBUS sense (PA7, ADC).** 100k/47k divider: VBUS = V_adc x 147/47. 5 V reads ~1.6 V.
 - **Firmware updates from the phone.** Jump to the built-in system bootloader (USB DFU) on command; no BOOT0 wiring is needed. (Pi board: the CM reflashes the STM32 over the UART bootloader with BOOT0/NRST from CM GPIOs, or over SWD from CM GPIOs.)
 
@@ -40,7 +39,7 @@ Target: the v1 board [`oomwoo-pcb/kicad/main-phone`](https://github.com/makerspe
 - Every timing-critical sensor goes through the STM32: wheel encoders, IMU, LiDAR, ToF, bumpers. Stamp everything on one free-running 32-bit µs timer (TIM2 or TIM5).
 - Stamp as close to the hardware as possible:
   - encoders in the timer interrupt
-  - IMU on its data-ready interrupt (INT1/INT2) or FSYNC
+  - IMU on its data-ready interrupt (INT1)
   - LiDAR at the UART DMA packet-start interrupt
 - **Map STM32 time to phone (ROS) time** with a two-way exchange, like NTP or MAVLink `TIMESYNC`:
   1. The phone sends t1; the STM32 records receive time t2 and reply time t3; the phone stamps arrival t4.
@@ -52,15 +51,15 @@ Target: the v1 board [`oomwoo-pcb/kicad/main-phone`](https://github.com/makerspe
 ## Sensors
 
 - **LiDAR on UART5:** RX = PD2 (from the LiDAR's TX, through R113 1k), TX = PC12 (to the LiDAR's RX on LIDAR2, through R117 and R66). Standard pin mapping, no TX/RX swap. LIDAR1 is an LDROBOT LD14P (TX only); LIDAR2 is a 0.1" header for other 2D LiDARs. Motor control (PWM) is PC2.
-- **Front ToF (2x VL53L7) on I2C4** (PC6 SCL, PC7 SDA, 2.2k pull-ups), shared with the right side sensor.
+- **Front ToF (2x VL53L7) on I2C4** (PC6 SCL, PC7 SDA, 2.2k pull-ups), shared with the right side sensor and the IMU.
   - `VL-I2C-RESET` is PC0 (shared, 47k pull-down; high = reset).
-  - LPn is PB13 (left) and PE8 (right): bring the sensors up one at a time to set their I2C addresses.
-  - INT is PD12 (left) and PC8 (right), with 47k pull-ups.
-- **Right side sensor:** VL53L0X on I2C4, GPIO1 (interrupt, open drain, 10k pull-up) PE2, XSHUT PE3 (10k pull-up; low = off); docking IR receiver (IRM-H638T, top-looking) PD6. There is no left side sensor on v1.
-  - The VL53L0X also starts at address 0x52: at boot, hold both VL53L7 LPn low (their I2C off), move the VL53L0X to a new address, then bring the front sensors up one at a time. All addresses are lost on power-off; after an MCU-only reset the sensors keep theirs, so probe the new addresses first.
+  - LPn: only the left sensor's is on the MCU (PB13). The right sensor's LPn is pulled up (R7307), so it is always on the bus.
+  - INT: one shared open-drain line, PD12 (`VL-L-INT`), for the left and right VL53L7 and the side VL53L0X's GPIO1. On an interrupt, ask each sensor whether it has data.
+- **Right side sensor:** VL53L0X on I2C4, GPIO1 (interrupt, open drain, 10k pull-up) on the shared ToF interrupt PD12, XSHUT PE3 (10k pull-up; low = off); docking IR receiver (IRM-H638T, top-looking) PD6. There is no left side sensor on v1.
+  - All three ToF sensors start at address 0x52. At boot: hold the left LPn (PB13) and the side XSHUT (PE3) low, so only the right VL53L7 answers; move it to a new address. Release the left LPn and move the left sensor. Release XSHUT; the VL53L0X can keep 0x52. All addresses are lost on power-off; after an MCU-only reset the sensors keep theirs, so probe the new addresses first.
   - Its I/Os run at 3.3 V: set the ST API to 2V8 I/O mode (the default is 1V8).
 - **Docking IR receivers** (38 kHz, NEC): front left PE15 (U7501) and front right PB11 (U7502), right side PD6. The two front receivers have a baffle between them: both receiving = dock straight ahead, one = steer to that side. Decode with timer input capture or EXTI plus the µs timer; any pin works.
-- **IMU ICM-42607-P on I2C2** (PA8 SDA, PA9 SCL, 10k pull-ups); INT1 PD3, INT2 PD7, FSYNC PD4.
+- **IMU ICM-42607-P on I2C4** (shared with the ToF sensors; was I2C2 on PA8/PA9). INT1 PD3. INT2 and FSYNC go to the J7301 spare header (pins 20 and 19), not to the MCU; FSYNC has a 100k pull-down. If a ToF transaction hangs the bus, the IMU FIFO buys time to reset the ToF sensors (VL-I2C-RESET) and recover the bus.
 - **Wheel encoders:** one channel each, PE13 (left) and PE14 (right). Wheel-drop switches: PB1 (left), PB0 (right).
 - **Cliff sensors** (Roomba-compatible harness): analog PA0-PA3 (RR, RF, LR, LF). Cliff LED enable PC1.
 - **Bumpers:** two ITR9606 slotted photo-interrupters on the main board, plus the harness bumpers in parallel as a backup: left PA4, right PA5 (47k pull-ups; low = light passes the slot; with both fitted, either one seeing light reads low). All bumper emitters are on while `BUMPER_LED_EN` (PC3) is **high**; it's pulled low in reset.
@@ -95,7 +94,9 @@ Target: the v1 board [`oomwoo-pcb/kicad/main-phone`](https://github.com/makerspe
 | Debug UART (STDC14 VCP + 0.1" header) | PC4 TX, PC5 RX |
 | SWD | PA13, PA14, SWO PB3 |
 | Charger power sense (`DC_IN_SENSE`, ADC) | PB15 |
-| Spare (on the unfitted J7301 header, with I2C4, 3.3 V, 5 V) | PA10, PC9, PC11, PE4, PE5, PE6 |
+| Spare UART on J7301 (UART4 or USART3), e.g. a UART ultrasonic sensor | PC10 TX, PC11 RX |
+| Spare GPIO on the unfitted J7301 header (with I2C4, 3.3 V, 5 V) | PA8, PA9 (10k pull-up), PA10, PC8, PC9, PD4, PD9 (ADC), PE2, PE4, PE5, PE6, PE8 (ADC) |
+| Also spare: SWO (PB3) on JTAG1 when not tracing; UART5 TX (PC12) when nothing is on LIDAR2 | |
 
 ## Misc notes
 
