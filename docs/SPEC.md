@@ -58,10 +58,11 @@ Target: the v1 board [`oomwoo-pcb/kicad/main-phone`](https://github.com/makerspe
 - **Right side sensor:** VL53L0X on I2C4, GPIO1 (interrupt, open drain, 10k pull-up) on the shared ToF interrupt PD12, XSHUT PE3 (10k pull-up; low = off); docking IR receiver (IRM-H638T, top-looking) PD6. There is no left side sensor on v1.
   - All three ToF sensors start at address 0x52. At boot: hold the left LPn (PB13) and the side XSHUT (PE3) low, so only the right VL53L7 answers; move it to a new address. Release the left LPn and move the left sensor. Release XSHUT; the VL53L0X can keep 0x52. All addresses are lost on power-off; after an MCU-only reset the sensors keep theirs, so probe the new addresses first.
   - Its I/Os run at 3.3 V: set the ST API to 2V8 I/O mode (the default is 1V8).
-- **Docking IR receivers** (38 kHz, NEC): front left PE15 (U7501) and front right PB11 (U7502), right side PD6. The two front receivers have a baffle between them: both receiving = dock straight ahead, one = steer to that side. Decode with timer input capture or EXTI plus the µs timer; any pin works.
+- **Docking IR receivers** (38 kHz, NEC): front left PE15 (U7501) and front right PB11 (U7502), right side PD6, rear left PC8 and rear right PC9 (rear docking IR board, TIM3_CH3/CH4). The front pair and the rear pair each have a baffle between them: both receiving = dock straight ahead (or straight behind), one = steer to that side. The robot backs into the dock: LiDAR for the approach, the rear pair for the final alignment. Decode with timer input capture or EXTI plus the µs timer; any pin works.
 - **IMU ICM-42607-P on I2C4** (shared with the ToF sensors; was I2C2 on PA8/PA9). INT1 PD3. INT2 and FSYNC go to the J7301 spare header (pins 20 and 19), not to the MCU; FSYNC has a 100k pull-down. If a ToF transaction hangs the bus, the IMU FIFO buys time to reset the ToF sensors (VL-I2C-RESET) and recover the bus.
 - **Wheel encoders:** one channel each, PE13 (left) and PE14 (right). Wheel-drop switches: PB1 (left), PB0 (right).
 - **Cliff sensors:** six boards (IR LED + phototransistor), analog: LF PA3, RF PA1, LR PA2, RR PA0, LM PD9, RM PE8 (47k pull-ups to 3.3 V; more light = lower voltage). `CLIFF_LED_EN` (PC1, high = on, pulled low in reset) switches all six LEDs. Modulate it and use LED-on minus LED-off to cancel ambient light; let each reading settle (the 47k load slows the phototransistor to ~1 ms). Keep the duty cycle at or below ~50% (each LED resistor takes 94 mW when on).
+- **Hall sensors** (omnipolar, ~20-45 Hz sampling): dust bin present PE4, LiDAR tower bumper PE5. Low = magnet near (47k pull-ups). Use EXTI on both edges.
 - **Bumpers:** two ITR9606 slotted photo-interrupters on the main board: left PA4, right PA5 (47k pull-ups; low = light passes the slot). All bumper emitters are on while `BUMPER_LED_EN` (PC3) is **high**; it's pulled low in reset.
 - **Charger power (DC_IN) sense:** PB15 (ADC4_IN5), DC_IN = V_adc x 11; ~1.82 V with the 20 V brick. Use it to detect docking or a plugged-in barrel jack (a 100 nF filter cap is on the pin, so any sample time works).
 - **Wake-up sensor (LDR):** PB12 (ADC).
@@ -95,7 +96,7 @@ Target: the v1 board [`oomwoo-pcb/kicad/main-phone`](https://github.com/makerspe
 | SWD | PA13, PA14, SWO PB3 |
 | Charger power sense (`DC_IN_SENSE`, ADC) | PB15 |
 | Spare UART on J7301 (UART4 or USART3), e.g. a UART ultrasonic sensor | PC10 TX, PC11 RX |
-| Spare GPIO on the unfitted J7301 header (with I2C4, 3.3 V, 5 V) | PA8, PA9 (10k pull-up), PA10, PC8, PC9, PD4, PE2, PE4, PE5, PE6 (PD9 and PE8 are on J7301 too, but carry cliff LM/RM) |
+| Spare GPIO on the unfitted J7301 header (with I2C4, 3.3 V, 5 V) | PA8, PA9 (10k pull-up), PA10, PD4, PE2, PE6 (J7301 also carries PC8/PC9 rear IR, PE4/PE5 Hall, PD9/PE8 cliff LM/RM) |
 | Also spare: SWO (PB3) on JTAG1 when not tracing; UART5 TX (PC12) when nothing is on LIDAR2 | |
 
 ## Misc notes
