@@ -61,8 +61,8 @@ Target: the v1 board [`oomwoo-pcb/kicad/main-phone`](https://github.com/makerspe
 - **Docking IR receivers** (38 kHz, NEC): front left PE15 (U7501) and front right PB11 (U7502), right side PD6. The two front receivers have a baffle between them: both receiving = dock straight ahead, one = steer to that side. Decode with timer input capture or EXTI plus the µs timer; any pin works.
 - **IMU ICM-42607-P on I2C4** (shared with the ToF sensors; was I2C2 on PA8/PA9). INT1 PD3. INT2 and FSYNC go to the J7301 spare header (pins 20 and 19), not to the MCU; FSYNC has a 100k pull-down. If a ToF transaction hangs the bus, the IMU FIFO buys time to reset the ToF sensors (VL-I2C-RESET) and recover the bus.
 - **Wheel encoders:** one channel each, PE13 (left) and PE14 (right). Wheel-drop switches: PB1 (left), PB0 (right).
-- **Cliff sensors** (Roomba-compatible harness): analog PA0-PA3 (RR, RF, LR, LF). Cliff LED enable PC1.
-- **Bumpers:** two ITR9606 slotted photo-interrupters on the main board, plus the harness bumpers in parallel as a backup: left PA4, right PA5 (47k pull-ups; low = light passes the slot; with both fitted, either one seeing light reads low). All bumper emitters are on while `BUMPER_LED_EN` (PC3) is **high**; it's pulled low in reset.
+- **Cliff sensors:** six boards (IR LED + phototransistor), analog: LF PA3, RF PA1, LR PA2, RR PA0, LM PD9, RM PE8 (47k pull-ups to 3.3 V; more light = lower voltage). `CLIFF_LED_EN` (PC1, high = on, pulled low in reset) switches all six LEDs. Modulate it and use LED-on minus LED-off to cancel ambient light; let each reading settle (the 47k load slows the phototransistor to ~1 ms). Keep the duty cycle at or below ~50% (each LED resistor takes 94 mW when on).
+- **Bumpers:** two ITR9606 slotted photo-interrupters on the main board: left PA4, right PA5 (47k pull-ups; low = light passes the slot). All bumper emitters are on while `BUMPER_LED_EN` (PC3) is **high**; it's pulled low in reset.
 - **Charger power (DC_IN) sense:** PB15 (ADC4_IN5), DC_IN = V_adc x 11; ~1.82 V with the 20 V brick. Use it to detect docking or a plugged-in barrel jack (a 100 nF filter cap is on the pin, so any sample time works).
 - **Wake-up sensor (LDR):** PB12 (ADC).
 - **Board temperature:** NTC on PB2. **Battery ID:** PB14.
@@ -95,7 +95,7 @@ Target: the v1 board [`oomwoo-pcb/kicad/main-phone`](https://github.com/makerspe
 | SWD | PA13, PA14, SWO PB3 |
 | Charger power sense (`DC_IN_SENSE`, ADC) | PB15 |
 | Spare UART on J7301 (UART4 or USART3), e.g. a UART ultrasonic sensor | PC10 TX, PC11 RX |
-| Spare GPIO on the unfitted J7301 header (with I2C4, 3.3 V, 5 V) | PA8, PA9 (10k pull-up), PA10, PC8, PC9, PD4, PD9 (ADC), PE2, PE4, PE5, PE6, PE8 (ADC) |
+| Spare GPIO on the unfitted J7301 header (with I2C4, 3.3 V, 5 V) | PA8, PA9 (10k pull-up), PA10, PC8, PC9, PD4, PE2, PE4, PE5, PE6 (PD9 and PE8 are on J7301 too, but carry cliff LM/RM) |
 | Also spare: SWO (PB3) on JTAG1 when not tracing; UART5 TX (PC12) when nothing is on LIDAR2 | |
 
 ## Misc notes
