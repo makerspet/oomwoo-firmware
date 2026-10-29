@@ -55,16 +55,24 @@ Passing this gate means only that bytes match the protocol contract. It does not
 mean an actuator command is safe to execute.
 
 A later dispatcher must still check the current MCU state, fault latches,
-command freshness, and actuator-specific limits. Only a validated
-`STACK_HEALTHY` heartbeat may be submitted to the watchdog, and doing so must
-remain separate from arbitrary message receipt. Hard-stop behavior stays in the
+command freshness, and actuator-specific limits. A validated `STACK_HEALTHY`
+heartbeat may refresh the watchdog deadline; a validated `DISARMED` heartbeat
+must submit the disarm request so the next watchdog tick forces hard stop. No
+other message receipt may refresh the deadline. Hard-stop behavior stays in the
 reviewed timer-ISR/HAL layer.
+
+`oomwoo_cpu_watchdog_bridge` provides the explicit composition point. It counts
+and ignores every accepted non-heartbeat message, and it submits only an
+ingress-validated `STACK_HEALTHY` or `DISARMED` mode to the watchdog mailbox.
+End-to-end sanitizer tests feed raw valid, corrupt, semantically invalid, and
+fragmented frames through this complete path.
 
 ## Verification
 
-The host conformance test sends all 23 accepted wire-v1 vectors through the
+The ingress host conformance test sends all 23 accepted wire-v1 vectors through the
 composed path. Ten CPU/bidirectional messages reach the callback and thirteen
 MCU-to-CPU messages are rejected by direction. Additional cases cover CRC
 corruption, noise, byte-at-a-time input, unknown IDs, wrong payload lengths,
 out-of-range commands, receive-gap reset, and null inputs under C11 and C++17
-sanitizers.
+sanitizers. The watchdog bridge suite separately proves that only valid
+heartbeats alter the watchdog deadline.

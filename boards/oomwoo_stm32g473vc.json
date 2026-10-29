@@ -1,0 +1,46 @@
+{
+  "build": {
+    "arduino": {
+      "variant_h": "variant_generic.h"
+    },
+    "core": "stm32",
+    "cpu": "cortex-m4",
+    "extra_flags": "-DSTM32G4 -DSTM32G4xx -DSTM32G473xx",
+    "f_cpu": "170000000L",
+    "framework_extra_flags": {
+      "arduino": "-DARDUINO_GENERIC_G473VCTX"
+    },
+    "mcu": "stm32g473vct6",
+    "product_line": "STM32G473xx",
+    "variant": "STM32G4xx/G473V(B-C-E)(H-T)_G474V(B-C-E)(H-T)_G483VE(H-T)_G484VE(H-T)"
+  },
+  "connectivity": [
+    "can"
+  ],
+  "debug": {
+    "jlink_device": "STM32G473VC",
+    "openocd_target": "stm32g4x",
+    "svd_path": "STM32G473xx.svd"
+  },
+  "frameworks": [
+    "arduino",
+    "cmsis",
+    "libopencm3",
+    "stm32cube"
+  ],
+  "name": "OOMWOO I/O Board STM32G473VCT6",
+  "upload": {
+    "maximum_ram_size": 131072,
+    "maximum_size": 262144,
+    "protocol": "stlink",
+    "protocols": [
+      "blackmagic",
+      "cmsis-dap",
+      "dfu",
+      "jlink",
+      "stlink"
+    ]
+  },
+  "url": "https://github.com/makerspet/oomwoo-io-board",
+  "vendor": "Maker's Pet"
+}
