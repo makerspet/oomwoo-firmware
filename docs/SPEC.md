@@ -2,6 +2,8 @@
 
 Target: the v1 board [`oomwoo-pcb/kicad/main-phone`](https://github.com/makerspet/oomwoo-pcb/tree/main/kicad/main-phone), an STM32G473VCT6 with an Android phone as the compute, connected over USB-C. Hardware details are in the [PCB spec](https://github.com/makerspet/oomwoo-pcb/blob/main/docs/SPEC.md). Notes that differ on the Raspberry Pi board (`kicad/main`) are marked **Pi board**.
 
+Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from the schematic by [`oomwoo-pcb/tools/gen_pins.py`](https://github.com/makerspet/oomwoo-pcb/blob/main/tools/gen_pins.py); don't edit it by hand. Each pin has an Arduino name (`PIN_LIDAR_TXD` = `PD2`) plus `_PORT`/`_NUM` for HAL code. It's for the real board: the Nucleo-G474RE bring-up target is LQFP64 and has no PD/PE pins, so using it needs a G473VCT6 build environment.
+
 ## Safety
 
 - **RC watchdog (WDI, PD8).** Toggle WDI from the control loop, in software, only while the loop is healthy: 50-1000 Hz, ~50% duty. Never drive it from a timer or PWM, which keeps running after the CPU hangs. If WDI stops, WD_OK falls below 1 V in ~100 ms and the motor rail, the LiDAR and (Pi board) the water pump lose power.
@@ -50,7 +52,7 @@ Target: the v1 board [`oomwoo-pcb/kicad/main-phone`](https://github.com/makerspe
 
 ## Sensors
 
-- **LiDAR on UART5:** RX = PD2 (from the LiDAR's TX, through R113 1k), TX = PC12 (to the LiDAR's RX on LIDAR2, through R117 and R66). Standard pin mapping, no TX/RX swap. LIDAR1 is an LDROBOT LD14P (TX only); LIDAR2 is a 0.1" header for other 2D LiDARs. Motor control (PWM) is PC2.
+- **LiDAR on UART5:** RX = PD2 (from the LiDAR's TX, through R113), TX = PC12 (to the LiDAR's RX on LIDAR2, through R66). Motor control (PWM) is PC2 (through R7008). Standard pin mapping, no TX/RX swap. LIDAR1 is an LDROBOT LD14P (TX only); LIDAR2 is unfitted 2x3 0.1" pads for other 2D LiDARs, with the same TX line on pin 5. The series resistors are 100 Ω (since 2026-10-29), too low to stop back-powering, so drive PC2 and PC12 low (or make them inputs) whenever the LiDAR rail is off.
 - **Front ToF (2x VL53L7) on I2C4** (PC6 SCL, PC7 SDA, 2.2k pull-ups), shared with the right side sensor and the IMU.
   - `VL-I2C-RESET` is PC0 (shared, 47k pull-down; high = reset).
   - LPn: only the left sensor's is on the MCU (PB13). The right sensor's LPn is pulled up (R7307), so it is always on the bus.
