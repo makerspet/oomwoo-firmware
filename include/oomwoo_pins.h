@@ -121,7 +121,7 @@
 #define PIN_BATTERY_CHARGER_ID          PB14
 #define PIN_BATTERY_CHARGER_ID_PORT     GPIOB
 #define PIN_BATTERY_CHARGER_ID_NUM      14
-/* PB15: MCU pin 54, net DC_IN_SENSE */
+/* PB15: MCU pin 54, net /DC_IN_SENSE */
 #define PIN_DC_IN_SENSE                 PB15
 #define PIN_DC_IN_SENSE_PORT            GPIOB
 #define PIN_DC_IN_SENSE_NUM             15
@@ -157,11 +157,11 @@
 #define PIN_I2C4_SDA                    PC7
 #define PIN_I2C4_SDA_PORT               GPIOC
 #define PIN_I2C4_SDA_NUM                7
-/* PC8: MCU pin 67, net REAR-IR-L */
+/* PC8: MCU pin 67, net /REAR-IR-L */
 #define PIN_REAR_IR_L                   PC8
 #define PIN_REAR_IR_L_PORT              GPIOC
 #define PIN_REAR_IR_L_NUM               8
-/* PC9: MCU pin 68, net REAR-IR-R */
+/* PC9: MCU pin 68, net /REAR-IR-R */
 #define PIN_REAR_IR_R                   PC9
 #define PIN_REAR_IR_R_PORT              GPIOC
 #define PIN_REAR_IR_R_NUM               9
@@ -217,7 +217,7 @@
 #define PIN_WDI                         PD8
 #define PIN_WDI_PORT                    GPIOD
 #define PIN_WDI_NUM                     8
-/* PD9: MCU pin 56, net CLIFF-LM-Q+ */
+/* PD9: MCU pin 56, net /CLIFF-LM-Q+ */
 #define PIN_CLIFF_LM_Q_P                PD9
 #define PIN_CLIFF_LM_Q_P_PORT           GPIOD
 #define PIN_CLIFF_LM_Q_P_NUM            9
@@ -261,11 +261,11 @@
 #define PIN_SIDE_PROXI_CE_R             PE3
 #define PIN_SIDE_PROXI_CE_R_PORT        GPIOE
 #define PIN_SIDE_PROXI_CE_R_NUM         3
-/* PE4: MCU pin 3, net HALL-BIN */
+/* PE4: MCU pin 3, net /HALL-BIN */
 #define PIN_HALL_BIN                    PE4
 #define PIN_HALL_BIN_PORT               GPIOE
 #define PIN_HALL_BIN_NUM                4
-/* PE5: MCU pin 4, net HALL-TOWER */
+/* PE5: MCU pin 4, net /HALL-TOWER */
 #define PIN_HALL_TOWER                  PE5
 #define PIN_HALL_TOWER_PORT             GPIOE
 #define PIN_HALL_TOWER_NUM              5
@@ -277,7 +277,7 @@
 #define PIN_PWR_BTN_SENSE               PE7
 #define PIN_PWR_BTN_SENSE_PORT          GPIOE
 #define PIN_PWR_BTN_SENSE_NUM           7
-/* PE8: MCU pin 39, net CLIFF-RM-Q+ */
+/* PE8: MCU pin 39, net /CLIFF-RM-Q+ */
 #define PIN_CLIFF_RM_Q_P                PE8
 #define PIN_CLIFF_RM_Q_P_PORT           GPIOE
 #define PIN_CLIFF_RM_Q_P_NUM            8
