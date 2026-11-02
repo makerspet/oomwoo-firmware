@@ -8,7 +8,7 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 
 - **RC watchdog (WDI, PD8).** Toggle WDI from the control loop, in software, only while the loop is healthy: 50-1000 Hz, ~50% duty. Never drive it from a timer or PWM, which keeps running after the CPU hangs. If WDI stops, WD_OK falls below 1 V in ~100 ms and the motor rail, the LiDAR and (Pi board) the water pump lose power.
 - **Gated rails are WD_OK AND an active-low enable:**
-  - `~VM-VBAT-EN` (PE10): wheels, brushes, fan, and the whole LiDAR, laser included. **Low = on.** (Changed 2026-10-28: the LiDAR rail used to have its own enable on PD9; now one pin drives both, so the LiDAR is on whenever the motor rail is. Stop just the LiDAR motor with its PWM, PC2.)
+  - `~VMOT-14V4-EN` (PE10): wheels, brushes, fan, and the whole LiDAR, laser included. **Low = on.** (Changed 2026-10-28: the LiDAR rail used to have its own enable on PD9; now one pin drives both, so the LiDAR is on whenever the motor rail is. Stop just the LiDAR motor with its PWM, PC2.)
   - (Pi board) `WATER-PUMPU-CTRL`: the pump
   - A 100k pull-up holds each one off while pins float (reset, flashing). Configure these pins as outputs, driven high, before anything else, so start-up never glitches them on.
 - **MCU reset path.** There is no external reset supervisor. Enable the IWDG through the hardware-watchdog option byte, and set the DBGMCU freeze bits so the IWDG and WDI timing stop at breakpoints. On v1 the phone cannot pulse NRST; the IWDG is the only automatic reset.
@@ -90,7 +90,7 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 | Side brush IN1/IN2, current ADC | PF9/PF10, PD13 |
 | Suction fan PWM, FG tachometer | PD1, PE9 |
 | 5 V buck enable (`5V_EN`) | PB5 |
-| Sensor 3.3 V enable (`3.3V_EN`, low = on, through 1k) | PB10 |
+| Sensor 3.3 V enable (`~3.3V_EN`, low = on, through 10k; ~6 ms to come up) | PB10 |
 | Power latch (`STM-PWR-CTRL`), power button sense | PA15, PE7 |
 | Buttons: clean, home | PD0, PD5 |
 | LEDs: home, power (also used for debug, there is no buzzer) | PC13, PF2 |

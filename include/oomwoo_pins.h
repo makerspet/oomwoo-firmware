@@ -101,10 +101,10 @@
 #define PIN_WHEEL_M_RIGHT_IN2           PB9
 #define PIN_WHEEL_M_RIGHT_IN2_PORT      GPIOB
 #define PIN_WHEEL_M_RIGHT_IN2_NUM       9
-/* PB10: MCU pin 47, net /MCU-STM32/3.3V_EN (through a series resistor) */
-#define PIN_3_3V_EN                     PB10
-#define PIN_3_3V_EN_PORT                GPIOB
-#define PIN_3_3V_EN_NUM                 10
+/* PB10: MCU pin 47, net /MCU-STM32/~{3.3V_EN} */
+#define PIN_3_3V_EN_N                   PB10
+#define PIN_3_3V_EN_N_PORT              GPIOB
+#define PIN_3_3V_EN_N_NUM               10
 /* PB11: MCU pin 50, net /FRONT SENSORS/IR-F-RX2 (through a series resistor) */
 #define PIN_IR_F_RX2                    PB11
 #define PIN_IR_F_RX2_PORT               GPIOB
@@ -185,10 +185,10 @@
 #define PIN_CLEAN_BTN                   PD0
 #define PIN_CLEAN_BTN_PORT              GPIOD
 #define PIN_CLEAN_BTN_NUM               0
-/* PD1: MCU pin 83, net /MAIN-FAN/MAIN-FAN-S-CTRL */
-#define PIN_MAIN_FAN_S_CTRL             PD1
-#define PIN_MAIN_FAN_S_CTRL_PORT        GPIOD
-#define PIN_MAIN_FAN_S_CTRL_NUM         1
+/* PD1: MCU pin 83, net /MAIN-FAN/MAIN-FAN-PWM */
+#define PIN_MAIN_FAN_PWM                PD1
+#define PIN_MAIN_FAN_PWM_PORT           GPIOD
+#define PIN_MAIN_FAN_PWM_NUM            1
 /* PD2: MCU pin 84, net /LiDAR/LiDAR-TXD */
 #define PIN_LIDAR_TXD                   PD2
 #define PIN_LIDAR_TXD_PORT              GPIOD
@@ -281,14 +281,14 @@
 #define PIN_CLIFF_RM_Q_P                PE8
 #define PIN_CLIFF_RM_Q_P_PORT           GPIOE
 #define PIN_CLIFF_RM_Q_P_NUM            8
-/* PE9: MCU pin 40, net /MAIN-FAN/MAIN-FAN-S-SENSE */
-#define PIN_MAIN_FAN_S_SENSE            PE9
-#define PIN_MAIN_FAN_S_SENSE_PORT       GPIOE
-#define PIN_MAIN_FAN_S_SENSE_NUM        9
-/* PE10: MCU pin 41, net /~{VM-VBAT-EN} */
-#define PIN_VM_VBAT_EN_N                PE10
-#define PIN_VM_VBAT_EN_N_PORT           GPIOE
-#define PIN_VM_VBAT_EN_N_NUM            10
+/* PE9: MCU pin 40, net /MAIN-FAN/MAIN-FAN-FB */
+#define PIN_MAIN_FAN_FB                 PE9
+#define PIN_MAIN_FAN_FB_PORT            GPIOE
+#define PIN_MAIN_FAN_FB_NUM             9
+/* PE10: MCU pin 41, net /~{VMOT-14V4-EN} */
+#define PIN_VMOT_14V4_EN_N              PE10
+#define PIN_VMOT_14V4_EN_N_PORT         GPIOE
+#define PIN_VMOT_14V4_EN_N_NUM          10
 /* PE11: MCU pin 42, net /CARPET-SENSOR/LO */
 #define PIN_CARPET_SENSOR_LO            PE11
 #define PIN_CARPET_SENSOR_LO_PORT       GPIOE
