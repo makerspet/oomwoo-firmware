@@ -37,10 +37,10 @@
 #define PIN_BAT_SENSE                   PA8
 #define PIN_BAT_SENSE_PORT              GPIOA
 #define PIN_BAT_SENSE_NUM               8
-/* PA9: MCU pin 70, net /MCU-STM32/SPARE-PA9 */
-#define PIN_SPARE_PA9                   PA9
-#define PIN_SPARE_PA9_PORT              GPIOA
-#define PIN_SPARE_PA9_NUM               9
+/* PA9: MCU pin 70, net /~{VMOT-14V4-EN} */
+#define PIN_VMOT_14V4_EN_N              PA9
+#define PIN_VMOT_14V4_EN_N_PORT         GPIOA
+#define PIN_VMOT_14V4_EN_N_NUM          9
 /* PA10: MCU pin 71, net /CLIFF/BUMP_R_LED_EN */
 #define PIN_BUMP_R_LED_EN               PA10
 #define PIN_BUMP_R_LED_EN_PORT          GPIOA
@@ -285,10 +285,10 @@
 #define PIN_MAIN_FAN_FB                 PE9
 #define PIN_MAIN_FAN_FB_PORT            GPIOE
 #define PIN_MAIN_FAN_FB_NUM             9
-/* PE10: MCU pin 41, net /~{VMOT-14V4-EN} */
-#define PIN_VMOT_14V4_EN_N              PE10
-#define PIN_VMOT_14V4_EN_N_PORT         GPIOE
-#define PIN_VMOT_14V4_EN_N_NUM          10
+/* PE10: MCU pin 41, net /MCU-STM32/SPARE-PE10 */
+#define PIN_SPARE_PE10                  PE10
+#define PIN_SPARE_PE10_PORT             GPIOE
+#define PIN_SPARE_PE10_NUM              10
 /* PE11: MCU pin 42, net /CARPET-SENSOR/LO */
 #define PIN_CARPET_SENSOR_LO            PE11
 #define PIN_CARPET_SENSOR_LO_PORT       GPIOE
