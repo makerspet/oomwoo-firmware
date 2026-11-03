@@ -33,10 +33,10 @@
 #define PIN_USB_VBUS_SENSE              PA7
 #define PIN_USB_VBUS_SENSE_PORT         GPIOA
 #define PIN_USB_VBUS_SENSE_NUM          7
-/* PA8: MCU pin 69, net /MCU-STM32/SPARE-PA8 */
-#define PIN_SPARE_PA8                   PA8
-#define PIN_SPARE_PA8_PORT              GPIOA
-#define PIN_SPARE_PA8_NUM               8
+/* PA8: MCU pin 69, net /BAT_SENSE */
+#define PIN_BAT_SENSE                   PA8
+#define PIN_BAT_SENSE_PORT              GPIOA
+#define PIN_BAT_SENSE_NUM               8
 /* PA9: MCU pin 70, net /MCU-STM32/SPARE-PA9 */
 #define PIN_SPARE_PA9                   PA9
 #define PIN_SPARE_PA9_PORT              GPIOA
