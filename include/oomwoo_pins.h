@@ -85,10 +85,10 @@
 #define PIN_USB_CC2                     PB4
 #define PIN_USB_CC2_PORT                GPIOB
 #define PIN_USB_CC2_NUM                 4
-/* PB5: MCU pin 92, net /MCU-STM32/5V_EN */
-#define PIN_5V_EN                       PB5
-#define PIN_5V_EN_PORT                  GPIOB
-#define PIN_5V_EN_NUM                   5
+/* PB5: MCU pin 92, net /MCU-STM32/VSENS_5V_USB_EN */
+#define PIN_VSENS_5V_USB_EN             PB5
+#define PIN_VSENS_5V_USB_EN_PORT        GPIOB
+#define PIN_VSENS_5V_USB_EN_NUM         5
 /* PB6: MCU pin 93, net /USB_CC1 */
 #define PIN_USB_CC1                     PB6
 #define PIN_USB_CC1_PORT                GPIOB
@@ -101,10 +101,10 @@
 #define PIN_WHEEL_M_RIGHT_IN2           PB9
 #define PIN_WHEEL_M_RIGHT_IN2_PORT      GPIOB
 #define PIN_WHEEL_M_RIGHT_IN2_NUM       9
-/* PB10: MCU pin 47, net /MCU-STM32/~{3.3V_EN} */
-#define PIN_3_3V_EN_N                   PB10
-#define PIN_3_3V_EN_N_PORT              GPIOB
-#define PIN_3_3V_EN_N_NUM               10
+/* PB10: MCU pin 47, net /MCU-STM32/~{VSENS_3V3_EN} */
+#define PIN_VSENS_3V3_EN_N              PB10
+#define PIN_VSENS_3V3_EN_N_PORT         GPIOB
+#define PIN_VSENS_3V3_EN_N_NUM          10
 /* PB11: MCU pin 50, net /FRONT SENSORS/IR-F-RX2 (through a series resistor) */
 #define PIN_IR_F_RX2                    PB11
 #define PIN_IR_F_RX2_PORT               GPIOB
@@ -229,10 +229,10 @@
 #define PIN_WHEEL_M_L_F_ADC             PD11
 #define PIN_WHEEL_M_L_F_ADC_PORT        GPIOD
 #define PIN_WHEEL_M_L_F_ADC_NUM         11
-/* PD12: MCU pin 59, net /VL-L-INT */
-#define PIN_VL_L_INT                    PD12
-#define PIN_VL_L_INT_PORT               GPIOD
-#define PIN_VL_L_INT_NUM                12
+/* PD12: MCU pin 59, net /VL-INT */
+#define PIN_VL_INT                      PD12
+#define PIN_VL_INT_PORT                 GPIOD
+#define PIN_VL_INT_NUM                  12
 /* PD13: MCU pin 60, net /MCU-STM32/SIDE-BRUSH-CURRENT-ADC */
 #define PIN_SIDE_BRUSH_CURRENT_ADC      PD13
 #define PIN_SIDE_BRUSH_CURRENT_ADC_PORT GPIOD

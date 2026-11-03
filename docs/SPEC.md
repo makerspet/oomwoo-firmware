@@ -56,7 +56,7 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 - **Front ToF (2x VL53L7) on I2C4** (PC6 SCL, PC7 SDA, 2.2k pull-ups), shared with the right side sensor and the IMU.
   - `VL-I2C-RESET` is PC0 (shared, 47k pull-down; high = reset).
   - LPn: only the left sensor's is on the MCU (PB13). The right sensor's LPn is pulled up (R196), so it is always on the bus.
-  - INT: one shared open-drain line, PD12 (`VL-L-INT`), for the left and right VL53L7 and the side VL53L0X's GPIO1. On an interrupt, ask each sensor whether it has data.
+  - INT: one shared open-drain line, PD12 (`VL-INT`), for the left and right VL53L7 and the side VL53L0X's GPIO1. On an interrupt, ask each sensor whether it has data.
 - **Right side sensor:** VL53L0X on I2C4, GPIO1 (interrupt, open drain, 10k pull-up) on the shared ToF interrupt PD12, XSHUT PE3 (10k pull-up; low = off); docking IR receiver (IRM-H638T, top-looking) PD6. There is no left side sensor on v1.
   - All three ToF sensors start at address 0x52. At boot: hold the left LPn (PB13) and the side XSHUT (PE3) low, so only the right VL53L7 answers; move it to a new address. Release the left LPn and move the left sensor. Release XSHUT; the VL53L0X can keep 0x52. All addresses are lost on power-off; after an MCU-only reset the sensors keep theirs, so probe the new addresses first.
   - Its I/Os run at 3.3 V: set the ST API to 2V8 I/O mode (the default is 1V8).
@@ -89,8 +89,8 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 | Main brush IN1/IN2, current ADC | PD14/PD15, PA6 |
 | Side brush IN1/IN2, current ADC | PF9/PF10, PD13 |
 | Suction fan PWM, FG tachometer | PD1, PE9 |
-| 5 V buck enable (`5V_EN`) | PB5 |
-| Sensor 3.3 V enable (`~3.3V_EN`, low = on, through 10k; ~6 ms to come up) | PB10 |
+| 5 V buck enable (`VSENS_5V_USB_EN`) | PB5 |
+| Sensor 3.3 V enable (`~VSENS_3V3_EN`, low = on, through 10k; ~6 ms to come up) | PB10 |
 | Power latch (`STM-PWR-CTRL`), power button sense | PA15, PE7 |
 | Buttons: clean, home | PD0, PD5 |
 | LEDs: home, power (also used for debug, there is no buzzer) | PC13, PF2 |
