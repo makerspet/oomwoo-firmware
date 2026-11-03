@@ -17,14 +17,14 @@
 #define PIN_CLIFF_LF_Q_P                PA3
 #define PIN_CLIFF_LF_Q_P_PORT           GPIOA
 #define PIN_CLIFF_LF_Q_P_NUM            3
-/* PA4: MCU pin 26, net /CLIFF/BUMP-L-Q+ */
-#define PIN_BUMP_L_Q_P                  PA4
-#define PIN_BUMP_L_Q_P_PORT             GPIOA
-#define PIN_BUMP_L_Q_P_NUM              4
-/* PA5: MCU pin 27, net /CLIFF/BUMP-R-Q+ */
-#define PIN_BUMP_R_Q_P                  PA5
-#define PIN_BUMP_R_Q_P_PORT             GPIOA
-#define PIN_BUMP_R_Q_P_NUM              5
+/* PA4: MCU pin 26, net /Bumper Sensors/BUMP-L */
+#define PIN_BUMP_L                      PA4
+#define PIN_BUMP_L_PORT                 GPIOA
+#define PIN_BUMP_L_NUM                  4
+/* PA5: MCU pin 27, net /Bumper Sensors/BUMP-R */
+#define PIN_BUMP_R                      PA5
+#define PIN_BUMP_R_PORT                 GPIOA
+#define PIN_BUMP_R_NUM                  5
 /* PA6: MCU pin 28, net /MAIN-BRUSH MOTOR/MAIN-BRUSH-CURRENT-ADC */
 #define PIN_MAIN_BRUSH_CURRENT_ADC      PA6
 #define PIN_MAIN_BRUSH_CURRENT_ADC_PORT GPIOA
@@ -41,7 +41,7 @@
 #define PIN_VMOT_14V4_EN_N              PA9
 #define PIN_VMOT_14V4_EN_N_PORT         GPIOA
 #define PIN_VMOT_14V4_EN_N_NUM          9
-/* PA10: MCU pin 71, net /CLIFF/BUMP_R_LED_EN */
+/* PA10: MCU pin 71, net /Bumper Sensors/BUMP_R_LED_EN */
 #define PIN_BUMP_R_LED_EN               PA10
 #define PIN_BUMP_R_LED_EN_PORT          GPIOA
 #define PIN_BUMP_R_LED_EN_NUM           10
@@ -137,7 +137,7 @@
 #define PIN_LIDAR_MOTOR_CTRL            PC2
 #define PIN_LIDAR_MOTOR_CTRL_PORT       GPIOC
 #define PIN_LIDAR_MOTOR_CTRL_NUM        2
-/* PC3: MCU pin 18, net /CLIFF/BUMP_L_LED_EN */
+/* PC3: MCU pin 18, net /Bumper Sensors/BUMP_L_LED_EN */
 #define PIN_BUMP_L_LED_EN               PC3
 #define PIN_BUMP_L_LED_EN_PORT          GPIOC
 #define PIN_BUMP_L_LED_EN_NUM           3
