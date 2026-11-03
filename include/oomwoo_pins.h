@@ -205,7 +205,7 @@
 #define PIN_HOME_BTN                    PD5
 #define PIN_HOME_BTN_PORT               GPIOD
 #define PIN_HOME_BTN_NUM                5
-/* PD6: MCU pin 88, net /MCU-STM32/USART2-IR-R-RX */
+/* PD6: MCU pin 88, net /USART2-IR-R-RX */
 #define PIN_USART2_IR_R_RX              PD6
 #define PIN_USART2_IR_R_RX_PORT         GPIOD
 #define PIN_USART2_IR_R_RX_NUM          6
@@ -229,10 +229,10 @@
 #define PIN_WHEEL_M_L_F_ADC             PD11
 #define PIN_WHEEL_M_L_F_ADC_PORT        GPIOD
 #define PIN_WHEEL_M_L_F_ADC_NUM         11
-/* PD12: MCU pin 59, net /VL-INT */
-#define PIN_VL_INT                      PD12
-#define PIN_VL_INT_PORT                 GPIOD
-#define PIN_VL_INT_NUM                  12
+/* PD12: MCU pin 59, net /INT-SENSORS */
+#define PIN_INT_SENSORS                 PD12
+#define PIN_INT_SENSORS_PORT            GPIOD
+#define PIN_INT_SENSORS_NUM             12
 /* PD13: MCU pin 60, net /MCU-STM32/SIDE-BRUSH-CURRENT-ADC */
 #define PIN_SIDE_BRUSH_CURRENT_ADC      PD13
 #define PIN_SIDE_BRUSH_CURRENT_ADC_PORT GPIOD
@@ -257,7 +257,7 @@
 #define PIN_SPARE_PE2                   PE2
 #define PIN_SPARE_PE2_PORT              GPIOE
 #define PIN_SPARE_PE2_NUM               2
-/* PE3: MCU pin 2, net /MCU-STM32/SIDE-PROXI-CE-R */
+/* PE3: MCU pin 2, net /SIDE-PROXI-CE-R */
 #define PIN_SIDE_PROXI_CE_R             PE3
 #define PIN_SIDE_PROXI_CE_R_PORT        GPIOE
 #define PIN_SIDE_PROXI_CE_R_NUM         3

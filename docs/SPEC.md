@@ -56,12 +56,12 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 - **Front ToF (2x VL53L7) on I2C4** (PC6 SCL, PC7 SDA, 2.2k pull-ups), shared with the right side sensor and the IMU.
   - `VL-I2C-RESET` is PC0 (shared, 47k pull-down; high = reset).
   - LPn: only the left sensor's is on the MCU (PB13). The right sensor's LPn is pulled up (R196), so it is always on the bus.
-  - INT: one shared open-drain line, PD12 (`VL-INT`), for the left and right VL53L7 and the side VL53L0X's GPIO1. On an interrupt, ask each sensor whether it has data.
+  - INT: one shared open-drain line, PD12 (`INT-SENSORS`), for the left and right VL53L7 and the side VL53L0X's GPIO1. On an interrupt, ask each sensor whether it has data.
 - **Right side sensor:** VL53L0X on I2C4, GPIO1 (interrupt, open drain, 10k pull-up) on the shared ToF interrupt PD12, XSHUT PE3 (10k pull-up; low = off); docking IR receiver (IRM-H638T, top-looking) PD6. There is no left side sensor on v1.
   - All three ToF sensors start at address 0x52. At boot: hold the left LPn (PB13) and the side XSHUT (PE3) low, so only the right VL53L7 answers; move it to a new address. Release the left LPn and move the left sensor. Release XSHUT; the VL53L0X can keep 0x52. All addresses are lost on power-off; after an MCU-only reset the sensors keep theirs, so probe the new addresses first.
   - Its I/Os run at 3.3 V: set the ST API to 2V8 I/O mode (the default is 1V8).
 - **Docking IR receivers** (38 kHz, NEC): front left PE15 (U24) and front right PB11 (U25), right side PD6, rear left PC8 and rear right PC9 (rear docking IR board, TIM3_CH3/CH4). The front pair and the rear pair each have a baffle between them: both receiving = dock straight ahead (or straight behind), one = steer to that side. The robot backs into the dock: LiDAR for the approach, the rear pair for the final alignment. Decode with timer input capture or EXTI plus the µs timer; any pin works.
-- **IMU ICM-42607-P on I2C4** (shared with the ToF sensors; was I2C2 on PA8/PA9). INT1 PD3. I2C address 0x68 (AP_AD0 pulled low by R217). INT2 (test pad TP1) and FSYNC (100k pull-down R211) are not on the MCU since 2026-10-30; wire one to a spare pin if needed. If a ToF transaction hangs the bus, the IMU FIFO buys time to reset the ToF sensors (VL-I2C-RESET) and recover the bus.
+- **IMU ICM-42607-P on I2C4** (shared with the ToF sensors; was I2C2 on PA8/PA9). INT1 PD3. I2C address 0x68 (AP_AD0 pulled low by R217). INT2 (probe on its pull-up R92) and FSYNC (100k pull-down R211) are not on the MCU since 2026-10-30; wire one to a spare pin if needed. If a ToF transaction hangs the bus, the IMU FIFO buys time to reset the ToF sensors (VL-I2C-RESET) and recover the bus.
 - **Wheel encoders:** one channel each, PE13 (left) and PE14 (right). Wheel-drop switches: PB1 (left), PB0 (right).
 - **Cliff sensors:** six boards (IR LED + phototransistor), analog: LF PA3, RF PA1, LR PA2, RR PA0, LM PD9, RM PE8 (47k pull-ups to 3.3 V; more light = lower voltage). `CLIFF_LED_EN` (PC1, high = on, pulled low in reset) switches all six LEDs. Modulate it and use LED-on minus LED-off to cancel ambient light; let each reading settle (the 47k load slows the phototransistor to ~1 ms). Keep the duty cycle at or below ~50% (each LED resistor takes 94 mW when on).
 - **Hall sensors** (omnipolar, ~20-45 Hz sampling): dust bin present PE4, LiDAR tower bumper PE5. Low = magnet near (47k pull-ups). Use EXTI on both edges.
@@ -72,7 +72,7 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 
 ## Carpet sensor
 
-- 290 kHz ultrasonic piezo, driven from VUS (~14.5 V boost rail) by one low-side FET (LO, PE11) with a 330 Ω pull-up; the echo comes back AC-coupled and clamped on PE12 (ECHO_ADC)
+- 290 kHz ultrasonic piezo, driven from VUSONIC-14V4 (~14.5 V boost rail) by one low-side FET (LO, PE11) with a 330 Ω pull-up; the echo comes back AC-coupled and clamped on PE12 (ECHO_ADC)
 - (firmware) bias the MCU internal op-amp to Vref/2 using MCU internal DAC
 - (firmware) configure ADC pre-amp gain, PGA mode (op-amp bandwidth is 10MHz)
 - (firmware) configure op-amp to output signal to internal ADC channel
@@ -92,13 +92,13 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 | 5 V buck enable (`VSENS_5V_USB_EN`) | PB5 |
 | Sensor 3.3 V enable (`~VSENS_3V3_EN`, low = on, through 10k; ~6 ms to come up) | PB10 |
 | Power latch (`STM-PWR-CTRL`), power button sense | PA15, PE7 |
-| Buttons: clean, home | PD0, PD5 |
+| Buttons: clean, home (to GND when pressed; no external pull-ups since 2026-11-03, enable the internal pull-ups) | PD0, PD5 |
 | LEDs: home, power (also used for debug, there is no buzzer) | PC13, PF2 |
 | Debug UART (STDC14 VCP + 0.1" header) | PC4 TX, PC5 RX |
 | SWD | PA13, PA14, SWO PB3 |
 | Charger power sense (`DC_IN_SENSE`, ADC) | PB15 |
 | Spare UART on J1 (UART4 or USART3), e.g. a UART ultrasonic sensor | PC10 TX, PC11 RX |
-| Spare GPIO on the J1 2x7 header (with 3.3 V, 5 V; no I2C) | PA8, PA9 (10k pull-up), PA10, PD4, PE2, PE6 |
+| Spare GPIO on the J1 2x6 header (with 3.3 V, 5 V; no I2C) | PA8, PA9 (10k pull-up), PA10, PD4, PE2, PE6 |
 | Also spare: SWO (PB3) on JTAG1 when not tracing; UART5 TX (PC12) when nothing is on LIDAR2 | |
 
 ## Misc notes
