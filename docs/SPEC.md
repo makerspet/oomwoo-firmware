@@ -31,7 +31,7 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 - **USB-C / PD (UCPD1).** CC1 = PB6, CC2 = PB4.
   - Run as a sink with Rd by default, so the phone attaches as host and power source.
   - To charge the phone while it stays host, negotiate a PD power-role swap (PR_Swap) to become the source. Phone support varies; phones that refuse it alternate between charging and data.
-  - Dead-battery pull-downs: on the G4, PA9/PA10 control the PB6/PB4 dead-battery Rd. PA9 is a spare with its own 10k pull-up (R204), so Rd on CC1 is active during reset; PA10 is unused. Using PA9 as a spare output only after start-up is fine. Call `HAL_PWREx_DisableUCPDDeadBattery()` only after UCPD is configured, so CC never floats.
+  - Dead-battery pull-downs: on the G4, PA9/PA10 control the PB6/PB4 dead-battery Rd. PA9 is a spare with its own 10k pull-up (R204), so Rd on CC1 is active during reset. PA10 drives the right bumper LED (R221 100k pull-down, so Rd on CC2 stays off during reset). Using PA9 as a spare output only after start-up is fine; drive PA10 only after dead-battery mode is disabled, or the LED PWM switches CC2's Rd on and off. Call `HAL_PWREx_DisableUCPDDeadBattery()` only after UCPD is configured, so CC never floats.
 - **Sourcing 5 V to the phone (`PWR_EN`, PD7; was PC10).** High turns on the TMI6240 and the reverse-block FET Q27 together. Hardware won't let the robot drive VBUS while the phone is sourcing it: a lockout holds the switch off if VBUS is present when PWR_EN goes high, and it turns on by itself once VBUS drops to ~0 V (as in a PD power-role swap). Firmware should still check VBUS sense first, and use it to confirm the switch actually turned on.
 - **VBUS sense (PA7, ADC).** 100k/47k divider: VBUS = V_adc x 147/47. 5 V reads ~1.6 V.
 - **Firmware updates from the phone.** Jump to the built-in system bootloader (USB DFU) on command; no BOOT0 wiring is needed. (Pi board: the CM reflashes the STM32 over the UART bootloader with BOOT0/NRST from CM GPIOs, or over SWD from CM GPIOs.)
@@ -65,7 +65,7 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 - **Wheel encoders:** one channel each, PE13 (left) and PE14 (right). Wheel-drop switches: PB1 (left), PB0 (right).
 - **Cliff sensors:** six boards (IR LED + phototransistor), analog: LF PA3, RF PA1, LR PA2, RR PA0, LM PD9, RM PE8 (47k pull-ups to 3.3 V; more light = lower voltage). `CLIFF_LED_EN` (PC1, high = on, pulled low in reset) switches all six LEDs. Modulate it and use LED-on minus LED-off to cancel ambient light; let each reading settle (the 47k load slows the phototransistor to ~1 ms). Keep the duty cycle at or below ~50% (each LED resistor takes 94 mW when on).
 - **Hall sensors** (omnipolar, ~20-45 Hz sampling): dust bin present PE4, LiDAR tower bumper PE5. Low = magnet near (47k pull-ups). Use EXTI on both edges.
-- **Bumpers:** two ITR9606 slotted photo-interrupters on the main board: left PA4 (ADC2_IN17), right PA5 (ADC2_IN13); 1k pull-ups since 2026-11-02, low = light passes the slot. Sample them on ADC2 (DMA) to see how fast the flag opens or closes the slot; the clear-slot level varies a lot between parts (IC(ON) 0.5-10 mA), so calibrate it per unit: read with the emitters on and off and use the difference. All bumper emitters are on while `BUMPER_LED_EN` (PC3) is **high**; it's pulled low in reset.
+- **Bumpers:** two ITR9606 slotted photo-interrupters on the main board: left PA4 (ADC2_IN17), right PA5 (ADC2_IN13); 1k pull-ups since 2026-11-02, low = light passes the slot. Sample them on ADC2 (DMA) to see how fast the flag opens or closes the slot; the clear-slot level varies a lot between parts (IC(ON) 0.5-10 mA), so calibrate it per unit: read with the emitters on and off and use the difference. Each emitter has its own enable since 2026-11-03, **high** = on, pulled low in reset: left `BUMP_L_LED_EN` (PC3, TIM1_CH4), right `BUMP_R_LED_EN` (PA10, TIM1_CH3). To compensate for the part spread and temperature, PWM each one at ~100-250 kHz and adjust its duty until that bumper's clear-slot level sits around 0.5-1 V (47 nF filters smooth the ripple); TIM1 can trigger ADC2 for synchronous sampling.
 - **Battery voltage:** PA8 (ADC5_IN1), V_bat = V_adc x 11 (1M/100k + 100 nF from the battery side of Q14; 16.8 V reads 1.53 V). It reads the battery itself even while charging. Use a long sample time (high source impedance).
 - **Charger power (DC_IN) sense:** PB15 (ADC4_IN5), DC_IN = V_adc x 11; ~1.82 V with the 20 V brick. Use it to detect docking or a plugged-in barrel jack (a 100 nF filter cap is on the pin, so any sample time works).
 - **Wake-up sensor (LDR):** PB12 (ADC).
@@ -100,7 +100,7 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 | Battery voltage (`BAT_SENSE`, ADC5_IN1, x11) | PA8 |
 | Charger power sense (`DC_IN_SENSE`, ADC) | PB15 |
 | Spare UART on J1 (UART4 or USART3), e.g. a UART ultrasonic sensor | PC10 TX, PC11 RX |
-| Spare GPIO on the J1 2x6 header (with 3.3 V, 5 V; no I2C) | PA9 (10k pull-up), PA10, PD4, PE2, PE6 |
+| Spare GPIO on the J1 2x6 header (with 3.3 V, 5 V; no I2C) | PA9 (10k pull-up), PD4, PE2, PE6 |
 | Also spare: SWO (PB3) on JTAG1 when not tracing; UART5 TX (PC12) when nothing is on LIDAR2 | |
 
 ## Misc notes

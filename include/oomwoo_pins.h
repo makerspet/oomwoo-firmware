@@ -41,10 +41,10 @@
 #define PIN_SPARE_PA9                   PA9
 #define PIN_SPARE_PA9_PORT              GPIOA
 #define PIN_SPARE_PA9_NUM               9
-/* PA10: MCU pin 71, net /MCU-STM32/SPARE-PA10 */
-#define PIN_SPARE_PA10                  PA10
-#define PIN_SPARE_PA10_PORT             GPIOA
-#define PIN_SPARE_PA10_NUM              10
+/* PA10: MCU pin 71, net /CLIFF/BUMP_R_LED_EN */
+#define PIN_BUMP_R_LED_EN               PA10
+#define PIN_BUMP_R_LED_EN_PORT          GPIOA
+#define PIN_BUMP_R_LED_EN_NUM           10
 /* PA11: MCU pin 72, net /BATTERY-CHARGER/D- */
 #define PIN_BATTERY_CHARGER_D_N         PA11
 #define PIN_BATTERY_CHARGER_D_N_PORT    GPIOA
@@ -137,10 +137,10 @@
 #define PIN_LIDAR_MOTOR_CTRL            PC2
 #define PIN_LIDAR_MOTOR_CTRL_PORT       GPIOC
 #define PIN_LIDAR_MOTOR_CTRL_NUM        2
-/* PC3: MCU pin 18, net /CLIFF/BUMPER_LED_EN */
-#define PIN_BUMPER_LED_EN               PC3
-#define PIN_BUMPER_LED_EN_PORT          GPIOC
-#define PIN_BUMPER_LED_EN_NUM           3
+/* PC3: MCU pin 18, net /CLIFF/BUMP_L_LED_EN */
+#define PIN_BUMP_L_LED_EN               PC3
+#define PIN_BUMP_L_LED_EN_PORT          GPIOC
+#define PIN_BUMP_L_LED_EN_NUM           3
 /* PC4: MCU pin 30, net /MCU-STM32/STM32-TX */
 #define PIN_STM32_TX                    PC4
 #define PIN_STM32_TX_PORT               GPIOC
