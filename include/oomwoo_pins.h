@@ -113,10 +113,10 @@
 #define PIN_LDR                         PB12
 #define PIN_LDR_PORT                    GPIOB
 #define PIN_LDR_NUM                     12
-/* PB13: MCU pin 52, net /VL-L-LPn */
-#define PIN_VL_L_LPN                    PB13
-#define PIN_VL_L_LPN_PORT               GPIOB
-#define PIN_VL_L_LPN_NUM                13
+/* PB13: MCU pin 52, net /~{VL-L-LPn} */
+#define PIN_VL_L_LPN_N                  PB13
+#define PIN_VL_L_LPN_N_PORT             GPIOB
+#define PIN_VL_L_LPN_N_NUM              13
 /* PB14: MCU pin 53, net /BATTERY-CHARGER/ID */
 #define PIN_BATTERY_CHARGER_ID          PB14
 #define PIN_BATTERY_CHARGER_ID_PORT     GPIOB
@@ -133,7 +133,7 @@
 #define PIN_CLIFF_LED_EN                PC1
 #define PIN_CLIFF_LED_EN_PORT           GPIOC
 #define PIN_CLIFF_LED_EN_NUM            1
-/* PC2: MCU pin 17, net /LiDAR/LIDAR-MOTOR-CTRL */
+/* PC2: MCU pin 17, net /LIDAR/LIDAR-MOTOR-CTRL */
 #define PIN_LIDAR_MOTOR_CTRL            PC2
 #define PIN_LIDAR_MOTOR_CTRL_PORT       GPIOC
 #define PIN_LIDAR_MOTOR_CTRL_NUM        2
@@ -173,7 +173,7 @@
 #define PIN_SPARE_PC11_RX               PC11
 #define PIN_SPARE_PC11_RX_PORT          GPIOC
 #define PIN_SPARE_PC11_RX_NUM           11
-/* PC12: MCU pin 81, net /LiDAR/LiDAR-RXD */
+/* PC12: MCU pin 81, net /LIDAR/LiDAR-RXD */
 #define PIN_LIDAR_RXD                   PC12
 #define PIN_LIDAR_RXD_PORT              GPIOC
 #define PIN_LIDAR_RXD_NUM               12
@@ -189,7 +189,7 @@
 #define PIN_MAIN_FAN_PWM                PD1
 #define PIN_MAIN_FAN_PWM_PORT           GPIOD
 #define PIN_MAIN_FAN_PWM_NUM            1
-/* PD2: MCU pin 84, net /LiDAR/LiDAR-TXD */
+/* PD2: MCU pin 84, net /LIDAR/LiDAR-TXD */
 #define PIN_LIDAR_TXD                   PD2
 #define PIN_LIDAR_TXD_PORT              GPIOD
 #define PIN_LIDAR_TXD_NUM               2
