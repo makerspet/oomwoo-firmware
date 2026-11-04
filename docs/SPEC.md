@@ -10,7 +10,8 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 - **Gated rails are WD_OK AND an active-low enable:**
   - `~VMOT-14V4-EN` (PA9; PE10 until 2026-11-03): wheels, brushes, fan, and the whole LiDAR, laser included. **Low = on.** (Changed 2026-10-28: the LiDAR rail used to have its own enable on PD9; now one pin drives both, so the LiDAR is on whenever the motor rail is. Stop just the LiDAR motor with its PWM, PC2.)
   - (Pi board) `WATER-PUMPU-CTRL`: the pump
-  - A 100k pull-up holds each one off while pins float (reset, flashing). Configure these pins as outputs, driven high, before anything else, so start-up never glitches them on.
+  - A pull-up (10k R184 on PA9) holds each one off while pins float (reset, flashing). Configure these pins as outputs, driven high, before anything else, so start-up never glitches them on.
+  - The DRV8870 IN1/IN2 pins have no external pull-downs since 2026-11-04; the driver's internal ~100k pull-downs hold them low (coast). Configure all eight IN pins as outputs, driven low, before turning the motor rail on.
 - **MCU reset path.** There is no external reset supervisor. Enable the IWDG through the hardware-watchdog option byte, and set the DBGMCU freeze bits so the IWDG and WDI timing stop at breakpoints. On v1 the phone cannot pulse NRST; the IWDG is the only automatic reset.
 - **Soft start.** The LiDAR rail has a gate-RC soft start (~1.5 ms on, ~30 ms off). PWM on an enable can only slow that ramp, never speed it up. The motor rail has no soft start by design (fast turn-off under load). Bring rails up one at a time, ~10 ms apart.
 - **Carpet sensor (LO, PE11):** drive it in short bursts only. LO is AC-coupled to the FET gate (C174 100 nF, R186 100k, τ ≈ 10 ms), so a stuck-high LO turns the FET off within ~10 ms and can't overheat the 330 Ω pull-up (R185). Keep bursts well under 1 ms.
@@ -54,7 +55,7 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 
 - **LiDAR on UART5:** RX = PD2 (from the LiDAR's TX, through R113), TX = PC12 (to the LiDAR's RX on LIDAR2, through R66). Motor control (PWM) is PC2 (through R183). Standard pin mapping, no TX/RX swap. LIDAR1 is an LDROBOT LD14P (TX only); LIDAR2 is unfitted 2x3 0.1" pads for other 2D LiDARs, with the same TX line on pin 5. The series resistors are 100 Ω (since 2026-10-29), too low to stop back-powering, so drive PC2 and PC12 low (or make them inputs) whenever the LiDAR rail is off.
 - **Front ToF (2x VL53L7) on I2C4** (PC6 SCL, PC7 SDA, 2.2k pull-ups), shared with the right side sensor and the IMU.
-  - `VL-I2C-RESET` is PC0 (shared, 47k pull-down; high = reset).
+  - `VL-I2C-RESET` is PC0 (shared, no pull-down since 2026-11-04: drive it low before the sensor rail comes up; high = reset).
   - LPn: only the left sensor's is on the MCU (PB13). The right sensor's LPn is pulled up (R196), so it is always on the bus.
   - INT: one shared open-drain line, PD12 (`INT-SENSORS`), for the left and right VL53L7 and the side VL53L0X's GPIO1. On an interrupt, ask each sensor whether it has data.
 - **Right side sensor:** VL53L0X on I2C4, GPIO1 (interrupt, open drain) on the shared sensor interrupt PD12 (47k pull-up R61 on the main board), XSHUT PE3 (no pull-up since 2026-11-04, driven by the MCU; low = off); docking IR receiver (IRM-H638T, top-looking) PD6. There is no left side sensor on v1.
