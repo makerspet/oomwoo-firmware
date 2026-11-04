@@ -90,7 +90,6 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 | Main brush IN1/IN2, current ADC | PD14/PD15, PA6 |
 | Side brush IN1/IN2, current ADC | PF9/PF10, PD13 |
 | Suction fan PWM, FG tachometer | PD1, PE9 |
-| Suction fan ID (`MAIN-FAN-ID`, ADC; 10k pull-up: 22k ~2.27 V, 20k ~2.20 V, 5 Ω ~0 V, none 3.3 V) | PE10 |
 | 5 V buck enable (`VSENS_5V_USB_EN`) | PB5 |
 | Sensor 3.3 V enable (`~VSENS_3V3_EN`, low = on, through 10k; ~6 ms to come up) | PB10 |
 | Power latch (`STM-PWR-CTRL`), power button sense | PA15, PE7 |
@@ -101,7 +100,7 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 | Battery voltage (`BAT_SENSE`, ADC5_IN1, x11) | PA8 |
 | Charger power sense (`DC_IN_SENSE`, ADC) | PB15 |
 | Spare UART on J1 (UART4 or USART3), e.g. a UART ultrasonic sensor | PC10 TX, PC11 RX |
-| Spare GPIO on the J1 2x6 header (with 3.3 V, 5 V; no I2C) | PD4, PE2, PE6 |
+| Spare GPIO on the J1 2x6 header (with 3.3 V, 5 V; no I2C) | PE10 (ADC3/4/5_IN14), PD4, PE2, PE6 |
 | Also spare: SWO (PB3) on JTAG1 when not tracing; UART5 TX (PC12) when nothing is on LIDAR2 | |
 
 ## Misc notes
