@@ -90,6 +90,7 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 | Main brush IN1/IN2, current ADC | PD14/PD15, PA6 |
 | Side brush IN1/IN2, current ADC | PF9/PF10, PD13 |
 | Suction fan PWM, FG tachometer | PD1, PE9 |
+| Suction fan ID (`MAIN-FAN-ID`, ADC; 10k pull-up: 22k ~2.27 V, 20k ~2.20 V, 5 Ω ~0 V, none 3.3 V) | PE10 |
 | 5 V buck enable (`VSENS_5V_USB_EN`) | PB5 |
 | Sensor 3.3 V enable (`~VSENS_3V3_EN`, low = on, through 10k; ~6 ms to come up) | PB10 |
 | Power latch (`STM-PWR-CTRL`), power button sense | PA15, PE7 |
@@ -100,13 +101,13 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 | Battery voltage (`BAT_SENSE`, ADC5_IN1, x11) | PA8 |
 | Charger power sense (`DC_IN_SENSE`, ADC) | PB15 |
 | Spare UART on J1 (UART4 or USART3), e.g. a UART ultrasonic sensor | PC10 TX, PC11 RX |
-| Spare GPIO on the J1 2x6 header (with 3.3 V, 5 V; no I2C) | PE10 (ADC3/4/5_IN14), PD4, PE2, PE6 |
+| Spare GPIO on the J1 2x6 header (with 3.3 V, 5 V; no I2C) | PD4, PE2, PE6 |
 | Also spare: SWO (PB3) on JTAG1 when not tracing; UART5 TX (PC12) when nothing is on LIDAR2 | |
 
 ## Misc notes
 
 - Firmware budgeting the current - Suction, main mop RPM are high on carpets, where mops are off. And vice versa for non-carpeted areas.
-- Firmware: budget total current. ~13 A from a 5200 mAh 2P pack is ~2.5 C — high for standard 18650s, with real voltage sag and BMS-trip risk. Normal operation is ~5 A (≈1 C), fine. But rather than letting the sum go wherever it goes, have firmware throttle the fan when brush and drive current climb — you already have per-motor sense to do it with, and the fan is the natural give.
+- Firmware: budget total current. ~13 A from a 5200 mAh 2P pack is ~2.5 C — high for standard 18650s, with real voltage sag and BMS-trip risk. Normal operation is ~5 A (≈1 C) with a ~2 A fan, ~7.5 A (≈1.4 C) with the MSD-G (4.2 A). On the dock (DC_IN present) the whole load runs through D14 (SS56, 5 A) instead of the battery switches: keep the fan and the motors off until DC_IN is gone. But rather than letting the sum go wherever it goes, have firmware throttle the fan when brush and drive current climb — you already have per-motor sense to do it with, and the fan is the natural give.
 - Firmware: A driver that fails shorted, shut battery off
   - Stagger motor startup. Even with ramping, bringing all five up together stacks the transients into exactly the aggregate spike that trips things.
   - 0.8× stall is a backstop, not jam detection. At that limit a jammed brush sits there drawing near-stall current — hard on the motor and the rail. Firmware should trip on a much lower threshold, much faster; the hardware limit exists only to stop the driver destroying itself if firmware misses it.

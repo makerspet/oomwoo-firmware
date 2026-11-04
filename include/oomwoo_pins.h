@@ -285,10 +285,10 @@
 #define PIN_MAIN_FAN_FB                 PE9
 #define PIN_MAIN_FAN_FB_PORT            GPIOE
 #define PIN_MAIN_FAN_FB_NUM             9
-/* PE10: MCU pin 41, net /MCU-STM32/SPARE-PE10 */
-#define PIN_SPARE_PE10                  PE10
-#define PIN_SPARE_PE10_PORT             GPIOE
-#define PIN_SPARE_PE10_NUM              10
+/* PE10: MCU pin 41, net /MAIN-FAN/MAIN-FAN-ID */
+#define PIN_MAIN_FAN_ID                 PE10
+#define PIN_MAIN_FAN_ID_PORT            GPIOE
+#define PIN_MAIN_FAN_ID_NUM             10
 /* PE11: MCU pin 42, net /CARPET-SENSOR/LO */
 #define PIN_CARPET_SENSOR_LO            PE11
 #define PIN_CARPET_SENSOR_LO_PORT       GPIOE
