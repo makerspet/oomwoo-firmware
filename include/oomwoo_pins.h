@@ -65,14 +65,14 @@
 #define PIN_STM_PWR_CTRL                PA15
 #define PIN_STM_PWR_CTRL_PORT           GPIOA
 #define PIN_STM_PWR_CTRL_NUM            15
-/* PB0: MCU pin 32, net /MCU-STM32/WHEEL-M-RIGHT-DROP */
-#define PIN_WHEEL_M_RIGHT_DROP          PB0
-#define PIN_WHEEL_M_RIGHT_DROP_PORT     GPIOB
-#define PIN_WHEEL_M_RIGHT_DROP_NUM      0
-/* PB1: MCU pin 33, net /MCU-STM32/WHEEL-M-LEFT-DROP */
-#define PIN_WHEEL_M_LEFT_DROP           PB1
-#define PIN_WHEEL_M_LEFT_DROP_PORT      GPIOB
-#define PIN_WHEEL_M_LEFT_DROP_NUM       1
+/* PB0: MCU pin 32, net /MCU-STM32/WHEEL-MOT-R-DROP */
+#define PIN_WHEEL_MOT_R_DROP            PB0
+#define PIN_WHEEL_MOT_R_DROP_PORT       GPIOB
+#define PIN_WHEEL_MOT_R_DROP_NUM        0
+/* PB1: MCU pin 33, net /MCU-STM32/WHEEL-MOT-L-DROP */
+#define PIN_WHEEL_MOT_L_DROP            PB1
+#define PIN_WHEEL_MOT_L_DROP_PORT       GPIOB
+#define PIN_WHEEL_MOT_L_DROP_NUM        1
 /* PB2: MCU pin 34, net /MCU-STM32/NTC */
 #define PIN_NTC                         PB2
 #define PIN_NTC_PORT                    GPIOB
@@ -93,14 +93,14 @@
 #define PIN_USB_CC1                     PB6
 #define PIN_USB_CC1_PORT                GPIOB
 #define PIN_USB_CC1_NUM                 6
-/* PB7: MCU pin 94, net /MCU-STM32/WHEEL-M-RIGHT-IN1 */
-#define PIN_WHEEL_M_RIGHT_IN1           PB7
-#define PIN_WHEEL_M_RIGHT_IN1_PORT      GPIOB
-#define PIN_WHEEL_M_RIGHT_IN1_NUM       7
-/* PB9: MCU pin 96, net /MCU-STM32/WHEEL-M-RIGHT-IN2 */
-#define PIN_WHEEL_M_RIGHT_IN2           PB9
-#define PIN_WHEEL_M_RIGHT_IN2_PORT      GPIOB
-#define PIN_WHEEL_M_RIGHT_IN2_NUM       9
+/* PB7: MCU pin 94, net /MCU-STM32/WHEEL-MOT-R-IN1 */
+#define PIN_WHEEL_MOT_R_IN1             PB7
+#define PIN_WHEEL_MOT_R_IN1_PORT        GPIOB
+#define PIN_WHEEL_MOT_R_IN1_NUM         7
+/* PB9: MCU pin 96, net /MCU-STM32/WHEEL-MOT-R-IN2 */
+#define PIN_WHEEL_MOT_R_IN2             PB9
+#define PIN_WHEEL_MOT_R_IN2_PORT        GPIOB
+#define PIN_WHEEL_MOT_R_IN2_NUM         9
 /* PB10: MCU pin 47, net /MCU-STM32/~{VSENS_3V3_EN} */
 #define PIN_VSENS_3V3_EN_N              PB10
 #define PIN_VSENS_3V3_EN_N_PORT         GPIOB
@@ -221,14 +221,14 @@
 #define PIN_CLIFF_LM                    PD9
 #define PIN_CLIFF_LM_PORT               GPIOD
 #define PIN_CLIFF_LM_NUM                9
-/* PD10: MCU pin 57, net /MCU-STM32/WHEEL-M-R-F-ADC */
-#define PIN_WHEEL_M_R_F_ADC             PD10
-#define PIN_WHEEL_M_R_F_ADC_PORT        GPIOD
-#define PIN_WHEEL_M_R_F_ADC_NUM         10
-/* PD11: MCU pin 58, net /MCU-STM32/WHEEL-M-L-F-ADC */
-#define PIN_WHEEL_M_L_F_ADC             PD11
-#define PIN_WHEEL_M_L_F_ADC_PORT        GPIOD
-#define PIN_WHEEL_M_L_F_ADC_NUM         11
+/* PD10: MCU pin 57, net /MCU-STM32/WHEEL-MOT-R-ADC */
+#define PIN_WHEEL_MOT_R_ADC             PD10
+#define PIN_WHEEL_MOT_R_ADC_PORT        GPIOD
+#define PIN_WHEEL_MOT_R_ADC_NUM         10
+/* PD11: MCU pin 58, net /MCU-STM32/WHEEL-MOT-L-ADC */
+#define PIN_WHEEL_MOT_L_ADC             PD11
+#define PIN_WHEEL_MOT_L_ADC_PORT        GPIOD
+#define PIN_WHEEL_MOT_L_ADC_NUM         11
 /* PD12: MCU pin 59, net /INT-SENSORS */
 #define PIN_INT_SENSORS                 PD12
 #define PIN_INT_SENSORS_PORT            GPIOD
@@ -245,14 +245,14 @@
 #define PIN_MAIN_BRUSH_IN2              PD15
 #define PIN_MAIN_BRUSH_IN2_PORT         GPIOD
 #define PIN_MAIN_BRUSH_IN2_NUM          15
-/* PE0: MCU pin 97, net /MCU-STM32/WHEEL-M-LEFT-IN1 */
-#define PIN_WHEEL_M_LEFT_IN1            PE0
-#define PIN_WHEEL_M_LEFT_IN1_PORT       GPIOE
-#define PIN_WHEEL_M_LEFT_IN1_NUM        0
-/* PE1: MCU pin 98, net /MCU-STM32/WHEEL-M-LEFT-IN2 */
-#define PIN_WHEEL_M_LEFT_IN2            PE1
-#define PIN_WHEEL_M_LEFT_IN2_PORT       GPIOE
-#define PIN_WHEEL_M_LEFT_IN2_NUM        1
+/* PE0: MCU pin 97, net /MCU-STM32/WHEEL-MOT-L-IN1 */
+#define PIN_WHEEL_MOT_L_IN1             PE0
+#define PIN_WHEEL_MOT_L_IN1_PORT        GPIOE
+#define PIN_WHEEL_MOT_L_IN1_NUM         0
+/* PE1: MCU pin 98, net /MCU-STM32/WHEEL-MOT-L-IN2 */
+#define PIN_WHEEL_MOT_L_IN2             PE1
+#define PIN_WHEEL_MOT_L_IN2_PORT        GPIOE
+#define PIN_WHEEL_MOT_L_IN2_NUM         1
 /* PE2: MCU pin 1, net /MCU-STM32/SPARE-PE2 */
 #define PIN_SPARE_PE2                   PE2
 #define PIN_SPARE_PE2_PORT              GPIOE
@@ -297,14 +297,14 @@
 #define PIN_ECHO_ADC                    PE12
 #define PIN_ECHO_ADC_PORT               GPIOE
 #define PIN_ECHO_ADC_NUM                12
-/* PE13: MCU pin 44, net /MCU-STM32/WHEEL-M-LEFT-ENCODE-A */
-#define PIN_WHEEL_M_LEFT_ENCODE_A       PE13
-#define PIN_WHEEL_M_LEFT_ENCODE_A_PORT  GPIOE
-#define PIN_WHEEL_M_LEFT_ENCODE_A_NUM   13
-/* PE14: MCU pin 45, net /MCU-STM32/WHEEL-M-RIGHT-ENCODE-A */
-#define PIN_WHEEL_M_RIGHT_ENCODE_A      PE14
-#define PIN_WHEEL_M_RIGHT_ENCODE_A_PORT GPIOE
-#define PIN_WHEEL_M_RIGHT_ENCODE_A_NUM  14
+/* PE13: MCU pin 44, net /MCU-STM32/WHEEL-MOT-L-ENCODE */
+#define PIN_WHEEL_MOT_L_ENCODE          PE13
+#define PIN_WHEEL_MOT_L_ENCODE_PORT     GPIOE
+#define PIN_WHEEL_MOT_L_ENCODE_NUM      13
+/* PE14: MCU pin 45, net /MCU-STM32/WHEEL-MOT-R-ENCODE */
+#define PIN_WHEEL_MOT_R_ENCODE          PE14
+#define PIN_WHEEL_MOT_R_ENCODE_PORT     GPIOE
+#define PIN_WHEEL_MOT_R_ENCODE_NUM      14
 /* PE15: MCU pin 46, net /FRONT SENSORS/IR-F-RX1 */
 #define PIN_IR_F_RX1                    PE15
 #define PIN_IR_F_RX1_PORT               GPIOE
