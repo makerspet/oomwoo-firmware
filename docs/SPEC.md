@@ -29,6 +29,7 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 ## Phone link (USB-C)
 
 - **USB device.** The STM32 USB FS port (PA11/PA12) is a CDC device; the phone is the USB host. The STM32G4 USB cannot be a host.
+- **Clocks: no HSE crystal** (removed 2026-11-04). Run the system clock from HSI16 through the PLL (170 MHz). Clock USB from HSI48 and enable the CRS synced to the USB SOF, so HSI48 locks to the phone's clock once enumerated. HSI16 is within about ±1 %: fine for the UARTs (LiDAR 230400). LSE (32.768 kHz, X3) stays for the RTC. PF0/PF1 are free.
 - **USB-C / PD (UCPD1).** CC1 = PB6, CC2 = PB4.
   - Run as a sink with Rd by default, so the phone attaches as host and power source.
   - To charge the phone while it stays host, negotiate a PD power-role swap (PR_Swap) to become the source. Phone support varies; phones that refuse it alternate between charging and data.
@@ -47,7 +48,7 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 - **Map STM32 time to phone (ROS) time** with a two-way exchange, like NTP or MAVLink `TIMESYNC`:
   1. The phone sends t1; the STM32 records receive time t2 and reply time t3; the phone stamps arrival t4.
   2. Offset = ((t2 - t1) + (t3 - t4)) / 2; round trip = (t4 - t1) - (t3 - t2).
-  3. Run it a few times a second. Keep the shortest round trips, and fit offset and drift over a sliding window (the crystals differ by tens of ppm).
+  3. Run it a few times a second. Keep the shortest round trips, and fit offset and drift over a sliding window (the MCU runs on HSI16, so expect drift of up to ~1 % that changes slowly with temperature; refit continuously).
   4. The phone's bridge node converts each STM32 timestamp before publishing. Never step time backwards.
 - Expect a sub-millisecond offset; measure it on the target phone.
 
@@ -57,7 +58,7 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 - **Front ToF (2x VL53L7) on I2C4** (PC6 SCL, PC7 SDA, 2.2k pull-ups), shared with the right side sensor and the IMU.
   - `VL-I2C-RESET` is PC0 (shared, no pull-down since 2026-11-04: drive it low before the sensor rail comes up; high = reset).
   - LPn: only the left sensor's is on the MCU (PB13). The right sensor's LPn is pulled up (R196), so it is always on the bus.
-  - INT: one shared open-drain line, PD12 (`INT-SENSORS`), for the left and right VL53L7 and the side VL53L0X's GPIO1. On an interrupt, ask each sensor whether it has data.
+  - INT: one shared open-drain line, PD12 (`~{INT-SENSORS}`, active low), for the left and right VL53L7 and the side VL53L0X's GPIO1. On an interrupt, ask each sensor whether it has data.
 - **Right side sensor:** VL53L0X on I2C4, GPIO1 (interrupt, open drain) on the shared sensor interrupt PD12 (47k pull-up R61 on the main board), XSHUT PE3 (no pull-up since 2026-11-04, driven by the MCU; low = off); docking IR receiver (IRM-H638T, top-looking) PD6. There is no left side sensor on v1.
   - Drive PB13 (left LPn), PC0 (VL-I2C-RESET) and PE3 (XSHUT) low, as outputs, before enabling the sensor rail (`~VSENS_3V3_EN`); none of them has a pull resistor since 2026-11-04, and keep PE3 low while the rail is off: driven high into the unpowered VL53L0X it back-powers it through XSHUT. Nothing holds XSHUT while PE3 is an input (the rail is off in reset, so that is fine).
   - All three ToF sensors start at address 0x52. At boot: hold the left LPn (PB13) and the side XSHUT (PE3) low, so only the right VL53L7 answers; move it to a new address. Release the left LPn and move the left sensor. Release XSHUT; the VL53L0X can keep 0x52. All addresses are lost on power-off; after an MCU-only reset the sensors keep theirs, so probe the new addresses first.
