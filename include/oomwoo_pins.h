@@ -309,6 +309,14 @@
 #define PIN_IR_F_RX1                 PE15
 #define PIN_IR_F_RX1_PORT            GPIOE
 #define PIN_IR_F_RX1_NUM             15
+/* PF0: MCU pin 12, net /MCU-STM32/SPARE-PF0 */
+#define PIN_SPARE_PF0                PF0
+#define PIN_SPARE_PF0_PORT           GPIOF
+#define PIN_SPARE_PF0_NUM            0
+/* PF1: MCU pin 13, net /MCU-STM32/SPARE-PF1 */
+#define PIN_SPARE_PF1                PF1
+#define PIN_SPARE_PF1_PORT           GPIOF
+#define PIN_SPARE_PF1_NUM            1
 /* PF2: MCU pin 19, net /BUTTON-LED/LED-PWR */
 #define PIN_LED_PWR                  PF2
 #define PIN_LED_PWR_PORT             GPIOF
@@ -321,3 +329,5 @@
 #define PIN_SIDE_BRUSH_IN2           PF10
 #define PIN_SIDE_BRUSH_IN2_PORT      GPIOF
 #define PIN_SIDE_BRUSH_IN2_NUM       10
+
+/* GPIOs not listed (unconnected, or no named net): PC14, PC15 */

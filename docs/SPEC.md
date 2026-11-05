@@ -103,7 +103,7 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 | Battery voltage (`BAT_SENSE`, ADC5_IN1, x11) | PA8 |
 | Charger power sense (`DC_IN_SENSE`, ADC) | PB15 |
 | Spare UART on J1 (UART4 or USART3), e.g. a UART ultrasonic sensor | PC10 TX, PC11 RX |
-| Spare GPIO on the J1 2x6 header (with 3.3 V, 5 V; no I2C) | PE10 (ADC3/4/5_IN14), PD4, PE2, PE6 |
+| Spare GPIO on the J1 2x6 header (with 3.3 V, 5 V; no I2C) | PE10 (ADC3/4/5_IN14), PF0 (ADC1_IN10), PF1 (ADC2_IN10), PD4, PE2, PE6 |
 | Also spare: SWO (PB3) on JTAG1 when not tracing; UART5 TX (PC12) when nothing is on LIDAR2 | |
 
 ## Misc notes
