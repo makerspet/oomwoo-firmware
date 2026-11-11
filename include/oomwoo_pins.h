@@ -105,10 +105,10 @@
 #define PIN_VSENS_3V3_EN_N          PB10
 #define PIN_VSENS_3V3_EN_N_PORT     GPIOB
 #define PIN_VSENS_3V3_EN_N_NUM      10
-/* PB11: MCU pin 50, net /FRONT SENSORS/IR-F-RX2 */
-#define PIN_IR_F_RX2                PB11
-#define PIN_IR_F_RX2_PORT           GPIOB
-#define PIN_IR_F_RX2_NUM            11
+/* PB11: MCU pin 50, net /IR-F-R */
+#define PIN_IR_F_R                  PB11
+#define PIN_IR_F_R_PORT             GPIOB
+#define PIN_IR_F_R_NUM              11
 /* PB12: MCU pin 51, net /MCU-STM32/LDR */
 #define PIN_LDR                     PB12
 #define PIN_LDR_PORT                GPIOB
@@ -305,10 +305,10 @@
 #define PIN_WHEEL_MOT_R_ENCODE      PE14
 #define PIN_WHEEL_MOT_R_ENCODE_PORT GPIOE
 #define PIN_WHEEL_MOT_R_ENCODE_NUM  14
-/* PE15: MCU pin 46, net /FRONT SENSORS/IR-F-RX1 */
-#define PIN_IR_F_RX1                PE15
-#define PIN_IR_F_RX1_PORT           GPIOE
-#define PIN_IR_F_RX1_NUM            15
+/* PE15: MCU pin 46, net /IR-F-L */
+#define PIN_IR_F_L                  PE15
+#define PIN_IR_F_L_PORT             GPIOE
+#define PIN_IR_F_L_NUM              15
 /* PF0: MCU pin 12, net /MCU-STM32/SPARE-PF0 */
 #define PIN_SPARE_PF0               PF0
 #define PIN_SPARE_PF0_PORT          GPIOF
