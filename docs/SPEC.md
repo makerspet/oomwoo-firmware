@@ -22,7 +22,7 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 - **Power button (PE7, `PWR-BTN-SENSE`, low = pressed):**
   - 3 s press: turn off every rail (motors, LiDAR, 5 V, sensor 3.3 V), then drive PA15 low.
   - 3 s press while holding Home (PD5): factory reset, and stay on.
-  - A hardware timer turns the MCU rail off after ~4-9 s of holding the button, whatever the firmware does. Give feedback (LEDs) before 3 s so users release in time.
+  - A hardware timer turns the MCU rail off after ~3.5-9.5 s of holding the button, whatever the firmware does. Give feedback (LEDs) before 3 s so users release in time.
 - **While charging** (dock or barrel jack), hardware holds the MCU rail on, and PA15 low can't turn it off. "Off" while charging means: all other rails off, LEDs show charging, MCU idles.
 - If the MCU rail is off, all pins float and every other rail is held off by its pull resistor.
 
