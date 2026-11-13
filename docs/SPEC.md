@@ -18,7 +18,7 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 
 ## Power control
 
-- **Latch (PA15, `STM-PWR-CTRL`).** The power button (or charger power) turns on the MCU rail only. At boot, drive PA15 high (push-pull is fine; it goes through a 1k resistor) before anything else, or the MCU loses power when the button is released. Then enable the other rails one at a time.
+- **Latch (PA15, `STM-PWR-CTRL`).** The power button (or charger power) turns on the MCU rail only. The latch holds itself in hardware once the MCU rail is up (R172 pull-up), so a blank or crashed MCU stays powered. At boot, drive PA15 high (push-pull is fine; it goes through a 1k resistor) so its state is defined, then enable the other rails one at a time. To turn off, drive PA15 low and keep it low until power is gone; never release it to an input while shutting down.
 - **Power button (PE7, `PWR-BTN-SENSE`, low = pressed):**
   - 3 s press: turn off every rail (motors, LiDAR, 5 V, sensor 3.3 V), then drive PA15 low.
   - 3 s press while holding Home (PD5): factory reset, and stay on.
@@ -54,7 +54,7 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 
 ## Sensors
 
-- **LiDAR on UART5:** RX = PD2 (from the LiDAR's TX, through R113), TX = PC12 (to the LiDAR's RX on LIDAR2, through R66). Motor control (PWM) is PC2 (through R183). Standard pin mapping, no TX/RX swap. LIDAR1 is an LDROBOT LD14P (TX only); LIDAR2 is unfitted 2x3 0.1" pads for other 2D LiDARs, with the same TX line on pin 5. The series resistors are 100 Ω (since 2026-10-29), too low to stop back-powering, so drive PC2 and PC12 low (or make them inputs) whenever the LiDAR rail is off.
+- **LiDAR on UART5:** RX = PD2 (from the LiDAR's TX, through R113), TX = PC12 (to the LiDAR's RX on J3, through R66). Motor control (PWM) is PC2 (through R183). Standard pin mapping, no TX/RX swap. LIDAR1 is an LDROBOT LD14P (TX only); J3 (LIDAR2 until 2026-11-13) is a fitted 2x3 0.1" right-angle header for other 2D LiDARs, with the same TX line on pin 5. Only one LiDAR is connected at a time. The series resistors are 100 Ω (since 2026-10-29), too low to stop back-powering, so drive PC2 and PC12 low (or make them inputs) whenever the LiDAR rail is off.
 - **Front ToF (2x VL53L7) on I2C4** (PC6 SCL, PC7 SDA, 2.2k pull-ups), shared with the right side sensor and the IMU.
   - `VL-I2C-RESET` is PC0 (shared, no pull-down since 2026-11-04: drive it low before the sensor rail comes up; high = reset).
   - LPn: only the left sensor's is on the MCU (PB13). The right sensor's LPn is pulled up (R196), so it is always on the bus.
@@ -93,7 +93,7 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 | Main brush IN1/IN2, current ADC | PD14/PD15, PA6 |
 | Side brush IN1/IN2, current ADC | PF9/PF10, PD13 |
 | Suction fan PWM, FG tachometer | PD1, PE9 |
-| 5 V buck enable (`VSENS_5V_USB_EN`) | PB5 |
+| 5 V buck enable (`VSENS-5V-USB-EN`) | PB5 |
 | Sensor 3.3 V enable (`~VSENS_3V3_EN`, low = on, through 10k; ~6 ms to come up) | PB10 |
 | Power latch (`STM-PWR-CTRL`), power button sense | PA15, PE7 |
 | Buttons: clean, home (to GND when pressed; no external pull-ups since 2026-11-02, enable the internal pull-ups) | PD0, PD5 |
@@ -104,7 +104,7 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 | Charger power sense (`DC_IN_SENSE`, ADC) | PB15 |
 | Spare UART on J1 (UART4 or USART3), e.g. a UART ultrasonic sensor | PC10 TX, PC11 RX |
 | Spare GPIO on the J1 2x6 header (with 3.3 V, 5 V; no I2C) | PE10 (ADC3/4/5_IN14), PF0 (ADC1_IN10), PF1 (ADC2_IN10), PD4, PE2, PE6 |
-| Also spare: SWO (PB3) on JTAG1 when not tracing; UART5 TX (PC12) when nothing is on LIDAR2 | |
+| Also spare: SWO (PB3) on JTAG1 when not tracing; UART5 TX (PC12) when nothing is on J3 | |
 
 ## Misc notes
 

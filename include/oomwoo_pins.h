@@ -85,7 +85,7 @@
 #define PIN_USB_CC2                 PB4
 #define PIN_USB_CC2_PORT            GPIOB
 #define PIN_USB_CC2_NUM             4
-/* PB5: MCU pin 92, net /MCU-STM32/VSENS_5V_USB_EN */
+/* PB5: MCU pin 92, net /MCU-STM32/VSENS-5V-USB-EN */
 #define PIN_VSENS_5V_USB_EN         PB5
 #define PIN_VSENS_5V_USB_EN_PORT    GPIOB
 #define PIN_VSENS_5V_USB_EN_NUM     5
