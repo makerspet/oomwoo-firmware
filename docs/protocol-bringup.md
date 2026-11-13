@@ -1,7 +1,10 @@
 # CPU/MCU Protocol Bring-up
 
-This is the first executable firmware slice for milestone 2. It deliberately
-contains no motor, power, charging, watchdog-reset, or hard-safety GPIO code.
+This is the first executable firmware slice for milestone 2. It contains no
+motor control, charging, or CPU-reset supervisor. The dedicated production-board
+target now includes only the reviewed boundary needed to remain fail-closed:
+heartbeat expiry through TIM7, active-low motor-rail shutdown, and external
+watchdog feeding from foreground context.
 
 ## Scope
 
@@ -64,18 +67,26 @@ separately counts accepted messages and each semantic rejection class. See
 [CPU ingress gate](cpu-ingress.md) for the API, memory ownership, and integration
 boundary.
 
+The watchdog draft adds a bounded `oomwoo_cpu_watchdog_bridge` after this gate.
+It forwards only validated heartbeat modes into the watchdog's single-producer
+mailbox and counts every other accepted message without refreshing the
+deadline. Raw-frame integration tests cover valid, fragmented, CRC-invalid,
+semantically invalid, disarmed, and unrelated-message paths.
+
 ## Identity handshake
 
-`src/main.cpp` is an identity-handshake harness for a Nucleo G474RE. It emits
-`MCU_HELLO` once at startup and after each validated `IDENTIFY_REQUEST`. This
-makes reconnect independent of whether the CPU observed the startup frame.
-Corrupt, truncated, wrong-version, wrong-direction, and malformed input is
-dropped.
+`src/main.cpp` emits `MCU_HELLO` once at startup and after each validated
+`IDENTIFY_REQUEST`. On Nucleo environments it remains an identity-handshake
+harness. On `oomwoo_stm32g473vc`, the same validated ingress also feeds the CPU
+watchdog bridge, USART1 uses the schematic's PC4/PC5 pins, and TIM7 owns the
+150 ms expiry. Corrupt, truncated, wrong-version, wrong-direction, and malformed
+input is dropped.
 
-All other valid messages are ignored. The harness deliberately emits no `ACK`:
+All other valid messages are ignored by the current application. It deliberately
+emits no `ACK`:
 frame integrity does not mean that a message type, payload, or requested action
-has been accepted. It does not arm the MCU, refresh a watchdog, replay a
-response, or touch hardware beyond the serial transport. See
+has been accepted. On the G473 target, only a validated heartbeat can refresh
+the watchdog; no message can enable the motor rail or replay a response. See
 [MCU identity handshake](identity-handshake.md) for the exact API and sequence
 rules.
 
@@ -86,6 +97,22 @@ indefinitely.
 This Arduino loop is a bring-up harness, not the final communication task. The
 production UART path should feed the same decoder from a statically allocated
 DMA/ring buffer owned by a FreeRTOS task.
+
+## Confirmed link safety policy
+
+The protocol policy now distinguishes two independent liveness mechanisms:
+
+- a missing healthy heartbeat forces motors and actuators safe after the
+  initial 150 ms bring-up deadline, without resetting the CPU;
+- CPU reset supervision uses a separate timeout of approximately five minutes,
+  long enough for CPU boot, and is not implemented by the heartbeat watchdog.
+
+While disarmed, the MCU continues emitting `SAFETY_STATE` at its normal
+periodic/event rate, plus `MCU_DIAGNOSTIC` and `POWER_TELEMETRY` after those
+payloads are defined. These messages cannot arm outputs, replay commands, clear
+latched faults, or refresh the heartbeat deadline. See
+[CPU link safety policy](cpu-link-policy.md) for the normative rules and current
+implementation status.
 
 ## Compatibility
 
@@ -165,7 +192,7 @@ PlatformIO:
 ```bash
 pio test -e native -e native_v2
 pio pkg install -e nucleo_g474re
-pio run -e nucleo_g474re -e nucleo_g474re_v2
+pio run -e nucleo_g474re -e nucleo_g474re_v2 -e oomwoo_stm32g473vc
 ```
 
 Hardware loopback, UART electrical validation, measured timing, and fault

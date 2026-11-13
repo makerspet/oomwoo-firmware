@@ -155,7 +155,7 @@ jobs:
           /tmp/oomwoo_identity_conformance_cpp
 
   platformio:
-    name: PlatformIO native + Nucleo G474
+    name: PlatformIO native + STM32 targets
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
@@ -165,7 +165,7 @@ jobs:
           path: |
             ~/.cache/pip
             ~/.platformio/.cache
-          key: ${{ runner.os }}-pio-${{ hashFiles('platformio.ini') }}
+          key: ${{ runner.os }}-pio-${{ hashFiles('platformio.ini', 'boards/*.json') }}
           restore-keys: |
             ${{ runner.os }}-pio-
 
@@ -185,7 +185,21 @@ jobs:
       - name: Cross-build Nucleo G474RE for wire v1 and v2
         run: pio run -e nucleo_g474re -e nucleo_g474re_v2
 
+      - name: Cross-build the OOMWOO STM32G473VCT6 target
+        run: pio run -e oomwoo_stm32g473vc
+
       - name: Verify firmware images
         run: |
           test -s .pio/build/nucleo_g474re/firmware.bin
           test -s .pio/build/nucleo_g474re_v2/firmware.bin
+          test -s .pio/build/oomwoo_stm32g473vc/firmware.bin
+
+      - name: Verify the production hard-stop callback remains a leaf function
+        run: |
+          "$HOME/.platformio/packages/toolchain-gccarmnoneeabi/bin/arm-none-eabi-objdump" \
+            -d -C \
+            .pio/build/oomwoo_stm32g473vc/firmware.elf \
+            > .pio/build/oomwoo_stm32g473vc/firmware.disassembly
+          python tools/check_isr_disassembly.py \
+            .pio/build/oomwoo_stm32g473vc/firmware.disassembly \
+            oomwoo_stm32g473_safety_hard_stop_isr
