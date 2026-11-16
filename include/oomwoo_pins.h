@@ -109,7 +109,7 @@
 #define PIN_IR_F_R                  PB11
 #define PIN_IR_F_R_PORT             GPIOB
 #define PIN_IR_F_R_NUM              11
-/* PB12: MCU pin 51, net /MCU-STM32/LDR */
+/* PB12: MCU pin 51, net /LDR */
 #define PIN_LDR                     PB12
 #define PIN_LDR_PORT                GPIOB
 #define PIN_LDR_NUM                 12
