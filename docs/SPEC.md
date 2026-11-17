@@ -23,8 +23,10 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
   - 3 s press: turn off every rail (motors, LiDAR, 5 V, sensor 3.3 V), then drive PA15 low.
   - 3 s press while holding Home (PD5): factory reset, and stay on.
   - A hardware timer turns the MCU rail off after ~3.5-9.5 s of holding the button, whatever the firmware does. Give feedback (LEDs) before 3 s so users release in time.
-- **While charging** (dock or barrel jack), hardware holds the MCU rail on, and PA15 low can't turn it off. "Off" while charging means: all other rails off, LEDs show charging, MCU idles.
+- **While charging** (on the dock), hardware holds the MCU rail on, and PA15 low can't turn it off. "Off" while charging means: all other rails off, LEDs show charging, MCU idles.
 - If the MCU rail is off, all pins float and every other rail is held off by its pull resistor.
+- **USB power (bring-up, since 2026-11-16).** VBUS also feeds VMCU-3V3 through D47 + U27 (3.1 V LDO), so a PC on a USB-A to USB-C cable runs the MCU with the battery out. U27 idles while U21 runs (3.28 V). On USB power alone, BAT_SENSE and DC_IN_SENSE read ~0 V: keep the motor and 5 V rails off (they have no input); VSENS-3V3 may come on (the PC port gives 500 mA).
+- **Power-off with a phone attached.** The phone sources VBUS while it sees Rd on CC, and U27 then keeps the MCU alive after PA15 goes low. So, to turn off: remove Rd on both CC lines (UCPD configured, dead-battery mode disabled, then CC open), wait for VBUS (PA7) to drop, then drive PA15 low. On the dock the rail-hold keeps the MCU on anyway.
 
 ## Phone link (USB-C)
 
@@ -72,7 +74,7 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 - **Hall sensors** (omnipolar, ~20-45 Hz sampling): dust bin present PE4, LiDAR tower bumper PE5. Low = magnet near. No external pull-ups since 2026-11-04: enable the MCU pull-ups on PE4/PE5. Use EXTI on both edges, debounce, and ignore them while the sensor rail is off.
 - **Bumpers:** two ITR9606 slotted photo-interrupters on the main board: left PA4 (ADC2_IN17), right PA5 (ADC2_IN13); 1k pull-ups since 2026-11-02, low = light passes the slot. Sample them on ADC2 (DMA) to see how fast the flag opens or closes the slot; the clear-slot level varies a lot between parts (IC(ON) 0.5-10 mA), so calibrate it per unit: read with the emitters on and off and use the difference. Each emitter has its own enable since 2026-11-03, **high** = on; since 2026-11-05 PC3 has no pull-down and PA10 has a 100k **pull-up** (R221, for the UCPD dead-battery Rd on CC2). The emitters run from VSENS-5V-USB, which is off in reset, so drive both pins low (or start the PWM) **before** setting `VSENS_5V_USB_EN`: left `BUMP_L_LED_EN` (PC3, TIM1_CH4), right `BUMP_R_LED_EN` (PA10, TIM1_CH3). To compensate for the part spread and temperature, PWM each one at ~100-250 kHz and adjust its duty until that bumper's clear-slot level sits around 0.5-1 V (47 nF filters smooth the ripple); TIM1 can trigger ADC2 for synchronous sampling.
 - **Battery voltage:** PA8 (ADC5_IN1), V_bat = V_adc x 11 (1M/100k + 100 nF from the battery side of Q14; 16.8 V reads 1.53 V). It reads the battery itself even while charging. Use a long sample time (high source impedance).
-- **Charger power (DC-IN-20V) sense:** PB15 (ADC4_IN5), DC-IN-20V = V_adc x 11; ~1.82 V with the 20 V brick. Use it to detect docking or a plugged-in barrel jack (a 100 nF filter cap is on the pin, so any sample time works).
+- **Charger power (DC-IN-20V) sense:** PB15 (ADC4_IN5), DC-IN-20V = V_adc x 11; ~1.82 V with the 20 V brick. Use it to detect docking: since 2026-11-16 the robot has no barrel jack, so charger power always means docked. Sampled often during a docking approach, it also shows the dock's ~1.5 V signature probe (~0.14 V at the pin) before the 20 V arrives (a 100 nF filter cap is on the pin, so any sample time works).
 - **Wake-up sensor (LDR):** PB12 (ADC). Since 2026-11-15 the LDR is on its own board, cabled to J9; R103 (10k to GND) and C1 (100 nF) stay on the main board, so more light reads higher, an unplugged board reads ~0 V, and any sample time works.
 - **Board temperature:** NTC on PB2. **Battery ID:** PB14.
 
@@ -112,7 +114,7 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 
 Flash the charging dock's CH32V003 from the robot, without a WCH-LinkE:
 
-- Wiring: two jumper wires from the dock's J1001 (fitted 1x2 header: 1 SWIO, 2 GND) to the robot board's J1: SWIO to PE2 (J1 pin 3), GND to J1 pin 13 or 14. The dock runs from its own brick; don't connect the two 3.3 V rails. Both sides are 3.3 V logic.
+- Wiring: two jumper wires from the dock's J1001 (fitted 1x2 header: 1 SWIO, 2 GND) to the robot board's J1: SWIO to PE2 (J1 pin 3), GND to J1 pin 13 or 14. The dock runs from its own brick; don't connect the two 3.3 V rails. With the battery out, a PC on USB-A powers the STM32 (U27, see Power control). Both sides are 3.3 V logic.
 - The phone (or a PC on USB-C) sends the dock image (≤ 16 KB) to the STM32 over the USB CDC link; the STM32 keeps it in RAM.
 - The STM32 bit-bangs WCH's single-wire debug protocol on PE2 (open-drain; pull-up to 3.3 V, internal or ~1k-4.7k external on the jumper; check the value against WCH's docs): halt the core, unlock the flash, erase, write 64-byte pages, read back to verify, reset.
 - Reference implementations: [ch32fun](https://github.com/cnlohr/ch32fun) minichlink and its "ardulink" Arduino programmer (an AVR bit-banging SWIO), plus its RP2040 and ESP32-S2 programmers. Check the licence before porting code.
