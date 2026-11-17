@@ -313,10 +313,10 @@
 #define PIN_SPARE_PF0               PF0
 #define PIN_SPARE_PF0_PORT          GPIOF
 #define PIN_SPARE_PF0_NUM           0
-/* PF1: MCU pin 13, net /MCU-STM32/SPARE-PF1 */
-#define PIN_SPARE_PF1               PF1
-#define PIN_SPARE_PF1_PORT          GPIOF
-#define PIN_SPARE_PF1_NUM           1
+/* PF1: MCU pin 13, net /BATTERY-CHARGER/BAT_NTC */
+#define PIN_BAT_NTC                 PF1
+#define PIN_BAT_NTC_PORT            GPIOF
+#define PIN_BAT_NTC_NUM             1
 /* PF2: MCU pin 19, net /BUTTON-LED/LED-PWR */
 #define PIN_LED_PWR                 PF2
 #define PIN_LED_PWR_PORT            GPIOF
