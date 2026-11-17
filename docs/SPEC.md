@@ -25,8 +25,7 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
   - A hardware timer turns the MCU rail off after ~3.5-9.5 s of holding the button, whatever the firmware does. Give feedback (LEDs) before 3 s so users release in time.
 - **While charging** (on the dock), hardware holds the MCU rail on, and PA15 low can't turn it off. "Off" while charging means: all other rails off, LEDs show charging, MCU idles.
 - If the MCU rail is off, all pins float and every other rail is held off by its pull resistor.
-- **USB power (bring-up, since 2026-11-16).** VBUS also feeds VMCU-3V3 through D47 + U27 (3.1 V LDO), so a PC on a USB-A to USB-C cable runs the MCU with the battery out. U27 idles while U21 runs (3.28 V). On USB power alone, BAT_SENSE and DC_IN_SENSE read ~0 V: keep the motor and 5 V rails off (they have no input); VSENS-3V3 may come on (the PC port gives 500 mA).
-- **Power-off with a phone attached.** The phone sources VBUS while it sees Rd on CC, and U27 then keeps the MCU alive after PA15 goes low. So, to turn off: remove Rd on both CC lines (UCPD configured, dead-battery mode disabled, then CC open), wait for VBUS (PA7) to drop, then drive PA15 low. On the dock the rail-hold keeps the MCU on anyway.
+- **USB power (bring-up, since 2026-11-16).** With the battery out, VBUS also feeds VMCU-3V3 (U27 + Q39, 3.3 V, 100 mA), so a PC on a USB-A to USB-C cable runs the MCU. With the battery in, Q39 is off and USB never powers the MCU, so power-off needs no USB-C handling. On USB power alone, BAT_SENSE and DC_IN_SENSE read ~0 V: keep the motor, 5 V and sensor 3.3 V rails off (100 mA is enough for the MCU only).
 
 ## Phone link (USB-C)
 
