@@ -197,10 +197,10 @@
 #define PIN_IMU_INT1                PD3
 #define PIN_IMU_INT1_PORT           GPIOD
 #define PIN_IMU_INT1_NUM            3
-/* PD4: MCU pin 86, net /MCU-STM32/SPARE-PD4 */
-#define PIN_SPARE_PD4               PD4
-#define PIN_SPARE_PD4_PORT          GPIOD
-#define PIN_SPARE_PD4_NUM           4
+/* PD4: MCU pin 86, net /BATTERY-CHARGER/~{STDBY} */
+#define PIN_STDBY_N                 PD4
+#define PIN_STDBY_N_PORT            GPIOD
+#define PIN_STDBY_N_NUM             4
 /* PD5: MCU pin 87, net /BUTTON-LED/~{HOME-BTN} */
 #define PIN_HOME_BTN_N              PD5
 #define PIN_HOME_BTN_N_PORT         GPIOD
@@ -269,10 +269,10 @@
 #define PIN_HALL_TOWER              PE5
 #define PIN_HALL_TOWER_PORT         GPIOE
 #define PIN_HALL_TOWER_NUM          5
-/* PE6: MCU pin 5, net /MCU-STM32/SPARE-PE6 */
-#define PIN_SPARE_PE6               PE6
-#define PIN_SPARE_PE6_PORT          GPIOE
-#define PIN_SPARE_PE6_NUM           6
+/* PE6: MCU pin 5, net /BATTERY-CHARGER/~{CHRG} */
+#define PIN_CHRG_N                  PE6
+#define PIN_CHRG_N_PORT             GPIOE
+#define PIN_CHRG_N_NUM              6
 /* PE7: MCU pin 38, net /MCU-STM32/PWR-BTN-SENSE */
 #define PIN_PWR_BTN_SENSE           PE7
 #define PIN_PWR_BTN_SENSE_PORT      GPIOE

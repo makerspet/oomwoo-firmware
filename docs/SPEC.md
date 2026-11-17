@@ -23,7 +23,12 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
   - 3 s press: turn off every rail (motors, LiDAR, 5 V, sensor 3.3 V), then drive PA15 low.
   - 3 s press while holding Home (PD5): factory reset, and stay on.
   - A hardware timer turns the MCU rail off after ~3.5-9.5 s of holding the button, whatever the firmware does. Give feedback (LEDs) before 3 s so users release in time.
-- **While charging** (on the dock), hardware holds the MCU rail on, and PA15 low can't turn it off. "Off" while charging means: all other rails off, LEDs show charging, MCU idles.
+- **While charging** (on the dock), hardware holds the MCU rail on, and PA15 low can't turn it off. "Off" while charging means: all other rails off, the button LEDs show the charge state, MCU idles.
+- **Charge status (since 2026-11-17).** The SLM6900's NCHRG (PE6, `~CHRG`) and NSTDBY (PD4, `~STDBY`), both open drain, active low; enable the internal pull-ups. There are no charge LEDs on the board: show the state on the button LEDs (PC13, PF2). Decode only while DC_IN_SENSE shows dock power:
+  - ~CHRG low, ~STDBY high: charging.
+  - ~STDBY low: done if BAT_SENSE reads ≥ ~16.4 V; otherwise a fault (the datasheet's table shows over-voltage, a shorted battery and a battery too hot or cold this way).
+  - Both high: fault (the datasheet's pin description). ~CHRG toggling at 1-4 Hz: no battery.
+  - On a fault: report it (app, LEDs) and don't leave the dock for a mission on a low battery. If the robot is docked but neither charging nor done for long, re-dock.
 - If the MCU rail is off, all pins float and every other rail is held off by its pull resistor.
 - **USB power (bring-up, since 2026-11-16).** With the battery out, VBUS also feeds VMCU-3V3 (U27 + Q39, 3.3 V, 100 mA), so a PC on a USB-A to USB-C cable runs the MCU. With the battery in, Q39 is off and USB never powers the MCU, so power-off needs no USB-C handling. On USB power alone, BAT_SENSE and DC_IN_SENSE read ~0 V: keep the motor, 5 V and sensor 3.3 V rails off (100 mA is enough for the MCU only).
 
@@ -105,8 +110,9 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 | SWD | PA13, PA14, SWO PB3 |
 | Battery voltage (`BAT_SENSE`, ADC5_IN1, x11) | PA8 |
 | Charger power sense (`DC_IN_SENSE`, ADC) | PB15 |
+| Charger status (`~CHRG`, `~STDBY`, open drain through 1k; enable the internal pull-ups) | PE6, PD4 |
 | Spare UART on J1 (UART4 or USART3), e.g. a UART ultrasonic sensor | PC10 TX, PC11 RX |
-| Spare GPIO on the J1 2x7 header (with 3.3 V, 5 V; no I2C) | PE10 (ADC3/4/5_IN14), PF0 (ADC1_IN10), PF1 (ADC2_IN10), PD4, PE2, PE6 |
+| Spare GPIO on the J1 2x7 header (with 3.3 V, 5 V; no I2C) | PE10 (ADC3/4/5_IN14), PF0 (ADC1_IN10), PF1 (ADC2_IN10), PE2 (dock SWIO) |
 | Also spare: SWO (PB3) on JTAG1 when not tracing; UART5 TX (PC12) when nothing is on J3 | |
 
 ## Dock programmer (planned)
