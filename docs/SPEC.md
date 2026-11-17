@@ -105,8 +105,18 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 | Battery voltage (`BAT_SENSE`, ADC5_IN1, x11) | PA8 |
 | Charger power sense (`DC_IN_SENSE`, ADC) | PB15 |
 | Spare UART on J1 (UART4 or USART3), e.g. a UART ultrasonic sensor | PC10 TX, PC11 RX |
-| Spare GPIO on the J1 2x6 header (with 3.3 V, 5 V; no I2C) | PE10 (ADC3/4/5_IN14), PF0 (ADC1_IN10), PF1 (ADC2_IN10), PD4, PE2, PE6 |
+| Spare GPIO on the J1 2x7 header (with 3.3 V, 5 V; no I2C) | PE10 (ADC3/4/5_IN14), PF0 (ADC1_IN10), PF1 (ADC2_IN10), PD4, PE2, PE6 |
 | Also spare: SWO (PB3) on JTAG1 when not tracing; UART5 TX (PC12) when nothing is on J3 | |
+
+## Dock programmer (planned)
+
+Flash the charging dock's CH32V003 from the robot, without a WCH-LinkE:
+
+- Wiring: two jumper wires from the dock's J1001 (fitted 1x2 header: 1 SWIO, 2 GND) to the robot board's J1: SWIO to PE2 (J1 pin 3), GND to J1 pin 13 or 14. The dock runs from its own brick; don't connect the two 3.3 V rails. Both sides are 3.3 V logic.
+- The phone (or a PC on USB-C) sends the dock image (≤ 16 KB) to the STM32 over the USB CDC link; the STM32 keeps it in RAM.
+- The STM32 bit-bangs WCH's single-wire debug protocol on PE2 (open-drain; pull-up to 3.3 V, internal or ~1k-4.7k external on the jumper; check the value against WCH's docs): halt the core, unlock the flash, erase, write 64-byte pages, read back to verify, reset.
+- Reference implementations: [ch32fun](https://github.com/cnlohr/ch32fun) minichlink and its "ardulink" Arduino programmer (an AVR bit-banging SWIO), plus its RP2040 and ESP32-S2 programmers. Check the licence before porting code.
+- A one-time option for later: put a small UART bootloader in the CH32V003's 1.9 KB boot area, then update over the dock UART (J1005 pins 3/4).
 
 ## Misc notes
 
