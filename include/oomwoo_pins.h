@@ -285,10 +285,10 @@
 #define PIN_MAIN_FAN_FB             PE9
 #define PIN_MAIN_FAN_FB_PORT        GPIOE
 #define PIN_MAIN_FAN_FB_NUM         9
-/* PE10: MCU pin 41, net /MCU-STM32/SPARE-PE10-ADC */
-#define PIN_SPARE_PE10_ADC          PE10
-#define PIN_SPARE_PE10_ADC_PORT     GPIOE
-#define PIN_SPARE_PE10_ADC_NUM      10
+/* PE10: MCU pin 41, net /HALL-FLOOR-L */
+#define PIN_HALL_FLOOR_L            PE10
+#define PIN_HALL_FLOOR_L_PORT       GPIOE
+#define PIN_HALL_FLOOR_L_NUM        10
 /* PE11: MCU pin 42, net /CARPET-SENSOR/LO */
 #define PIN_CARPET_SENSOR_LO        PE11
 #define PIN_CARPET_SENSOR_LO_PORT   GPIOE
@@ -309,10 +309,10 @@
 #define PIN_IR_F_L                  PE15
 #define PIN_IR_F_L_PORT             GPIOE
 #define PIN_IR_F_L_NUM              15
-/* PF0: MCU pin 12, net /MCU-STM32/SPARE-PF0 */
-#define PIN_SPARE_PF0               PF0
-#define PIN_SPARE_PF0_PORT          GPIOF
-#define PIN_SPARE_PF0_NUM           0
+/* PF0: MCU pin 12, net /HALL-FLOOR-R */
+#define PIN_HALL_FLOOR_R            PF0
+#define PIN_HALL_FLOOR_R_PORT       GPIOF
+#define PIN_HALL_FLOOR_R_NUM        0
 /* PF1: MCU pin 13, net /BATTERY-CHARGER/BAT_NTC */
 #define PIN_BAT_NTC                 PF1
 #define PIN_BAT_NTC_PORT            GPIOF
