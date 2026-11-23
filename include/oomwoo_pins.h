@@ -106,14 +106,14 @@
 #define PIN_CAM_Y9                  PB9
 #define PIN_CAM_Y9_PORT             GPIOB
 #define PIN_CAM_Y9_NUM              9
-/* PB10: U13 pin 47, net /I2C4_SCL */
-#define PIN_I2C4_SCL                PB10
-#define PIN_I2C4_SCL_PORT           GPIOB
-#define PIN_I2C4_SCL_NUM            10
-/* PB11: U13 pin 48, net /I2C4_SDA */
-#define PIN_I2C4_SDA                PB11
-#define PIN_I2C4_SDA_PORT           GPIOB
-#define PIN_I2C4_SDA_NUM            11
+/* PB10: U13 pin 47, net /SCL */
+#define PIN_SCL                     PB10
+#define PIN_SCL_PORT                GPIOB
+#define PIN_SCL_NUM                 10
+/* PB11: U13 pin 48, net /SDA */
+#define PIN_SDA                     PB11
+#define PIN_SDA_PORT                GPIOB
+#define PIN_SDA_NUM                 11
 /* PB12: U13 pin 51, net /~{VMOT-14V4-EN} */
 #define PIN_VMOT_14V4_EN_N          PB12
 #define PIN_VMOT_14V4_EN_N_PORT     GPIOB
@@ -412,10 +412,10 @@
 #define PIN_X035_CC_RD_EN                PB6
 #define PIN_X035_CC_RD_EN_PORT           GPIOB
 #define PIN_X035_CC_RD_EN_NUM            6
-/* PB8: U28 pin 28, net /MCU/~{CAM-EN} */
-#define PIN_X035_CAM_EN_N                PB8
-#define PIN_X035_CAM_EN_N_PORT           GPIOB
-#define PIN_X035_CAM_EN_N_NUM            8
+/* PB7: U28 pin 27, net /MCU/CAM-RESET */
+#define PIN_X035_CAM_RESET               PB7
+#define PIN_X035_CAM_RESET_PORT          GPIOB
+#define PIN_X035_CAM_RESET_NUM           7
 /* PB12: U28 pin 35, net /USB_PWR_EN */
 #define PIN_X035_USB_PWR_EN              PB12
 #define PIN_X035_USB_PWR_EN_PORT         GPIOB
@@ -445,4 +445,4 @@
 #define PIN_X035_X035_RX_PORT            GPIOC
 #define PIN_X035_X035_RX_NUM             19
 
-/* GPIOs not listed (unconnected, or no named net): U28 PA14, U28 PA19, U28 PA20, U28 PA22, U28 PA23, U28 PA3, U28 PB10, U28 PB11, U28 PB13, U28 PB2, U28 PB4, U28 PB5, U28 PB7, U28 PB9, U28 PC6, U28 PC7 */
+/* GPIOs not listed (unconnected, or no named net): U28 PA14, U28 PA19, U28 PA20, U28 PA22, U28 PA23, U28 PA3, U28 PB10, U28 PB11, U28 PB13, U28 PB2, U28 PB4, U28 PB5, U28 PB8, U28 PB9, U28 PC6, U28 PC7 */
