@@ -102,14 +102,14 @@
 #define PIN_CAM_Y9                  PB9
 #define PIN_CAM_Y9_PORT             GPIOB
 #define PIN_CAM_Y9_NUM              9
-/* PB10: U13 pin 47, net /SCL */
-#define PIN_SCL                     PB10
-#define PIN_SCL_PORT                GPIOB
-#define PIN_SCL_NUM                 10
-/* PB11: U13 pin 48, net /SDA */
-#define PIN_SDA                     PB11
-#define PIN_SDA_PORT                GPIOB
-#define PIN_SDA_NUM                 11
+/* PB10: U13 pin 47, net /IMU-SCL */
+#define PIN_IMU_SCL                 PB10
+#define PIN_IMU_SCL_PORT            GPIOB
+#define PIN_IMU_SCL_NUM             10
+/* PB11: U13 pin 48, net /IMU-SDA */
+#define PIN_IMU_SDA                 PB11
+#define PIN_IMU_SDA_PORT            GPIOB
+#define PIN_IMU_SDA_NUM             11
 /* PB12: U13 pin 51, net /~{VMOT-14V4-EN} */
 #define PIN_VMOT_14V4_EN_N          PB12
 #define PIN_VMOT_14V4_EN_N_PORT     GPIOB
@@ -404,7 +404,7 @@
 #define PIN_MCU2_CHRG_N                  PB4
 #define PIN_MCU2_CHRG_N_PORT             GPIOB
 #define PIN_MCU2_CHRG_N_NUM              4
-/* PB5: U28 pin 41, net /MCU/CC-RD-EN */
+/* PB5: U28 pin 41, net /CC-RD-EN */
 #define PIN_MCU2_CC_RD_EN                PB5
 #define PIN_MCU2_CC_RD_EN_PORT           GPIOB
 #define PIN_MCU2_CC_RD_EN_NUM            5
