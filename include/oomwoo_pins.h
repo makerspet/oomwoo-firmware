@@ -376,6 +376,14 @@
 #define PIN_MCU2_PWR_BTN_SENSE           PA12
 #define PIN_MCU2_PWR_BTN_SENSE_PORT      GPIOA
 #define PIN_MCU2_PWR_BTN_SENSE_NUM       12
+/* PA13: U28 pin 34, net /MCU/MCU2-SWDIO */
+#define PIN_MCU2_MCU2_SWDIO              PA13
+#define PIN_MCU2_MCU2_SWDIO_PORT         GPIOA
+#define PIN_MCU2_MCU2_SWDIO_NUM          13
+/* PA14: U28 pin 37, net /MCU/MCU2-SWCLK */
+#define PIN_MCU2_MCU2_SWCLK              PA14
+#define PIN_MCU2_MCU2_SWCLK_PORT         GPIOA
+#define PIN_MCU2_MCU2_SWCLK_NUM          14
 /* PA15: U28 pin 38, net /HALL-BIN */
 #define PIN_MCU2_HALL_BIN                PA15
 #define PIN_MCU2_HALL_BIN_PORT           GPIOA
@@ -428,6 +436,10 @@
 #define PIN_MCU2_CAM_SDA                 PB11
 #define PIN_MCU2_CAM_SDA_PORT            GPIOB
 #define PIN_MCU2_CAM_SDA_NUM             11
+/* PB12: U28 pin 25, net /MCU/MCU2-PB12 */
+#define PIN_MCU2_MCU2_PB12               PB12
+#define PIN_MCU2_MCU2_PB12_PORT          GPIOB
+#define PIN_MCU2_MCU2_PB12_NUM           12
 /* PB13: U28 pin 26, net /MCU/STM-PWR-CTRL */
 #define PIN_MCU2_STM_PWR_CTRL            PB13
 #define PIN_MCU2_STM_PWR_CTRL_PORT       GPIOB
@@ -441,4 +453,4 @@
 #define PIN_MCU2_USB_PWR_EN_PORT         GPIOB
 #define PIN_MCU2_USB_PWR_EN_NUM          15
 
-/* GPIOs not listed (unconnected, or no named net): U28 PA13, U28 PA14, U28 PB12, U28 PC13, U28 PC14, U28 PC15 */
+/* GPIOs not listed (unconnected, or no named net): U28 PC13, U28 PC14, U28 PC15 */
