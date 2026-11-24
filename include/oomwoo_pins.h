@@ -448,5 +448,9 @@
 #define PIN_MCU2_USB_PWR_EN              PB15
 #define PIN_MCU2_USB_PWR_EN_PORT         GPIOB
 #define PIN_MCU2_USB_PWR_EN_NUM          15
+/* PC13: U28 pin 2, net /BATTERY-CHARGER/CHG-I-HI */
+#define PIN_MCU2_CHG_I_HI                PC13
+#define PIN_MCU2_CHG_I_HI_PORT           GPIOC
+#define PIN_MCU2_CHG_I_HI_NUM            13
 
-/* GPIOs not listed (unconnected, or no named net): U13 PA15, U28 PC13, U28 PC14, U28 PC15 */
+/* GPIOs not listed (unconnected, or no named net): U13 PA15, U28 PC14, U28 PC15 */
