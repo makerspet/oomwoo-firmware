@@ -18,7 +18,7 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 
 ## Power control
 
-- **Latch (PA15, `STM-PWR-CTRL`).** The power button (or charger power) turns on the MCU rail only. The latch holds itself in hardware once the MCU rail is up (R172 pull-up), so a blank or crashed MCU stays powered. At boot, drive PA15 high (push-pull is fine; it goes through a 1k resistor) so its state is defined, then enable the other rails one at a time. To turn off, drive PA15 low and keep it low until power is gone; never release it to an input while shutting down.
+- **Latch (PA15, `PWR-HOLD` (STM-PWR-CTRL until 2026-11-24)).** The power button (or charger power) turns on the MCU rail only. The latch holds itself in hardware once the MCU rail is up (R172 pull-up), so a blank or crashed MCU stays powered. At boot, drive PA15 high (push-pull is fine; it goes through a 1k resistor) so its state is defined, then enable the other rails one at a time. To turn off, drive PA15 low and keep it low until power is gone; never release it to an input while shutting down.
 - **Power button (PE7, `PWR-BTN-SENSE`, low = pressed):**
   - 3 s press: turn off every rail (motors, LiDAR, 5 V, sensor 3.3 V), then drive PA15 low.
   - 3 s press while holding Home (PD5): factory reset, and stay on.
@@ -105,7 +105,7 @@ Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from t
 | Suction fan PWM, FG tachometer | PD1, PE9 |
 | 5 V buck enable (`VSENS-5V-USB-EN`) | PB5 |
 | Sensor 3.3 V enable (`~VSENS_3V3_EN`, low = on, through 10k; ~6 ms to come up) | PB10 |
-| Power latch (`STM-PWR-CTRL`), power button sense | PA15, PE7 |
+| Power latch (`PWR-HOLD`), power button sense | PA15, PE7 |
 | Buttons: clean, home (to GND when pressed; no external pull-ups since 2026-11-02, enable the internal pull-ups) | PD0, PD5 |
 | LEDs: home, power (also used for debug, there is no buzzer) | PC13, PF2 |
 | Debug UART (STDC14 VCP + 0.1" header) | PC4 TX, PC5 RX |

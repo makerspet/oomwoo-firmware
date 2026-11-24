@@ -54,14 +54,14 @@
 #define PIN_WHEEL_MOT_R_ENCODE      PA12
 #define PIN_WHEEL_MOT_R_ENCODE_PORT GPIOA
 #define PIN_WHEEL_MOT_R_ENCODE_NUM  12
-/* PA13: U13 pin 72, net /MCU/STM32-SWDIO */
-#define PIN_STM32_SWDIO             PA13
-#define PIN_STM32_SWDIO_PORT        GPIOA
-#define PIN_STM32_SWDIO_NUM         13
-/* PA14: U13 pin 76, net /MCU/STM32-SWCLK */
-#define PIN_STM32_SWCLK             PA14
-#define PIN_STM32_SWCLK_PORT        GPIOA
-#define PIN_STM32_SWCLK_NUM         14
+/* PA13: U13 pin 72, net /MCU/MCU-SWDIO */
+#define PIN_MCU_SWDIO               PA13
+#define PIN_MCU_SWDIO_PORT          GPIOA
+#define PIN_MCU_SWDIO_NUM           13
+/* PA14: U13 pin 76, net /MCU/MCU-SWCLK */
+#define PIN_MCU_SWCLK               PA14
+#define PIN_MCU_SWCLK_PORT          GPIOA
+#define PIN_MCU_SWCLK_NUM           14
 /* PB0: U13 pin 35, net /MAIN-BRUSH MOTOR/MAIN-BRUSH-ADC */
 #define PIN_MAIN_BRUSH_ADC          PB0
 #define PIN_MAIN_BRUSH_ADC_PORT     GPIOB
@@ -302,14 +302,14 @@
 #define PIN_BUMP_R_LED_EN           PE11
 #define PIN_BUMP_R_LED_EN_PORT      GPIOE
 #define PIN_BUMP_R_LED_EN_NUM       11
-/* PE12: U13 pin 43, net /MCU/STM32-TX */
-#define PIN_STM32_TX                PE12
-#define PIN_STM32_TX_PORT           GPIOE
-#define PIN_STM32_TX_NUM            12
-/* PE13: U13 pin 44, net /MCU/STM32-RX */
-#define PIN_STM32_RX                PE13
-#define PIN_STM32_RX_PORT           GPIOE
-#define PIN_STM32_RX_NUM            13
+/* PE12: U13 pin 43, net /MCU/MCU-TX */
+#define PIN_MCU_TX                  PE12
+#define PIN_MCU_TX_PORT             GPIOE
+#define PIN_MCU_TX_NUM              12
+/* PE13: U13 pin 44, net /MCU/MCU-RX */
+#define PIN_MCU_RX                  PE13
+#define PIN_MCU_RX_PORT             GPIOE
+#define PIN_MCU_RX_NUM              13
 /* PE14: U13 pin 45, net /MCU/MCU2-RX */
 #define PIN_MCU2_RX                 PE14
 #define PIN_MCU2_RX_PORT            GPIOE
@@ -436,10 +436,10 @@
 #define PIN_MCU2_MCU2_PB12               PB12
 #define PIN_MCU2_MCU2_PB12_PORT          GPIOB
 #define PIN_MCU2_MCU2_PB12_NUM           12
-/* PB13: U28 pin 26, net /MCU/STM-PWR-CTRL */
-#define PIN_MCU2_STM_PWR_CTRL            PB13
-#define PIN_MCU2_STM_PWR_CTRL_PORT       GPIOB
-#define PIN_MCU2_STM_PWR_CTRL_NUM        13
+/* PB13: U28 pin 26, net /MCU/PWR-HOLD */
+#define PIN_MCU2_PWR_HOLD                PB13
+#define PIN_MCU2_PWR_HOLD_PORT           GPIOB
+#define PIN_MCU2_PWR_HOLD_NUM            13
 /* PB14: U28 pin 27, net /SIDE-PROXI-CE-R */
 #define PIN_MCU2_SIDE_PROXI_CE_R         PB14
 #define PIN_MCU2_SIDE_PROXI_CE_R_PORT    GPIOB
