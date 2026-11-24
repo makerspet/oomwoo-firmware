@@ -62,6 +62,10 @@
 #define PIN_MCU_SWCLK               PA14
 #define PIN_MCU_SWCLK_PORT          GPIOA
 #define PIN_MCU_SWCLK_NUM           14
+/* PA15: U13 pin 77, net /MCU/SPARE-PA15 */
+#define PIN_SPARE_PA15              PA15
+#define PIN_SPARE_PA15_PORT         GPIOA
+#define PIN_SPARE_PA15_NUM          15
 /* PB0: U13 pin 35, net /MAIN-BRUSH MOTOR/MAIN-BRUSH-ADC */
 #define PIN_MAIN_BRUSH_ADC          PB0
 #define PIN_MAIN_BRUSH_ADC_PORT     GPIOB
@@ -452,5 +456,11 @@
 #define PIN_MCU2_CHG_I_HI                PC13
 #define PIN_MCU2_CHG_I_HI_PORT           GPIOC
 #define PIN_MCU2_CHG_I_HI_NUM            13
-
-/* GPIOs not listed (unconnected, or no named net): U13 PA15, U28 PC14, U28 PC15 */
+/* PC14: U28 pin 3, net /MCU/MCU2-PC14 */
+#define PIN_MCU2_MCU2_PC14               PC14
+#define PIN_MCU2_MCU2_PC14_PORT          GPIOC
+#define PIN_MCU2_MCU2_PC14_NUM           14
+/* PC15: U28 pin 4, net /MCU/MCU2-PC15 */
+#define PIN_MCU2_MCU2_PC15               PC15
+#define PIN_MCU2_MCU2_PC15_PORT          GPIOC
+#define PIN_MCU2_MCU2_PC15_NUM           15
