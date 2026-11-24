@@ -323,130 +323,126 @@
 #define PIN_MCU2_TX_PORT            GPIOE
 #define PIN_MCU2_TX_NUM             15
 
-/* ---- U28 (X035) ---- */
-/* PA0: U28 pin 10, net /USB_VBUS_SENSE */
-#define PIN_X035_USB_VBUS_SENSE          PA0
-#define PIN_X035_USB_VBUS_SENSE_PORT     GPIOA
-#define PIN_X035_USB_VBUS_SENSE_NUM      0
-/* PA1: U28 pin 11, net /HALL-FLOOR-L */
-#define PIN_X035_HALL_FLOOR_L            PA1
-#define PIN_X035_HALL_FLOOR_L_PORT       GPIOA
-#define PIN_X035_HALL_FLOOR_L_NUM        1
-/* PA2: U28 pin 12, net /HALL-FLOOR-R */
-#define PIN_X035_HALL_FLOOR_R            PA2
-#define PIN_X035_HALL_FLOOR_R_PORT       GPIOA
-#define PIN_X035_HALL_FLOOR_R_NUM        2
+/* ---- U28 (MCU2) ---- */
+/* PA0: U28 pin 10, net /HALL-FLOOR-L */
+#define PIN_MCU2_HALL_FLOOR_L            PA0
+#define PIN_MCU2_HALL_FLOOR_L_PORT       GPIOA
+#define PIN_MCU2_HALL_FLOOR_L_NUM        0
+/* PA1: U28 pin 11, net /HALL-FLOOR-R */
+#define PIN_MCU2_HALL_FLOOR_R            PA1
+#define PIN_MCU2_HALL_FLOOR_R_PORT       GPIOA
+#define PIN_MCU2_HALL_FLOOR_R_NUM        1
+/* PA2: U28 pin 12, net /MCU/MCU2-TX */
+#define PIN_MCU2_MCU2_TX                 PA2
+#define PIN_MCU2_MCU2_TX_PORT            GPIOA
+#define PIN_MCU2_MCU2_TX_NUM             2
+/* PA3: U28 pin 13, net /MCU/MCU2-RX */
+#define PIN_MCU2_MCU2_RX                 PA3
+#define PIN_MCU2_MCU2_RX_PORT            GPIOA
+#define PIN_MCU2_MCU2_RX_NUM             3
 /* PA4: U28 pin 14, net /BAT_SENSE */
-#define PIN_X035_BAT_SENSE               PA4
-#define PIN_X035_BAT_SENSE_PORT          GPIOA
-#define PIN_X035_BAT_SENSE_NUM           4
+#define PIN_MCU2_BAT_SENSE               PA4
+#define PIN_MCU2_BAT_SENSE_PORT          GPIOA
+#define PIN_MCU2_BAT_SENSE_NUM           4
 /* PA5: U28 pin 15, net /DC_IN_SENSE */
-#define PIN_X035_DC_IN_SENSE             PA5
-#define PIN_X035_DC_IN_SENSE_PORT        GPIOA
-#define PIN_X035_DC_IN_SENSE_NUM         5
+#define PIN_MCU2_DC_IN_SENSE             PA5
+#define PIN_MCU2_DC_IN_SENSE_PORT        GPIOA
+#define PIN_MCU2_DC_IN_SENSE_NUM         5
 /* PA6: U28 pin 16, net /BATTERY-CHARGER/BAT_NTC */
-#define PIN_X035_BAT_NTC                 PA6
-#define PIN_X035_BAT_NTC_PORT            GPIOA
-#define PIN_X035_BAT_NTC_NUM             6
+#define PIN_MCU2_BAT_NTC                 PA6
+#define PIN_MCU2_BAT_NTC_PORT            GPIOA
+#define PIN_MCU2_BAT_NTC_NUM             6
 /* PA7: U28 pin 17, net /MCU/NTC */
-#define PIN_X035_NTC                     PA7
-#define PIN_X035_NTC_PORT                GPIOA
-#define PIN_X035_NTC_NUM                 7
-/* PA8: U28 pin 40, net /BUTTON-LED/LED-HOME */
-#define PIN_X035_LED_HOME                PA8
-#define PIN_X035_LED_HOME_PORT           GPIOA
-#define PIN_X035_LED_HOME_NUM            8
-/* PA9: U28 pin 41, net /BUTTON-LED/LED-PWR */
-#define PIN_X035_LED_PWR                 PA9
-#define PIN_X035_LED_PWR_PORT            GPIOA
-#define PIN_X035_LED_PWR_NUM             9
-/* PA10: U28 pin 42, net /BUTTON-LED/~{CLEAN-BTN} */
-#define PIN_X035_CLEAN_BTN_N             PA10
-#define PIN_X035_CLEAN_BTN_N_PORT        GPIOA
-#define PIN_X035_CLEAN_BTN_N_NUM         10
-/* PA11: U28 pin 43, net /BUTTON-LED/~{HOME-BTN} */
-#define PIN_X035_HOME_BTN_N              PA11
-#define PIN_X035_HOME_BTN_N_PORT         GPIOA
-#define PIN_X035_HOME_BTN_N_NUM          11
-/* PA12: U28 pin 44, net /MCU/PWR-BTN-SENSE */
-#define PIN_X035_PWR_BTN_SENSE           PA12
-#define PIN_X035_PWR_BTN_SENSE_PORT      GPIOA
-#define PIN_X035_PWR_BTN_SENSE_NUM       12
-/* PA13: U28 pin 45, net /CAM-SCL */
-#define PIN_X035_CAM_SCL                 PA13
-#define PIN_X035_CAM_SCL_PORT            GPIOA
-#define PIN_X035_CAM_SCL_NUM             13
-/* PA14: U28 pin 46, net /CAM-SDA */
-#define PIN_X035_CAM_SDA                 PA14
-#define PIN_X035_CAM_SDA_PORT            GPIOA
-#define PIN_X035_CAM_SDA_NUM             14
-/* PA15: U28 pin 1, net /HALL-BIN */
-#define PIN_X035_HALL_BIN                PA15
-#define PIN_X035_HALL_BIN_PORT           GPIOA
-#define PIN_X035_HALL_BIN_NUM            15
-/* PA16: U28 pin 2, net /MCU/STM-PWR-CTRL */
-#define PIN_X035_STM_PWR_CTRL            PA16
-#define PIN_X035_STM_PWR_CTRL_PORT       GPIOA
-#define PIN_X035_STM_PWR_CTRL_NUM        16
-/* PA18: U28 pin 4, net /SIDE-PROXI-CE-R */
-#define PIN_X035_SIDE_PROXI_CE_R         PA18
-#define PIN_X035_SIDE_PROXI_CE_R_PORT    GPIOA
-#define PIN_X035_SIDE_PROXI_CE_R_NUM     18
-/* PA21: U28 pin 7, net /MCU/MCU2-NRST */
-#define PIN_X035_MCU2_NRST               PA21
-#define PIN_X035_MCU2_NRST_PORT          GPIOA
-#define PIN_X035_MCU2_NRST_NUM           21
-/* PB0: U28 pin 20, net /BATTERY-CHARGER/ID */
-#define PIN_X035_BATTERY_CHARGER_ID      PB0
-#define PIN_X035_BATTERY_CHARGER_ID_PORT GPIOB
-#define PIN_X035_BATTERY_CHARGER_ID_NUM  0
-/* PB1: U28 pin 21, net /LDR */
-#define PIN_X035_LDR                     PB1
-#define PIN_X035_LDR_PORT                GPIOB
-#define PIN_X035_LDR_NUM                 1
-/* PB3: U28 pin 23, net /BATTERY-CHARGER/~{STDBY} */
-#define PIN_X035_STDBY_N                 PB3
-#define PIN_X035_STDBY_N_PORT            GPIOB
-#define PIN_X035_STDBY_N_NUM             3
-/* PB6: U28 pin 26, net /MCU/CC-RD-EN */
-#define PIN_X035_CC_RD_EN                PB6
-#define PIN_X035_CC_RD_EN_PORT           GPIOB
-#define PIN_X035_CC_RD_EN_NUM            6
-/* PB7: U28 pin 27, net /MCU/CAM-RESET */
-#define PIN_X035_CAM_RESET               PB7
-#define PIN_X035_CAM_RESET_PORT          GPIOB
-#define PIN_X035_CAM_RESET_NUM           7
-/* PB9: U28 pin 29, net /TORCH */
-#define PIN_X035_TORCH                   PB9
-#define PIN_X035_TORCH_PORT              GPIOB
-#define PIN_X035_TORCH_NUM               9
-/* PB12: U28 pin 35, net /USB_PWR_EN */
-#define PIN_X035_USB_PWR_EN              PB12
-#define PIN_X035_USB_PWR_EN_PORT         GPIOB
-#define PIN_X035_USB_PWR_EN_NUM          12
-/* PC14: U28 pin 38, net /USB_CC1 */
-#define PIN_X035_USB_CC1                 PC14
-#define PIN_X035_USB_CC1_PORT            GPIOC
-#define PIN_X035_USB_CC1_NUM             14
-/* PC15: U28 pin 39, net /USB_CC2 */
-#define PIN_X035_USB_CC2                 PC15
-#define PIN_X035_USB_CC2_PORT            GPIOC
-#define PIN_X035_USB_CC2_NUM             15
-/* PC16: U28 pin 32, net /BATTERY-CHARGER/~{CHRG} */
-#define PIN_X035_CHRG_N                  PC16
-#define PIN_X035_CHRG_N_PORT             GPIOC
-#define PIN_X035_CHRG_N_NUM              16
-/* PC17: U28 pin 33, net /MCU/MCU2-BOOT */
-#define PIN_X035_MCU2_BOOT               PC17
-#define PIN_X035_MCU2_BOOT_PORT          GPIOC
-#define PIN_X035_MCU2_BOOT_NUM           17
-/* PC18: U28 pin 34, net /MCU/MCU2-TX */
-#define PIN_X035_MCU2_TX                 PC18
-#define PIN_X035_MCU2_TX_PORT            GPIOC
-#define PIN_X035_MCU2_TX_NUM             18
-/* PC19: U28 pin 37, net /MCU/MCU2-RX */
-#define PIN_X035_MCU2_RX                 PC19
-#define PIN_X035_MCU2_RX_PORT            GPIOC
-#define PIN_X035_MCU2_RX_NUM             19
+#define PIN_MCU2_NTC                     PA7
+#define PIN_MCU2_NTC_PORT                GPIOA
+#define PIN_MCU2_NTC_NUM                 7
+/* PA8: U28 pin 29, net /BUTTON-LED/LED-HOME */
+#define PIN_MCU2_LED_HOME                PA8
+#define PIN_MCU2_LED_HOME_PORT           GPIOA
+#define PIN_MCU2_LED_HOME_NUM            8
+/* PA9: U28 pin 30, net /BUTTON-LED/LED-PWR */
+#define PIN_MCU2_LED_PWR                 PA9
+#define PIN_MCU2_LED_PWR_PORT            GPIOA
+#define PIN_MCU2_LED_PWR_NUM             9
+/* PA10: U28 pin 31, net /BUTTON-LED/~{CLEAN-BTN} */
+#define PIN_MCU2_CLEAN_BTN_N             PA10
+#define PIN_MCU2_CLEAN_BTN_N_PORT        GPIOA
+#define PIN_MCU2_CLEAN_BTN_N_NUM         10
+/* PA11: U28 pin 32, net /BUTTON-LED/~{HOME-BTN} */
+#define PIN_MCU2_HOME_BTN_N              PA11
+#define PIN_MCU2_HOME_BTN_N_PORT         GPIOA
+#define PIN_MCU2_HOME_BTN_N_NUM          11
+/* PA12: U28 pin 33, net /MCU/PWR-BTN-SENSE */
+#define PIN_MCU2_PWR_BTN_SENSE           PA12
+#define PIN_MCU2_PWR_BTN_SENSE_PORT      GPIOA
+#define PIN_MCU2_PWR_BTN_SENSE_NUM       12
+/* PA15: U28 pin 38, net /HALL-BIN */
+#define PIN_MCU2_HALL_BIN                PA15
+#define PIN_MCU2_HALL_BIN_PORT           GPIOA
+#define PIN_MCU2_HALL_BIN_NUM            15
+/* PB0: U28 pin 18, net /BATTERY-CHARGER/ID */
+#define PIN_MCU2_BATTERY_CHARGER_ID      PB0
+#define PIN_MCU2_BATTERY_CHARGER_ID_PORT GPIOB
+#define PIN_MCU2_BATTERY_CHARGER_ID_NUM  0
+/* PB1: U28 pin 19, net /LDR */
+#define PIN_MCU2_LDR                     PB1
+#define PIN_MCU2_LDR_PORT                GPIOB
+#define PIN_MCU2_LDR_NUM                 1
+/* PB2: U28 pin 20, net /MCU/BOOT1 */
+#define PIN_MCU2_BOOT1                   PB2
+#define PIN_MCU2_BOOT1_PORT              GPIOB
+#define PIN_MCU2_BOOT1_NUM               2
+/* PB3: U28 pin 39, net /BATTERY-CHARGER/~{STDBY} */
+#define PIN_MCU2_STDBY_N                 PB3
+#define PIN_MCU2_STDBY_N_PORT            GPIOB
+#define PIN_MCU2_STDBY_N_NUM             3
+/* PB4: U28 pin 40, net /BATTERY-CHARGER/~{CHRG} */
+#define PIN_MCU2_CHRG_N                  PB4
+#define PIN_MCU2_CHRG_N_PORT             GPIOB
+#define PIN_MCU2_CHRG_N_NUM              4
+/* PB5: U28 pin 41, net /MCU/CC-RD-EN */
+#define PIN_MCU2_CC_RD_EN                PB5
+#define PIN_MCU2_CC_RD_EN_PORT           GPIOB
+#define PIN_MCU2_CC_RD_EN_NUM            5
+/* PB6: U28 pin 42, net /USB_CC1 */
+#define PIN_MCU2_USB_CC1                 PB6
+#define PIN_MCU2_USB_CC1_PORT            GPIOB
+#define PIN_MCU2_USB_CC1_NUM             6
+/* PB7: U28 pin 43, net /USB_CC2 */
+#define PIN_MCU2_USB_CC2                 PB7
+#define PIN_MCU2_USB_CC2_PORT            GPIOB
+#define PIN_MCU2_USB_CC2_NUM             7
+/* PB8: U28 pin 45, net /TORCH */
+#define PIN_MCU2_TORCH                   PB8
+#define PIN_MCU2_TORCH_PORT              GPIOB
+#define PIN_MCU2_TORCH_NUM               8
+/* PB9: U28 pin 46, net /MCU/CAM-RESET */
+#define PIN_MCU2_CAM_RESET               PB9
+#define PIN_MCU2_CAM_RESET_PORT          GPIOB
+#define PIN_MCU2_CAM_RESET_NUM           9
+/* PB10: U28 pin 21, net /CAM-SCL */
+#define PIN_MCU2_CAM_SCL                 PB10
+#define PIN_MCU2_CAM_SCL_PORT            GPIOB
+#define PIN_MCU2_CAM_SCL_NUM             10
+/* PB11: U28 pin 22, net /CAM-SDA */
+#define PIN_MCU2_CAM_SDA                 PB11
+#define PIN_MCU2_CAM_SDA_PORT            GPIOB
+#define PIN_MCU2_CAM_SDA_NUM             11
+/* PB12: U28 pin 25, net /USB_VBUS_SENSE */
+#define PIN_MCU2_USB_VBUS_SENSE          PB12
+#define PIN_MCU2_USB_VBUS_SENSE_PORT     GPIOB
+#define PIN_MCU2_USB_VBUS_SENSE_NUM      12
+/* PB13: U28 pin 26, net /MCU/STM-PWR-CTRL */
+#define PIN_MCU2_STM_PWR_CTRL            PB13
+#define PIN_MCU2_STM_PWR_CTRL_PORT       GPIOB
+#define PIN_MCU2_STM_PWR_CTRL_NUM        13
+/* PB14: U28 pin 27, net /SIDE-PROXI-CE-R */
+#define PIN_MCU2_SIDE_PROXI_CE_R         PB14
+#define PIN_MCU2_SIDE_PROXI_CE_R_PORT    GPIOB
+#define PIN_MCU2_SIDE_PROXI_CE_R_NUM     14
+/* PB15: U28 pin 28, net /USB_PWR_EN */
+#define PIN_MCU2_USB_PWR_EN              PB15
+#define PIN_MCU2_USB_PWR_EN_PORT         GPIOB
+#define PIN_MCU2_USB_PWR_EN_NUM          15
 
-/* GPIOs not listed (unconnected, or no named net): U28 PA17, U28 PA19, U28 PA20, U28 PA22, U28 PA23, U28 PA3, U28 PB10, U28 PB11, U28 PB13, U28 PB2, U28 PB4, U28 PB5, U28 PB8, U28 PC6, U28 PC7 */
+/* GPIOs not listed (unconnected, or no named net): U28 PA13, U28 PA14, U28 PC13, U28 PC14, U28 PC15 */
