@@ -62,10 +62,6 @@
 #define PIN_STM32_SWCLK             PA14
 #define PIN_STM32_SWCLK_PORT        GPIOA
 #define PIN_STM32_SWCLK_NUM         14
-/* PA15: U13 pin 77, net /MCU/STM32-SWO-SPARE */
-#define PIN_STM32_SWO_SPARE         PA15
-#define PIN_STM32_SWO_SPARE_PORT    GPIOA
-#define PIN_STM32_SWO_SPARE_NUM     15
 /* PB0: U13 pin 35, net /MAIN-BRUSH MOTOR/MAIN-BRUSH-ADC */
 #define PIN_MAIN_BRUSH_ADC          PB0
 #define PIN_MAIN_BRUSH_ADC_PORT     GPIOB
@@ -453,4 +449,4 @@
 #define PIN_MCU2_USB_PWR_EN_PORT         GPIOB
 #define PIN_MCU2_USB_PWR_EN_NUM          15
 
-/* GPIOs not listed (unconnected, or no named net): U28 PC13, U28 PC14, U28 PC15 */
+/* GPIOs not listed (unconnected, or no named net): U13 PA15, U28 PC13, U28 PC14, U28 PC15 */
