@@ -352,10 +352,10 @@
 #define PIN_MCU2_BAT_NTC                 PA6
 #define PIN_MCU2_BAT_NTC_PORT            GPIOA
 #define PIN_MCU2_BAT_NTC_NUM             6
-/* PA7: U28 pin 17, net /MCU/NTC */
-#define PIN_MCU2_NTC                     PA7
-#define PIN_MCU2_NTC_PORT                GPIOA
-#define PIN_MCU2_NTC_NUM                 7
+/* PA7: U28 pin 17, net /USB_VBUS_SENSE */
+#define PIN_MCU2_USB_VBUS_SENSE          PA7
+#define PIN_MCU2_USB_VBUS_SENSE_PORT     GPIOA
+#define PIN_MCU2_USB_VBUS_SENSE_NUM      7
 /* PA8: U28 pin 29, net /BUTTON-LED/LED-HOME */
 #define PIN_MCU2_LED_HOME                PA8
 #define PIN_MCU2_LED_HOME_PORT           GPIOA
@@ -428,10 +428,6 @@
 #define PIN_MCU2_CAM_SDA                 PB11
 #define PIN_MCU2_CAM_SDA_PORT            GPIOB
 #define PIN_MCU2_CAM_SDA_NUM             11
-/* PB12: U28 pin 25, net /USB_VBUS_SENSE */
-#define PIN_MCU2_USB_VBUS_SENSE          PB12
-#define PIN_MCU2_USB_VBUS_SENSE_PORT     GPIOB
-#define PIN_MCU2_USB_VBUS_SENSE_NUM      12
 /* PB13: U28 pin 26, net /MCU/STM-PWR-CTRL */
 #define PIN_MCU2_STM_PWR_CTRL            PB13
 #define PIN_MCU2_STM_PWR_CTRL_PORT       GPIOB
@@ -445,4 +441,4 @@
 #define PIN_MCU2_USB_PWR_EN_PORT         GPIOB
 #define PIN_MCU2_USB_PWR_EN_NUM          15
 
-/* GPIOs not listed (unconnected, or no named net): U28 PA13, U28 PA14, U28 PC13, U28 PC14, U28 PC15 */
+/* GPIOs not listed (unconnected, or no named net): U28 PA13, U28 PA14, U28 PB12, U28 PC13, U28 PC14, U28 PC15 */
