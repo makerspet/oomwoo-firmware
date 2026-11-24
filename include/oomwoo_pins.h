@@ -18,10 +18,10 @@
 #define PIN_BUMP_R                  PA3
 #define PIN_BUMP_R_PORT             GPIOA
 #define PIN_BUMP_R_NUM              3
-/* PA4: U13 pin 29, net /MCU/CAM-HREF */
-#define PIN_CAM_HREF                PA4
-#define PIN_CAM_HREF_PORT           GPIOA
-#define PIN_CAM_HREF_NUM            4
+/* PA4: U13 pin 29, net /MCU/CAM-HSYNC */
+#define PIN_CAM_HSYNC               PA4
+#define PIN_CAM_HSYNC_PORT          GPIOA
+#define PIN_CAM_HSYNC_NUM           4
 /* PA5: U13 pin 30, net /MCU/CAM-VSYNC */
 #define PIN_CAM_VSYNC               PA5
 #define PIN_CAM_VSYNC_PORT          GPIOA
@@ -34,10 +34,10 @@
 #define PIN_WHEEL_MOT_R_ADC         PA7
 #define PIN_WHEEL_MOT_R_ADC_PORT    GPIOA
 #define PIN_WHEEL_MOT_R_ADC_NUM     7
-/* PA8: U13 pin 67, net /MCU/CAM-MCO */
-#define PIN_CAM_MCO                 PA8
-#define PIN_CAM_MCO_PORT            GPIOA
-#define PIN_CAM_MCO_NUM             8
+/* PA8: U13 pin 67, net /MCU/CAM-OSC */
+#define PIN_CAM_OSC                 PA8
+#define PIN_CAM_OSC_PORT            GPIOA
+#define PIN_CAM_OSC_NUM             8
 /* PA9: U13 pin 68, net /MCU/CAM-Y2 */
 #define PIN_CAM_Y2                  PA9
 #define PIN_CAM_Y2_PORT             GPIOA
@@ -182,15 +182,15 @@
 #define PIN_LIDAR_RXD               PC12
 #define PIN_LIDAR_RXD_PORT          GPIOC
 #define PIN_LIDAR_RXD_NUM           12
-/* PC13: U13 pin 7, net /MCU/X035-NRST */
-#define PIN_X035_NRST               PC13
-#define PIN_X035_NRST_PORT          GPIOC
-#define PIN_X035_NRST_NUM           13
-/* PC14: U13 pin 8, net /MCU/CAM-SCL */
+/* PC13: U13 pin 7, net /MCU/MCU2-NRST */
+#define PIN_MCU2_NRST               PC13
+#define PIN_MCU2_NRST_PORT          GPIOC
+#define PIN_MCU2_NRST_NUM           13
+/* PC14: U13 pin 8, net /CAM-SCL */
 #define PIN_CAM_SCL                 PC14
 #define PIN_CAM_SCL_PORT            GPIOC
 #define PIN_CAM_SCL_NUM             14
-/* PC15: U13 pin 9, net /MCU/CAM-SDA */
+/* PC15: U13 pin 9, net /CAM-SDA */
 #define PIN_CAM_SDA                 PC15
 #define PIN_CAM_SDA_PORT            GPIOC
 #define PIN_CAM_SDA_NUM             15
@@ -210,10 +210,10 @@
 #define PIN_WHEEL_MOT_L_IN2         PD3
 #define PIN_WHEEL_MOT_L_IN2_PORT    GPIOD
 #define PIN_WHEEL_MOT_L_IN2_NUM     3
-/* PD4: U13 pin 85, net /MCU/X035-BOOT */
-#define PIN_X035_BOOT               PD4
-#define PIN_X035_BOOT_PORT          GPIOD
-#define PIN_X035_BOOT_NUM           4
+/* PD4: U13 pin 85, net /MCU/MCU2-BOOT */
+#define PIN_MCU2_BOOT               PD4
+#define PIN_MCU2_BOOT_PORT          GPIOD
+#define PIN_MCU2_BOOT_NUM           4
 /* PD5: U13 pin 86, net /MCU/WHEEL-MOT-R-IN1 */
 #define PIN_WHEEL_MOT_R_IN1         PD5
 #define PIN_WHEEL_MOT_R_IN1_PORT    GPIOD
@@ -314,14 +314,14 @@
 #define PIN_STM32_RX                PE13
 #define PIN_STM32_RX_PORT           GPIOE
 #define PIN_STM32_RX_NUM            13
-/* PE14: U13 pin 45, net /MCU/X035-RX */
-#define PIN_X035_RX                 PE14
-#define PIN_X035_RX_PORT            GPIOE
-#define PIN_X035_RX_NUM             14
-/* PE15: U13 pin 46, net /MCU/X035-TX */
-#define PIN_X035_TX                 PE15
-#define PIN_X035_TX_PORT            GPIOE
-#define PIN_X035_TX_NUM             15
+/* PE14: U13 pin 45, net /MCU/MCU2-RX */
+#define PIN_MCU2_RX                 PE14
+#define PIN_MCU2_RX_PORT            GPIOE
+#define PIN_MCU2_RX_NUM             14
+/* PE15: U13 pin 46, net /MCU/MCU2-TX */
+#define PIN_MCU2_TX                 PE15
+#define PIN_MCU2_TX_PORT            GPIOE
+#define PIN_MCU2_TX_NUM             15
 
 /* ---- U28 (X035) ---- */
 /* PA0: U28 pin 10, net /USB_VBUS_SENSE */
@@ -372,30 +372,30 @@
 #define PIN_X035_PWR_BTN_SENSE           PA12
 #define PIN_X035_PWR_BTN_SENSE_PORT      GPIOA
 #define PIN_X035_PWR_BTN_SENSE_NUM       12
-/* PA13: U28 pin 45, net /MCU/STM-PWR-CTRL */
-#define PIN_X035_STM_PWR_CTRL            PA13
-#define PIN_X035_STM_PWR_CTRL_PORT       GPIOA
-#define PIN_X035_STM_PWR_CTRL_NUM        13
+/* PA13: U28 pin 45, net /CAM-SCL */
+#define PIN_X035_CAM_SCL                 PA13
+#define PIN_X035_CAM_SCL_PORT            GPIOA
+#define PIN_X035_CAM_SCL_NUM             13
+/* PA14: U28 pin 46, net /CAM-SDA */
+#define PIN_X035_CAM_SDA                 PA14
+#define PIN_X035_CAM_SDA_PORT            GPIOA
+#define PIN_X035_CAM_SDA_NUM             14
 /* PA15: U28 pin 1, net /HALL-BIN */
 #define PIN_X035_HALL_BIN                PA15
 #define PIN_X035_HALL_BIN_PORT           GPIOA
 #define PIN_X035_HALL_BIN_NUM            15
-/* PA16: U28 pin 2, net /VL-I2C-RESET */
-#define PIN_X035_VL_I2C_RESET            PA16
-#define PIN_X035_VL_I2C_RESET_PORT       GPIOA
-#define PIN_X035_VL_I2C_RESET_NUM        16
-/* PA17: U28 pin 3, net /~{VL-L-LPn} */
-#define PIN_X035_VL_L_LPN_N              PA17
-#define PIN_X035_VL_L_LPN_N_PORT         GPIOA
-#define PIN_X035_VL_L_LPN_N_NUM          17
+/* PA16: U28 pin 2, net /MCU/STM-PWR-CTRL */
+#define PIN_X035_STM_PWR_CTRL            PA16
+#define PIN_X035_STM_PWR_CTRL_PORT       GPIOA
+#define PIN_X035_STM_PWR_CTRL_NUM        16
 /* PA18: U28 pin 4, net /SIDE-PROXI-CE-R */
 #define PIN_X035_SIDE_PROXI_CE_R         PA18
 #define PIN_X035_SIDE_PROXI_CE_R_PORT    GPIOA
 #define PIN_X035_SIDE_PROXI_CE_R_NUM     18
-/* PA21: U28 pin 7, net /MCU/X035-NRST */
-#define PIN_X035_X035_NRST               PA21
-#define PIN_X035_X035_NRST_PORT          GPIOA
-#define PIN_X035_X035_NRST_NUM           21
+/* PA21: U28 pin 7, net /MCU/MCU2-NRST */
+#define PIN_X035_MCU2_NRST               PA21
+#define PIN_X035_MCU2_NRST_PORT          GPIOA
+#define PIN_X035_MCU2_NRST_NUM           21
 /* PB0: U28 pin 20, net /BATTERY-CHARGER/ID */
 #define PIN_X035_BATTERY_CHARGER_ID      PB0
 #define PIN_X035_BATTERY_CHARGER_ID_PORT GPIOB
@@ -416,6 +416,10 @@
 #define PIN_X035_CAM_RESET               PB7
 #define PIN_X035_CAM_RESET_PORT          GPIOB
 #define PIN_X035_CAM_RESET_NUM           7
+/* PB9: U28 pin 29, net /TORCH */
+#define PIN_X035_TORCH                   PB9
+#define PIN_X035_TORCH_PORT              GPIOB
+#define PIN_X035_TORCH_NUM               9
 /* PB12: U28 pin 35, net /USB_PWR_EN */
 #define PIN_X035_USB_PWR_EN              PB12
 #define PIN_X035_USB_PWR_EN_PORT         GPIOB
@@ -432,17 +436,17 @@
 #define PIN_X035_CHRG_N                  PC16
 #define PIN_X035_CHRG_N_PORT             GPIOC
 #define PIN_X035_CHRG_N_NUM              16
-/* PC17: U28 pin 33, net /MCU/X035-BOOT */
-#define PIN_X035_X035_BOOT               PC17
-#define PIN_X035_X035_BOOT_PORT          GPIOC
-#define PIN_X035_X035_BOOT_NUM           17
-/* PC18: U28 pin 34, net /MCU/X035-TX */
-#define PIN_X035_X035_TX                 PC18
-#define PIN_X035_X035_TX_PORT            GPIOC
-#define PIN_X035_X035_TX_NUM             18
-/* PC19: U28 pin 37, net /MCU/X035-RX */
-#define PIN_X035_X035_RX                 PC19
-#define PIN_X035_X035_RX_PORT            GPIOC
-#define PIN_X035_X035_RX_NUM             19
+/* PC17: U28 pin 33, net /MCU/MCU2-BOOT */
+#define PIN_X035_MCU2_BOOT               PC17
+#define PIN_X035_MCU2_BOOT_PORT          GPIOC
+#define PIN_X035_MCU2_BOOT_NUM           17
+/* PC18: U28 pin 34, net /MCU/MCU2-TX */
+#define PIN_X035_MCU2_TX                 PC18
+#define PIN_X035_MCU2_TX_PORT            GPIOC
+#define PIN_X035_MCU2_TX_NUM             18
+/* PC19: U28 pin 37, net /MCU/MCU2-RX */
+#define PIN_X035_MCU2_RX                 PC19
+#define PIN_X035_MCU2_RX_PORT            GPIOC
+#define PIN_X035_MCU2_RX_NUM             19
 
-/* GPIOs not listed (unconnected, or no named net): U28 PA14, U28 PA19, U28 PA20, U28 PA22, U28 PA23, U28 PA3, U28 PB10, U28 PB11, U28 PB13, U28 PB2, U28 PB4, U28 PB5, U28 PB8, U28 PB9, U28 PC6, U28 PC7 */
+/* GPIOs not listed (unconnected, or no named net): U28 PA17, U28 PA19, U28 PA20, U28 PA22, U28 PA23, U28 PA3, U28 PB10, U28 PB11, U28 PB13, U28 PB2, U28 PB4, U28 PB5, U28 PB8, U28 PC6, U28 PC7 */
