@@ -15,8 +15,9 @@ SIZE    := $(CROSS)size
 WLINK   ?= wlink
 
 WCH_SDK ?= third_party/wch
-# BOARD=robot (default): the main-phone PCB. BOARD=evt: WCH's CH32V307V-R1
-# evaluation board (console on USART1 via its on-board WCH-Link, carpet off).
+# BOARD=robot (default): the main-phone PCB. BOARD=evt: WCH's evaluation boards
+# (U13 on the CH32V307V-R1: console on USART1 via its on-board WCH-Link, carpet
+# off; U28 on the CH32L103C8T6 board: power-button input pulled up internally).
 BOARD   ?= robot
 BUILD   ?= build/$(BOARD)
 FW_VERSION ?= 1
@@ -54,7 +55,7 @@ U13_ASM   := $(U13_SDK)/Startup/startup_ch32v30x_D8C.S
 # ---------------------------------------------------------------- U28
 U28_SDK   := $(WCH_SDK)/ch32l103/EVT/EXAM/SRC
 U28_ARCH  := -march=rv32imac_zicsr_zifencei -mabi=ilp32
-U28_DEFS  := -DCH32L103
+U28_DEFS  := -DCH32L103 $(if $(filter evt,$(BOARD)),-DBOARD_EVT)
 U28_INC   := -Iu28 -isystem $(U28_SDK)/Peripheral/inc -isystem $(U28_SDK)/Core
 U28_PERIPH := gpio rcc misc usart tim adc dma iwdg dbgmcu flash
 U28_SRCS  := $(wildcard u28/*.c) $(COMMON_SRCS)

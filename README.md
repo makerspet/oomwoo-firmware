@@ -111,10 +111,11 @@ MCU serial tool in [oomwoo-install](https://github.com/makerspet/oomwoo-install)
 
 - **CH32 firmware (`mcu/`):** xPack `riscv-none-elf-gcc` and GNU make (Linux, WSL2, CI);
   the WCH SDK is fetched at pinned commits, not committed. Flash with `wlink` over a
-  WCH-LinkE, or `wchisp` through the chips' bootloaders. See the [firmware plan](docs/firmware-plan.md).
+  WCH-LinkE, or `wchisp` through the chips' bootloaders; on Windows, `mcu/scripts/setup-windows.ps1`
+  installs both. See the [firmware plan](docs/firmware-plan.md).
 
   ```bash
-  mcu/scripts/install-toolchain.sh && mcu/scripts/fetch-wch-sdk.sh
+  mcu/scripts/setup.sh   # Linux/WSL2: toolchain, WCH SDK, wlink, wchisp, PATH
   make -C mcu            # build/robot/u13.bin, build/robot/u28.bin
   make -C mcu test       # host tests of the shared logic
   ```

@@ -22,7 +22,12 @@ static const pin_init_t k_safe[] = {
     /* Inputs */
     {PIN_INIT(PIN_MCU2_CLEAN_BTN_N), true, PM_IN_PULL},  /* to GND when pressed */
     {PIN_INIT(PIN_MCU2_HOME_BTN_N), true, PM_IN_PULL},
+#ifdef BOARD_EVT
+    /* Evaluation board: no R173 (and PA12 is its USB D+): pull up internally. */
+    {PIN_INIT(PIN_MCU2_PWR_BTN_SENSE), true, PM_IN_PULL},
+#else
     {PIN_INIT(PIN_MCU2_PWR_BTN_SENSE), true, PM_IN_FLOAT}, /* R173 pull-up, D26 to the button */
+#endif
     {PIN_INIT(PIN_MCU2_HALL_BIN), true, PM_IN_PULL},     /* open-drain Hall, no board pull-up */
     {PIN_INIT(PIN_MCU2_STDBY_N), true, PM_IN_PULL},      /* SLM6900 open drain via 1k */
     {PIN_INIT(PIN_MCU2_CHRG_N), true, PM_IN_PULL},

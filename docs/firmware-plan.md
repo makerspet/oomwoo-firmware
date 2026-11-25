@@ -43,26 +43,27 @@ This document covers:
 
 ## Toolchain
 
-The toolchain is plain upstream GCC and GNU make. No MounRiver Studio is needed.
+The toolchain is plain upstream GCC and GNU make. No MounRiver Studio is needed. Two scripts set everything up:
 
-| What | Where | Notes |
+- **`mcu/scripts/setup.sh`** (Linux x64 or WSL2 Ubuntu): installs the build tools, the RISC-V GCC, the WCH SDK, `wlink` and `wchisp`, and the udev rules on native Linux. It adds a PATH block to `~/.bashrc`, then builds both images and runs the host tests. It is safe to run again.
+- **`mcu/scripts/setup-windows.ps1`**: installs `wlink` (32-bit build, which works with WCH's own WCH-Link driver) and `wchisp` into `%LOCALAPPDATA%\oomwoo\wch` and adds that folder to the user PATH. On Windows, builds run in WSL2 and flashing runs on Windows, where the USB probe is.
+
+| What | Version | Notes |
 |---|---|---|
-| xPack `riscv-none-elf-gcc` 14.3.0-1 | `mcu/scripts/install-toolchain.sh` → `~/opt` | Pinned and sha256-checked. Linux x64, WSL2, CI. |
-| WCH SDK (peripheral library, startup, core) | `mcu/scripts/fetch-wch-sdk.sh` → `mcu/third_party/wch` (ignored by git) | Pinned openwch commits, sparse checkout. The WCH files carry WCH's own terms, not Apache-2.0, so they are fetched rather than committed. |
-| `wlink` 0.1.3 | `C:\Users\ASUS\opt\wch\wlink-win-x64` and WSL `~/opt/bin` | Flashing and debugging over the WCH-LinkE (SWD/SDI). Supports CH32V307 and CH32L103. |
-| `wchisp` 0.3.0 | `C:\Users\ASUS\opt\wch\wchisp-win-x64` and WSL `~/opt/bin` | Bootloader flashing: U13 over USB on PB6/PB7 (BOOT0 jumper), U28 over USART2 (`-s -p COMx`). |
+| xPack `riscv-none-elf-gcc` | 14.3.0-1 | Pinned and sha256-checked (`install-toolchain.sh`). |
+| WCH SDK (peripheral library, startup, core) | pinned openwch commits | `fetch-wch-sdk.sh` → `mcu/third_party/wch`, ignored by git. The WCH files carry WCH's own terms, not Apache-2.0, so they are fetched rather than committed. |
+| `wlink` | 0.1.3 | Flashing and debugging over the WCH-LinkE. Supports CH32V307 and CH32L103. |
+| `wchisp` | 0.3.0 | Bootloader flashing: U13 over USB on PB6/PB7 (BOOT0 jumper), U28 over USART2 (`-s -p COMx`). |
 
 ```bash
-mcu/scripts/install-toolchain.sh        # prints the PATH line
-mcu/scripts/fetch-wch-sdk.sh
+mcu/scripts/setup.sh                    # once
 make -C mcu                             # build/robot/u13.bin, build/robot/u28.bin
 make -C mcu BOARD=evt u13               # U13 for WCH's CH32V307V-R1 board
 make -C mcu test                        # host tests of the shared logic
 ```
 
-- **Flashing from Windows:** use `wlink.exe flash --address 0x08000000 mcu\build\robot\u13.bin`.
-  - The WCH-LinkE needs WCH's driver (WCH-LinkUtility) or WinUSB via Zadig on its RISC-V interface.
-  - From WSL, pass the probe through with `usbipd-win`. Flashing from Windows is simpler.
+- **Clone inside WSL** (for example `~/git`) rather than under `/mnt/c`: builds are several times faster. `.gitattributes` keeps the scripts and the Makefile in LF even in a Windows clone.
+- **Flashing from Windows:** `wlink flash --address 0x08000000 build\robot\u13.bin`. The WCH-LinkE needs WCH's driver (WCH-LinkUtility). From WSL, attaching the probe with `usbipd-win` also works.
 - **ISR attribute:** interrupt handlers use the standard `__attribute__((interrupt))`. WCH's `"WCH-Interrupt-fast"` attribute is not upstream GCC.
   - The WCH startup turns on the hardware prologue/epilogue, so registers are saved twice per interrupt. That is correct, just a few cycles slower. Switch to the fast path later if an ISR's latency matters.
 

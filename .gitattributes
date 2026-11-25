@@ -1,0 +1,4 @@
+# Shell scripts, the Makefile and linker scripts run in WSL/Linux: keep LF even in Windows clones.
+*.sh text eol=lf
+Makefile text eol=lf
+*.ld text eol=lf
