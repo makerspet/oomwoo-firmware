@@ -13,6 +13,7 @@
 #include "camera.h"
 #include "carpet.h"
 #include "cli.h"
+#include "dock_beacon.h"
 #include "drive_gate.h"
 #include "i2c.h"
 #include "lidar.h"
@@ -343,10 +344,15 @@ static void cmd_ir(int argc, char **argv) {
     uint16_t a = 0;
     uint8_t c = 0;
     const bool ok = nec_frame_valid(g_ir[i].frame, &a, &c);
-    cli_printf("  %-8s frames %lu repeats %lu errors %lu last 0x%08lx %s addr 0x%04x cmd 0x%02x age %lu ms\n",
+    cli_printf("  %-8s frames %lu repeats %lu errors %lu last 0x%08lx %s addr 0x%04x cmd 0x%02x age %lu ms",
                names[i], (unsigned long)g_ir[i].frames, (unsigned long)g_ir[i].repeats,
                (unsigned long)g_ir[i].errors, (unsigned long)g_ir[i].frame, ok ? "ok" : "--", a, c,
                g_ir[i].frames ? (unsigned long)((systime_us() - g_ir[i].frame_us) / 1000u) : 0ul);
+    if (ok && (a == DOCK_BEACON_ADDR_LEFT || a == DOCK_BEACON_ADDR_RIGHT)) {
+      cli_printf("  = dock %s string, budget %lu W", a == DOCK_BEACON_ADDR_LEFT ? "left" : "right",
+                 (unsigned long)dock_beacon_budget_w(c));
+    }
+    cli_printf("\n");
   }
 }
 

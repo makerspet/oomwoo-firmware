@@ -1,5 +1,6 @@
 /* System time on the QingKe V4 SysTick: a free-running 64-bit counter at
- * HCLK/8 (U13: 18 MHz, U28: 12 MHz) for microsecond timestamps, and a
+ * HCLK/8 (U13: 18 MHz, U28: 12 MHz, dock: 6 MHz, extended in software on its
+ * 32-bit SysTick) for microsecond timestamps, and a
  * 1 kHz compare interrupt for the millisecond tick and the control loop. */
 #pragma once
 

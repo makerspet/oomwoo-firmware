@@ -123,7 +123,7 @@ if [ "$build" = 1 ]; then
   make -C "$here" -j"$(nproc)" BOARD=evt all
   make -C "$here" test
   echo
-  echo "Images: $here/build/robot/u13.bin, $here/build/robot/u28.bin,"
+  echo "Images: $here/build/robot/u13.bin, $here/build/robot/u28.bin, $here/build/robot/dock.bin,"
   echo "        $here/build/evt/u13.bin, $here/build/evt/u28.bin (evaluation boards)"
 fi
 say "Done"

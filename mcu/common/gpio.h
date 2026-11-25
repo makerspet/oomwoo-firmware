@@ -1,4 +1,4 @@
-/* GPIO helpers shared by U13 (CH32V307) and U28 (CH32L103).
+/* GPIO helpers shared by U13 (CH32V307), U28 (CH32L103) and the dock (CH32V003).
  * Both chips have the same F1-style port layout: CFGLR/CFGHR hold a 4-bit
  * CNF:MODE field per pin, BSHR/BCR set and clear outputs atomically. */
 #pragma once
@@ -32,7 +32,11 @@ enum {
 };
 
 static inline void pin_mode(pin_t p, uint8_t mode) {
+#ifdef CH32V003
+  volatile uint32_t *cfg = &p.port->CFGLR; /* 8 pins per port, no CFGHR */
+#else
   volatile uint32_t *cfg = p.num < 8 ? &p.port->CFGLR : &p.port->CFGHR;
+#endif
   const uint32_t shift = (uint32_t)(p.num & 7u) * 4u;
   *cfg = (*cfg & ~(0xFu << shift)) | ((uint32_t)mode << shift);
 }

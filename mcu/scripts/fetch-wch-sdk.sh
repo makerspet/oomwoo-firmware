@@ -12,6 +12,7 @@ dest="${WCH_SDK:-$here/third_party/wch}"
 repos=(
   "ch32v307|https://github.com/openwch/ch32v307.git|8b3699d9e4eafc3102e382b74266a1165a2bb584|EVT/EXAM/SRC"
   "ch32l103|https://github.com/openwch/ch32l103.git|8237d6a11d7d81d885b4fd524db3cd818843ad7d|EVT/EXAM/SRC EVT/EXAM/USBPD"
+  "ch32v003|https://github.com/openwch/ch32v003.git|4e1b7437ada5d3ae8831a6f4b811a6320e4e23c7|EVT/EXAM/SRC"
 )
 
 mkdir -p "$dest"

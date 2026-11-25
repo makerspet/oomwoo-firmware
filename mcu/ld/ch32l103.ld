@@ -1,4 +1,6 @@
 /* CH32L103C8T6 (U28): 64K flash, 20K RAM. */
+__stack_size = 2048;
+
 MEMORY
 {
   FLASH (rx)  : ORIGIN = 0x00000000, LENGTH = 64K

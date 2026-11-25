@@ -1,10 +1,11 @@
-# OOMWOO main-phone board firmware: U13 (CH32V307VCT6) and U28 (CH32L103C8T6).
+# OOMWOO firmware: main-phone board U13 (CH32V307VCT6) and U28 (CH32L103C8T6),
+# and the charging dock (CH32V003F4P6).
 #
 #   scripts/install-toolchain.sh     # once: xPack riscv-none-elf-gcc
 #   scripts/fetch-wch-sdk.sh         # once: pinned WCH SDK into third_party/
-#   make                             # both images in build/
-#   make u13 | make u28
-#   make flash-u13 | make flash-u28  # WCH-LinkE + wlink
+#   make                             # all three images in build/robot/
+#   make u13 | make u28 | make dock
+#   make flash-u13 | flash-u28 | flash-dock   # WCH-LinkE + wlink
 #
 # Plain GNU make, no IDE. Works in WSL2, Linux, macOS and CI.
 
@@ -33,12 +34,13 @@ CFLAGS_COMMON := -std=gnu11 -Os -g3 -Wall -Wextra -Werror \
 # Vendor sources are compiled without -Werror and with their own warnings muted.
 VENDOR_CFLAGS := -std=gnu99 -Os -g3 -w -ffunction-sections -fdata-sections -fno-common \
   -msmall-data-limit=8 -mno-save-restore
-LDFLAGS_COMMON := -nostartfiles -Wl,--gc-sections -Wl,--print-memory-usage \
+LDFLAGS_COMMON := -nostartfiles -Wl,--gc-sections -Wl,--print-memory-usage -Wl,--no-warn-rwx-segments\
   --specs=nano.specs --specs=nosys.specs -Lld
 
 # Portable logic (also built and tested on the host: make test) ...
 LOGIC_SRCS := $(COMMON)/fmt.c $(COMMON)/cli.c $(COMMON)/mcu_link.c $(COMMON)/nec.c \
-  $(COMMON)/power_sm.c $(COMMON)/charger_sm.c $(COMMON)/drive_gate.c
+  $(COMMON)/power_sm.c $(COMMON)/charger_sm.c $(COMMON)/drive_gate.c \
+  $(COMMON)/dock_sm.c $(COMMON)/nec_tx.c
 # ... and hardware helpers shared by both chips.
 COMMON_SRCS := $(LOGIC_SRCS) $(COMMON)/systime.c $(COMMON)/uart.c $(PROTO)
 
@@ -63,18 +65,31 @@ U28_VSRCS := $(U28_PERIPH:%=$(U28_SDK)/Peripheral/src/ch32l103_%.c) $(U28_SDK)/C
 U28_ASM   := $(U28_SDK)/Startup/startup_ch32l103.S
 U28_VENDOR_EXTRA := -include u28/wch_globals.h
 
+# ---------------------------------------------------------------- dock
+DOCK_SDK   := $(WCH_SDK)/ch32v003/EVT/EXAM/SRC
+DOCK_ARCH  := -march=rv32ec_zicsr_zifencei -mabi=ilp32e
+DOCK_DEFS  := -DCH32V003 -DUART_RX_SIZE=64u -DUART_TX_SIZE=256u
+DOCK_INC   := -Idock -isystem $(DOCK_SDK)/Peripheral/inc -isystem $(DOCK_SDK)/Core
+DOCK_PERIPH := gpio rcc misc usart tim adc dma i2c iwdg dbgmcu
+DOCK_SRCS  := $(wildcard dock/*.c) $(COMMON)/fmt.c $(COMMON)/cli.c $(COMMON)/uart.c \
+  $(COMMON)/systime.c $(COMMON)/dock_sm.c $(COMMON)/nec_tx.c
+DOCK_VSRCS := $(DOCK_PERIPH:%=$(DOCK_SDK)/Peripheral/src/ch32v00x_%.c) $(DOCK_SDK)/Core/core_riscv.c
+DOCK_ASM   := $(DOCK_SDK)/Startup/startup_ch32v00x.S
+
 obj = $(addprefix $(BUILD)/$(1)/,$(addsuffix .o,$(subst ..,_up,$(basename $(2)))))
 
 U13_OBJS := $(call obj,u13,$(U13_SRCS)) $(call obj,u13/vendor,$(U13_VSRCS) $(U13_ASM))
 U28_OBJS := $(call obj,u28,$(U28_SRCS)) $(call obj,u28/vendor,$(U28_VSRCS) $(U28_ASM))
+DOCK_OBJS := $(call obj,dock,$(DOCK_SRCS)) $(call obj,dock/vendor,$(DOCK_VSRCS) $(DOCK_ASM))
 
-.PHONY: all u13 u28 clean flash-u13 flash-u28 check-sdk test
-all: u13 u28
+.PHONY: all u13 u28 dock clean flash-u13 flash-u28 flash-dock check-sdk test
+all: u13 u28 dock
 u13: check-sdk $(BUILD)/u13.bin
 u28: check-sdk $(BUILD)/u28.bin
+dock: check-sdk $(BUILD)/dock.bin
 
 check-sdk:
-	@test -d $(U13_SDK) -a -d $(U28_SDK) || { echo "WCH SDK missing: run scripts/fetch-wch-sdk.sh"; exit 1; }
+	@test -d $(U13_SDK) -a -d $(U28_SDK) -a -d $(DOCK_SDK) || { echo "WCH SDK missing: run scripts/fetch-wch-sdk.sh"; exit 1; }
 
 define rules
 $(BUILD)/$(1)/%.o: %.c
@@ -99,17 +114,20 @@ endef
 
 $(eval $(call rules,u13,U13,ch32v307))
 $(eval $(call rules,u28,U28,ch32l103))
+$(eval $(call rules,dock,DOCK,ch32v003))
 
 flash-u13: $(BUILD)/u13.bin
 	$(WLINK) flash --address 0x08000000 $<
 flash-u28: $(BUILD)/u28.bin
+	$(WLINK) flash --address 0x08000000 $<
+flash-dock: $(BUILD)/dock.bin
 	$(WLINK) flash --address 0x08000000 $<
 
 # Host tests of the portable logic (no SDK, no cross compiler needed).
 HOSTCC ?= cc
 test:
 	@mkdir -p $(BUILD)
-	$(HOSTCC) -std=c11 -Wall -Wextra -Werror -pedantic -fsanitize=address,undefined -I$(COMMON) 	  -I$(REPO)/include $(filter-out $(COMMON)/cli.c,$(LOGIC_SRCS)) $(PROTO) $(REPO)/tests/mcu_logic_test.c 	  -o $(BUILD)/mcu_logic_test
+	$(HOSTCC) -std=c11 -Wall -Wextra -Werror -pedantic -fsanitize=address,undefined -I$(COMMON) 	  -I$(REPO)/include $(filter-out $(COMMON)/cli.c,$(LOGIC_SRCS)) $(PROTO) $(REPO)/tests/mcu_logic_test.c 	  -o $(BUILD)/mcu_logic_test -lm
 	$(BUILD)/mcu_logic_test
 
 clean:

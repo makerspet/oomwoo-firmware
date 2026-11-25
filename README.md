@@ -14,7 +14,8 @@ CH32V307 + CH32L103 · Bare-metal C · Safety · Motors · Sensors · Charging
 
 MCU firmware for the OOMWOO [main-phone board](https://github.com/makerspet/oomwoo-pcb/tree/main/kicad/main-phone):
 a **WCH CH32V307VCT6** (U13: motors, sensors, safety, camera, USB to the phone) and a
-**CH32L103C8T6** companion (U28: power latch, buttons, charger status, USB-C roles).
+**CH32L103C8T6** companion (U28: power latch, buttons, charger status, USB-C roles),
+plus the charging dock's **CH32V003F4P6**.
 Bare-metal C with interrupt-driven real-time parts, built with upstream GCC and make.
 Start with the [firmware plan](docs/firmware-plan.md); the starter firmware is in [`mcu/`](mcu).
 (The board used an STM32G473 until 2026-11-21; sections below that mention it, STM32duino
@@ -116,7 +117,7 @@ MCU serial tool in [oomwoo-install](https://github.com/makerspet/oomwoo-install)
 
   ```bash
   mcu/scripts/setup.sh   # Linux/WSL2: toolchain, WCH SDK, wlink, wchisp, PATH
-  make -C mcu            # build/robot/u13.bin, build/robot/u28.bin
+  make -C mcu            # build/robot/u13.bin, u28.bin and dock.bin
   make -C mcu test       # host tests of the shared logic
   ```
 - **Protocol core (`src/`, `tests/`):** portable C11, tested on the host; the PlatformIO

@@ -7,8 +7,12 @@
 
 #include "chip.h"
 
-#define UART_RX_SIZE 512u /* power of two */
+#ifndef UART_RX_SIZE
+#define UART_RX_SIZE 512u /* power of two; the dock (2 KB RAM) sets smaller ones */
+#endif
+#ifndef UART_TX_SIZE
 #define UART_TX_SIZE 512u
+#endif
 
 typedef struct {
   USART_TypeDef *regs;

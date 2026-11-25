@@ -2,6 +2,8 @@
  * option bytes (192K+128K, 224K+96K, 256K+64K, 288K+32K). 192K flash and 32K
  * RAM fit every setting. Once the production option byte (192K + 128K, for
  * camera line buffers) is programmed, raise RAM to 128K. */
+__stack_size = 2048;
+
 MEMORY
 {
   FLASH (rx)  : ORIGIN = 0x00000000, LENGTH = 192K

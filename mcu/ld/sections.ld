@@ -3,8 +3,6 @@
  * _data_lma/_data_vma/_edata, _sbss/_ebss, _eusrstack, __global_pointer$. */
 ENTRY(_start)
 
-__stack_size = 2048;
-
 SECTIONS
 {
   .init : {
@@ -32,6 +30,16 @@ SECTIONS
     KEEP(*(.init_array))
     PROVIDE_HIDDEN(__init_array_end = .);
   } >FLASH
+
+  /* Code the CH32V003 startup copies into RAM (empty unless something is
+   * placed in .highcode). */
+  .highcode : ALIGN(4) {
+    _highcode_vma_start = .;
+    *(.highcode .highcode.*)
+    . = ALIGN(4);
+    _highcode_vma_end = .;
+  } >RAM AT>FLASH
+  _highcode_lma = LOADADDR(.highcode);
 
   _data_lma = LOADADDR(.data);
 

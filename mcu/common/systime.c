@@ -2,7 +2,7 @@
 
 #include "chip.h"
 
-/* SysTick CTLR bits (QingKe V4) */
+/* SysTick CTLR bits (QingKe V4 and V2A) */
 #define STK_STE 0x01u   /* counter enable */
 #define STK_STIE 0x02u  /* interrupt enable */
 #define STK_STCLK 0x04u /* 1: HCLK, 0: HCLK/8 */
@@ -24,6 +24,29 @@ void systime_init(uint32_t hclk_hz) {
   SysTick->CTLR = STK_STE | STK_STIE; /* HCLK/8, free running, no auto-reload */
 }
 
+#ifdef CH32V003
+/* QingKe V2A (CH32V003): CNT and CMP are 32-bit and wrap every ~12 minutes
+ * at 6 MHz. Extend them in software: s_base is the tick count of the last
+ * compare match, which the interrupt advances every millisecond. */
+static volatile uint64_t s_base;
+
+void SysTick_Handler(void) ISR;
+void SysTick_Handler(void) {
+  SysTick->SR = 0u;
+  s_base += s_ticks_per_ms;
+  SysTick->CMP = (uint32_t)(s_base + s_ticks_per_ms);
+  ++s_ms;
+  ++s_pending;
+}
+
+uint64_t systime_ticks(void) {
+  __disable_irq();
+  const uint64_t base = s_base;
+  const uint32_t cnt = SysTick->CNT;
+  __enable_irq();
+  return base + (uint32_t)(cnt - (uint32_t)base);
+}
+#else
 void SysTick_Handler(void) ISR;
 void SysTick_Handler(void) {
   SysTick->SR = 0u;
@@ -42,6 +65,7 @@ uint64_t systime_ticks(void) {
   } while (hi != p[1]);
   return ((uint64_t)hi << 32) | lo;
 }
+#endif
 
 uint32_t systime_us(void) { return (uint32_t)(systime_ticks() / s_ticks_per_us); }
 

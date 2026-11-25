@@ -1,4 +1,4 @@
-# MCU firmware plan: U13 (CH32V307) + U28 (CH32L103)
+# MCU firmware plan: U13 (CH32V307) + U28 (CH32L103), and the dock (CH32V003)
 
 The main-phone board has two WCH RISC-V MCUs. U13, a CH32V307VCT6, is the main MCU. U28, a CH32L103C8T6, is the power/UI companion. The pin maps are in [`include/oomwoo_pins.h`](../include/oomwoo_pins.h), which is generated from the schematic, and in the PCB repo's [mcu-ch32v307.md](https://github.com/makerspet/oomwoo-pcb/blob/main/docs/mcu-ch32v307.md).
 
@@ -6,12 +6,13 @@ This document covers:
 - the starter firmware in [`mcu/`](../mcu);
 - how to build and flash it;
 - how it is structured;
-- what writing it turned up about the schematic.
+- what writing it turned up about the schematic;
+- the charging dock's firmware ([Charging dock](#charging-dock-ch32v003)).
 
 ## Status (2026-11-24)
 
 - **Done:**
-  - Both images build.
+  - All three images build (U13, U28 and, since 2026-11-25, the dock).
   - The shared logic passes its host tests (`make -C mcu test`).
   - CI builds and tests on every push.
   - Nothing has run on silicon yet. The first targets are WCH's evaluation boards.
@@ -81,6 +82,7 @@ mcu/
     gpio.h systime.* uart.* cli.* fmt.*
   u13/                     CH32V307: board, motors, sensors, i2c, camera, carpet, lidar, link, main
   u28/                     CH32L103: board, typec, main
+  dock/                    CH32V003 (charging dock): main (ADC, CH224A, beacon, console)
 tests/mcu_logic_test.c     host tests (ASan + UBSan)
 ```
 
@@ -150,6 +152,28 @@ tests/mcu_logic_test.c     host tests (ASan + UBSan)
   - buttons;
   - the power, charge and USB states.
 - U28 runs on its internal oscillator (±1 % at room temperature). 1 Mbit/s divides exactly on both sides, and U13 can trim U28's oscillator from frame timing if bench tests show errors.
+
+## Charging dock (CH32V003)
+
+The dock ([`kicad/charging-dock`](https://github.com/makerspet/oomwoo-pcb/tree/main/kicad/charging-dock), U1001) runs `mcu/dock/` with the same toolchain: `make -C mcu dock` builds `build/robot/dock.bin` (11 KB of 16 KB flash, ~1.9 KB of 2 KB RAM with the stack). Flash it with a WCH-LinkE on J1001 (1 SWIO, 2 GND) while the dock runs from its charger: `make -C mcu flash-dock`. The debug console is USART1 on J1005 (pins 3 TX, 4 RX, 115200), not fitted by default; `status` and `pd` print the state.
+
+**State machine** (`common/dock_sm.c`, host-tested), every millisecond on filtered readings:
+
+| State | Contacts | Leaves when |
+|---|---|---|
+| NO_POWER | off, LED double-blinks | VIN is 18.5-22 V **and** the CH224A reports a PD contract, for 500 ms |
+| BLEED | off | VDOCK-20V below 3 V, or 3 s |
+| PROBING | probe on, LED blips | the measured resistance (100k probe, diode drop cancelled, the dock's own 1.1M divider removed) sits in 90-180 kΩ for 1 s, **and** it drifted there over at least 300 ms |
+| CONNECTING | CHARGE-EN on | VDOCK-20V within 1.5 V of VIN: CHARGING; not within 50 ms: FAULT |
+| CHARGING | on, LED on | current < 5 mA for 100 ms (the robot left): BLEED; > 3.2 A or > PD limit + 10 %: FAULT; VDOCK-20V sags 2 V below VIN for 5 ms: FAULT |
+| FAULT | off, LED fast | after 10 s (60 s after three in a row) |
+
+- **Robot signature:** a robot's ~30 µF input capacitance makes the reading drift into the window over seconds, from below when its capacitors start empty, from above when they are still charged (a charger blip mid-charge). A plain resistor or a finger jumps straight in and is refused; a short reads ~0 Ω. The window and times are first guesses: measure real robots (full and flat battery) and tune `dock_sm_init()`.
+- **Fast trip:** the ADC analog watchdog watches I-SENSE (~3.3 A) and its interrupt drops CHARGE-EN directly, without waiting for the 1 ms loop. It is re-armed on every connection.
+- **INA180 offset:** averaged while the contacts are off and subtracted.
+- **CH224A:** read every 250 ms over I2C1 (PC5/PC6), single-byte reads: 0x09 bit 3 (PD contract) and 0x50 (current limit, 50 mA units).
+- **IR beacon:** TIM1 makes the 38 kHz carrier (1/3 duty) on CH3 (IR-L) and CH4 (IR-R); TIM2 walks the NEC timeline and switches the active channel between PWM and forced-low, so the AC-coupled gates only ever see the carrier. The two strings take turns, a frame each with 40 ms gaps, so a receiver that sees both never gets overlapping frames. Codes (`common/dock_beacon.h`, shared with U13): address 0xD1 = left string, 0xD2 = right string; command = watts available at the contacts / 2 (20 V x the PD limit - 1 W; 0 = refusing: no 20 V, no PD contract, or a fault). The beacon keeps running while charging, so a docked robot reads the budget too. U13's `ir` command decodes it.
+- **IWDG:** 500 ms.
 
 ## Bring-up on the evaluation boards
 
