@@ -189,3 +189,33 @@ jobs:
         run: |
           test -s .pio/build/nucleo_g474re/firmware.bin
           test -s .pio/build/nucleo_g474re_v2/firmware.bin
+
+  mcu:
+    name: CH32 firmware (U13 CH32V307, U28 CH32L103)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/opt/xpack-riscv-none-elf-gcc-14.3.0-1
+            mcu/third_party
+          key: ${{ runner.os }}-ch32-${{ hashFiles('mcu/scripts/*.sh') }}
+
+      - name: Toolchain and WCH SDK
+        run: |
+          eval "$(mcu/scripts/install-toolchain.sh | tail -1)"
+          echo "$HOME/opt/xpack-riscv-none-elf-gcc-14.3.0-1/bin" >> "$GITHUB_PATH"
+          mcu/scripts/fetch-wch-sdk.sh
+
+      - name: Host tests of the shared logic
+        run: make -C mcu test
+
+      - name: Build both MCUs (robot board) and U13 for the EVT board
+        run: |
+          make -C mcu all
+          make -C mcu BOARD=evt u13
+          test -s mcu/build/robot/u13.bin
+          test -s mcu/build/robot/u28.bin
+          test -s mcu/build/evt/u13.bin
