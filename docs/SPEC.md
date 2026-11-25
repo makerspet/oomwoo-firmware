@@ -1,5 +1,7 @@
 # OOMWOO I/O firmware spec (work in progress)
 
+> **Since 2026-11-21 the board has a CH32V307VCT6 (U13) and a CH32L103C8T6 (U28), not an STM32G473.** The pin names and numbers in this file below are STM32-era history: the current map is [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) and the PCB repo's [mcu-ch32v307.md](https://github.com/makerspet/oomwoo-pcb/blob/main/docs/mcu-ch32v307.md); the firmware structure and the schematic findings are in [firmware-plan.md](firmware-plan.md). The behaviour rules (rail order, watchdog, charge status, cliff pulsing, time sync) still apply.
+
 Target: the v1 board [`oomwoo-pcb/kicad/main-phone`](https://github.com/makerspet/oomwoo-pcb/tree/main/kicad/main-phone), an STM32G473VCT6 with an Android phone as the compute, connected over USB-C. Hardware details are in the [PCB spec](https://github.com/makerspet/oomwoo-pcb/blob/main/docs/SPEC.md). Notes that differ on the Raspberry Pi board (`kicad/main`) are marked **Pi board**.
 
 Pin map: [`include/oomwoo_pins.h`](../include/oomwoo_pins.h) is generated from the schematic by [`oomwoo-pcb/tools/gen_pins.py`](https://github.com/makerspet/oomwoo-pcb/blob/main/tools/gen_pins.py); don't edit it by hand. Each pin has an Arduino name (`PIN_LIDAR_TXD` = `PD2`) plus `_PORT`/`_NUM` for HAL code. It's for the real board: the Nucleo-G474RE bring-up target is LQFP64 and has no PD/PE pins, so using it needs a G473VCT6 build environment.

@@ -4,7 +4,7 @@
 
 *Open-source robot vacuum you build yourself*
 
-STM32G473 · Arduino · FreeRTOS · Safety · Motors · Sensors · Charging
+CH32V307 + CH32L103 · Bare-metal C · Safety · Motors · Sensors · Charging
 
 ![License](https://img.shields.io/badge/License-Apache--2.0-blue)
 ![Status](https://img.shields.io/badge/Status-Protocol%20Bring--up-orange)
@@ -12,9 +12,13 @@ STM32G473 · Arduino · FreeRTOS · Safety · Motors · Sensors · Charging
 
 </div>
 
-MCU firmware for the OOMWOO [I/O board](https://github.com/makerspet/oomwoo-io-board),
-targeting an **STM32G473VCT6**. Arduino (STM32duino) API on top, FreeRTOS for task
-structure, and a HAL/timer-ISR real-time core underneath.
+MCU firmware for the OOMWOO [main-phone board](https://github.com/makerspet/oomwoo-pcb/tree/main/kicad/main-phone):
+a **WCH CH32V307VCT6** (U13: motors, sensors, safety, camera, USB to the phone) and a
+**CH32L103C8T6** companion (U28: power latch, buttons, charger status, USB-C roles).
+Bare-metal C with interrupt-driven real-time parts, built with upstream GCC and make.
+Start with the [firmware plan](docs/firmware-plan.md); the starter firmware is in [`mcu/`](mcu).
+(The board used an STM32G473 until 2026-11-21; sections below that mention it, STM32duino
+or the Nucleo harness describe the protocol bring-up done on that part.)
 
 > **Status — RFC / protocol bring-up.** The framing core and a Nucleo G474RE
 > identity handshake now exist; motor control, hard-safety inputs, charging, and the
@@ -29,24 +33,12 @@ safety*. This repo is that MCU firmware. Its defining constraint: **safety must
 never depend on Linux/ROS 2** — and, as you'll see below, it must never depend on
 the friendly Arduino layer either.
 
-## Why STM32G473VCT6
+## Why CH32V307 + CH32L103
 
-The board drives ~10 actuators and reads a dozen-plus analog channels, so the MCU
-needs headroom the earlier STM32G0 (Cortex-M0+, no FPU) didn't comfortably have:
-
-- **Cortex-M4F @ up to 170 MHz with an FPU** — real control math (PID, filters,
-  odometry) in hardware float, with cycles to spare for FreeRTOS + the Arduino layer.
-- **Many timers incl. HRTIM** — enough PWM channels for every motor, plus the
-  high-resolution timer for clean BLDC/fan drive.
-- **5× 12-bit ADCs** — the board has many simultaneous analog channels (per-motor
-  current sense, `VBat`, source current, 4× cliff IR, 2× dock IR, 2× side IR); five
-  ADCs let safety-critical currents be sampled fast and independently.
-- **CORDIC + FMAC** math accelerators, 512 KB flash / 128 KB RAM, **LQFP100** (hand-
-  solderable, JLCPCB-friendly).
-
-STM32duino supports the G4 family (Nucleo-G474 is a good bring-up board), and
-FreeRTOS is available via the `STM32FreeRTOS` library — so "Arduino API + FreeRTOS"
-is a supported, real combination on this part.
+The STM32G473 went to $7.39 with 20 in stock; the CH32V307 + CH32L103 pair costs about
+$2.60, adds a parallel camera port and high-speed USB with a built-in PHY, and leaves the
+slow power and UI work to a separate MCU. Details: [mcu-ch32v307.md](https://github.com/makerspet/oomwoo-pcb/blob/main/docs/mcu-ch32v307.md)
+in the PCB repo.
 
 ## Architecture — three layers (the core design decision)
 
@@ -117,10 +109,17 @@ MCU serial tool in [oomwoo-install](https://github.com/makerspet/oomwoo-install)
 
 ## Toolchain
 
-- **STM32duino** (the STM32 Arduino core) via the Arduino IDE **or** PlatformIO;
-  G473 through the generic-G4 board definition (bring up on a Nucleo-G474 first).
-- **FreeRTOS** via `STM32FreeRTOS`.
-- **SWD** debug (ST-Link) on the board's `SWDIO`/`SWCLK` header; test/program pads.
+- **CH32 firmware (`mcu/`):** xPack `riscv-none-elf-gcc` and GNU make (Linux, WSL2, CI);
+  the WCH SDK is fetched at pinned commits, not committed. Flash with `wlink` over a
+  WCH-LinkE, or `wchisp` through the chips' bootloaders. See the [firmware plan](docs/firmware-plan.md).
+
+  ```bash
+  mcu/scripts/install-toolchain.sh && mcu/scripts/fetch-wch-sdk.sh
+  make -C mcu            # build/robot/u13.bin, build/robot/u28.bin
+  make -C mcu test       # host tests of the shared logic
+  ```
+- **Protocol core (`src/`, `tests/`):** portable C11, tested on the host; the PlatformIO
+  Nucleo-G474 harness below is from the STM32 bring-up.
 
 ## Current protocol bring-up
 
