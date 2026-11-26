@@ -191,7 +191,7 @@ jobs:
           test -s .pio/build/nucleo_g474re_v2/firmware.bin
 
   mcu:
-    name: CH32 firmware (U13 CH32V307, U28 CH32L103)
+    name: CH32 firmware (U13 CH32V307, U28 CH32L103, dock CH32V003)
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
@@ -212,10 +212,41 @@ jobs:
       - name: Host tests of the shared logic
         run: make -C mcu test
 
-      - name: Build both MCUs (robot board) and U13 for the EVT board
+      - name: Build all images, robot board and evaluation boards
         run: |
           make -C mcu all
-          make -C mcu BOARD=evt u13
-          test -s mcu/build/robot/u13.bin
-          test -s mcu/build/robot/u28.bin
-          test -s mcu/build/evt/u13.bin
+          make -C mcu BOARD=evt all
+          for f in robot/u13 robot/u28 robot/dock evt/u13 evt/u28; do test -s mcu/build/$f.bin; done
+
+  arduino:
+    name: Arduino sketch (U28 on WCH's core)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.arduino15
+            ~/opt/bin/arduino-cli
+          key: ${{ runner.os }}-arduino-${{ hashFiles('mcu/scripts/setup.sh') }}
+
+      - name: arduino-cli and WCH's core
+        run: |
+          mkdir -p ~/opt/bin
+          if [ ! -x ~/opt/bin/arduino-cli ]; then
+            curl -fsSL https://github.com/arduino/arduino-cli/releases/download/v1.6.0/arduino-cli_1.6.0_Linux_64bit.tar.gz               | tar -xz -C ~/opt/bin arduino-cli
+          fi
+          echo "$HOME/opt/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/opt/bin:$PATH"
+          arduino-cli config init --overwrite
+          arduino-cli config add board_manager.additional_urls             https://github.com/openwch/board_manager_files/raw/main/package_ch32v_index.json
+          arduino-cli core update-index
+          arduino-cli core install WCH:ch32v@1.0.7
+
+      - name: Build U28 for the robot board and the evaluation board
+        run: |
+          arduino/build.sh robot --warnings all
+          arduino/build.sh evt --warnings all
+          test -s arduino/build/u28-robot/U28.ino.bin
+          test -s arduino/build/u28-evt/U28.ino.bin
