@@ -7,7 +7,7 @@
 CH32V307 + CH32L103 · Bare-metal C · Safety · Motors · Sensors · Charging
 
 ![License](https://img.shields.io/badge/License-Apache--2.0-blue)
-![Status](https://img.shields.io/badge/Status-Protocol%20Bring--up-orange)
+![Status](https://img.shields.io/badge/Status-Starter%20firmware-orange)
 [![Part of OOMWOO](https://img.shields.io/badge/Part%20of-OOMWOO-5eead4)](https://github.com/makerspet/oomwoo)
 
 </div>
@@ -18,21 +18,20 @@ a **WCH CH32V307VCT6** (U13: motors, sensors, safety, camera, USB to the phone) 
 plus the charging dock's **CH32V003F4P6**.
 Bare-metal C with interrupt-driven real-time parts, built with upstream GCC and make.
 Start with the [firmware plan](docs/firmware-plan.md); the starter firmware is in [`mcu/`](mcu).
-(The board used an STM32G473 until 2026-11-21; sections below that mention it, STM32duino
-or the Nucleo harness describe the protocol bring-up done on that part.)
 
-> **Status — RFC / protocol bring-up.** The framing core and a Nucleo G474RE
-> identity handshake now exist; motor control, hard-safety inputs, charging, and the
-> production FreeRTOS task structure do not. Say hi in
+> **Status: starter firmware.** All three images (U13, U28, dock) build in CI, and the
+> shared logic passes its host tests. Nothing has run on silicon yet: WCH's evaluation
+> boards come first. Not written yet: USB to the phone, camera capture, the ToF and IMU
+> drivers, the wheel control loop and odometry. Say hi in
 > [Discussions](https://github.com/makerspet/oomwoo/discussions) or on
-> [Discord](https://discord.gg/3y2JKz5T25) if you want to build it.
+> [Discord](https://discord.gg/3y2JKz5T25) if you want to help.
 
 OOMWOO splits compute across two processors ([ARCHITECTURE.md §5.4](https://github.com/makerspet/oomwoo/blob/main/docs/ARCHITECTURE.md)):
-a **CPU** (CM4/CM5-class module) runs ROS 2, SLAM, Nav2, and behaviour; the **MCU**
-on this I/O board owns *motors, encoders, sensors, battery charging, and hard
-safety*. This repo is that MCU firmware. Its defining constraint: **safety must
-never depend on Linux/ROS 2** — and, as you'll see below, it must never depend on
-the friendly Arduino layer either.
+the **CPU** (an Android phone on the first board, a Raspberry Pi Compute Module later)
+runs mapping, navigation and the app; the **MCUs** on the I/O board own *motors,
+encoders, sensors, battery charging, and hard safety*. This repo is that MCU firmware.
+Its defining constraint: **safety must never depend on the CPU**, and it must never
+depend on feature code either.
 
 ## Why CH32V307 + CH32L103
 
@@ -41,37 +40,39 @@ $2.60, adds a parallel camera port and high-speed USB with a built-in PHY, and l
 slow power and UI work to a separate MCU. Details: [mcu-ch32v307.md](https://github.com/makerspet/oomwoo-pcb/blob/main/docs/mcu-ch32v307.md)
 in the PCB repo.
 
-## Architecture — three layers (the core design decision)
+## Architecture
 
-The usual "friendly Arduino **or** deterministic real-time safety" trade-off is a
-false choice here. We get both by **layering**, so the layer a contributor touches
-is not the layer that keeps the robot safe:
+**Bare metal and interrupts, no RTOS yet** (details in the [firmware plan](docs/firmware-plan.md#architecture)):
 
-| Layer | What | Owned by | Determinism |
-|---|---|---|---|
-| **3 — Arduino (STM32duino) API** | New behaviours, features, and peripheral bring-up live here. This is the contributor-friendly surface. | community | best-effort |
-| **2 — FreeRTOS tasks** (static allocation) | Task structure: CPU-serial comms, control loop, telemetry, charging supervisor, safety supervisor. Watchdog-fed, bounded reaction times. | maintainer + community | soft real-time |
-| **1 — Real-time core** (HAL + timer ISRs) | Motor commutation/PWM, encoder capture, the hard-safety cutoffs, the CPU watchdog. Runs in hardware timers / ISRs. | maintainer, safety-reviewed | **hard real-time** |
+| Part | What runs there | Determinism |
+|---|---|---|
+| **Interrupts** | Anything with a hard deadline: cliff LED timing, encoder and IR edges, the fan tachometer, the UARTs, and the hazard stops. | hard real-time |
+| **Control tick** (1 kHz SysTick, main loop) | The drive gate, motor commands, sensor scans, the WDI toggle, telemetry, the U13 ↔ U28 link, the bench console. | bounded, watchdog-checked |
+| **Later: FreeRTOS** (WCH ships a V307 port) | USB to the phone, camera and ToF work, if they need it. The safety tick stays in an interrupt. | soft real-time |
 
-**The rule that makes this safe:** contributor code lives at the Arduino level;
-the motor-control and safety core is HAL/ISR and **structurally isolated** from it.
-A bug or an infinite loop in someone's Arduino feature **cannot** defeat a cliff
-stop, an overcurrent cutoff, or the CPU watchdog — those live in interrupts and a
-hardware watchdog that the upper layers cannot starve. That's how you get the
-community-attraction of Arduino *and* the real-time integrity a robot needs.
+**The rule that makes this safe:** the safety core is **structurally isolated** from
+feature code. A bug or an infinite loop in a new feature **cannot** defeat a cliff
+stop, an overcurrent cutoff, or the CPU watchdog: those live in interrupts and in
+hardware watchdogs that the main loop can't starve. The STM32-era STM32duino +
+FreeRTOS layering no longer applies.
 
 ## Safety (non-negotiable, CE-oriented)
 
-Hard safety runs on the MCU, independent of *both* Linux/ROS 2 and the Arduino
-layer:
+Hard safety runs on the MCUs, independent of the CPU and of feature code:
 
-- **Bumper / cliff / wheel-drop → immediate motor stop**, at ISR level.
-- **Per-motor overcurrent limiting** — a stuck brush, jammed wheel, or stall is
-  current-limited or cut before thermal/mechanical damage.
-- **CPU watchdog** — if the CPU's periodic health packets stop, the MCU stops the
-  motors and can assert the CPU-reset line.
-- **MCU independent watchdog (IWDG)**, static memory allocation, and *measured,
-  documented* worst-case reaction times.
+- **Hardware watchdog:** the motor rail needs WD_OK, and WD_OK needs WDI toggling.
+  U13 toggles WDI once per control tick, and only when the tick came on time. Every
+  actuator rail is off while the MCU is in reset or being flashed.
+- **MCU watchdog (IWDG):** ~260 ms on U13.
+- **Drive gate**, every tick: nothing runs unless the robot is armed, the motor rail is
+  on, U28 is alive, there is no power-off request, and the motion command hasn't
+  expired. A wheel drop stops everything. A front cliff or a bumper blocks forward
+  motion only, so the robot can back away; a rear cliff blocks reverse.
+- **Per-motor overcurrent limiting:** a stuck brush, jammed wheel, or stall is
+  current-limited or cut before thermal or mechanical damage (being characterized).
+- **CPU watchdog:** if the CPU's periodic health messages stop, the MCU stops the
+  motors.
+- Static memory only, and *measured, documented* worst-case reaction times.
 
 Per the project's safety-review gate, **safety-critical changes require maintainer
 review before merge** and a short hazard note (over-current, thermal, short,
@@ -79,34 +80,36 @@ mechanical pinch).
 
 ## What the firmware owns
 
-Source of truth is the board [SPEC.md](https://github.com/makerspet/oomwoo-io-board/blob/main/docs/SPEC.md)
-(work in progress — treat it as authoritative over this summary, and note its open
-TODOs, e.g. the GPIO 36/46 bumper-label question):
+Source of truth is the board [SPEC.md](https://github.com/makerspet/oomwoo-pcb/blob/main/docs/SPEC.md)
+and the pin map in [`include/oomwoo_pins.h`](include/oomwoo_pins.h), generated from
+the schematic.
 
-- **Actuators:** 2× drive wheels (H-bridge + hall encoders), suction fan (BLDC, PWM
-  + FG feedback), main brush, side brush(es), 2D-LiDAR spin motor, water pump, mop
-  motors, and the mop-lift / mop-arm / side-brush-arm servos — each drive path with
-  current sense where the board provides it.
-- **Sensors:** 4× cliff IR, 2× dock IR, 2× side-proximity IR (+ their IR-LED PWM),
-  2× bumper switches, 2× wheel-drop switches, wheel encoders, IMU (SPI + interrupts
-  + FSYNC), and the current-sense/`VBat`/source-current analog channels.
-- **Power & charging:** supervise the power-path charger (0.5C charge cap, input
-  DPM, USB-C PD *and* dock input, graceful "insufficient charger" handling), plus
-  `motors power enable`, `vacuum power`, `CPU power on/off`, and `CPU reset`.
-- **HMI:** power/home buttons and power/home LEDs.
+- **U13 actuators:** 2× drive wheels and the main and side brushes (DRV8870 H-bridges,
+  filtered current sense), the suction fan (BLDC controller, PWM + FG tachometer), the
+  LiDAR motor.
+- **U13 sensors:** cliff IR (pulsed LEDs), bumper photo-interrupters, wheel drops,
+  wheel encoders, dock IR receivers (NEC beacon), 2× VL53L7 front ToF, the side
+  VL53L0X, the LSM6DS3TR-C IMU, the DVP camera, the ultrasonic carpet sensor, the
+  LiDAR UART.
+- **U13 to the phone:** high-speed USB, CDC for the robot link and UVC for the camera.
+- **U28 power and UI:** the power latch, buttons and button LEDs, charger status and
+  charge current, battery, DC-in and VBUS voltages, the battery NTC and ID, the
+  USB-C roles, the torch and the camera reset.
+- **Dock (CH32V003):** USB-C PD contract check, robot detection by its resistance
+  signature, the contact switch with a fast overcurrent trip, and the IR beacon.
 
 ## CPU ↔ MCU link
 
-A **custom serial protocol over UART** — deliberately **not** micro-ROS, so the
-safety core carries no heavyweight third-party dependency (and no risk of an
-upstream library update slipping a bug into safety-critical firmware). The framing,
-command set, telemetry, and health/watchdog handshake are being defined in the
+A **custom serial protocol**, deliberately **not** micro-ROS, so the safety core
+carries no heavyweight third-party dependency. On the first board it runs over USB
+CDC to the phone; on the Pi board, over a UART. The framing, command set, telemetry,
+and health/watchdog handshake are defined in the
 [io-board-interface RFC](https://github.com/makerspet/oomwoo/tree/main/contributions/io-board-interface).
-The MCU: accepts **bounded, expiring** commands (drive setpoints, motor/actuator
-commands); publishes telemetry (encoders, battery/charge state, bumper/cliff/
-wheel-drop, per-motor current); and enforces the health handshake that backs the
-CPU watchdog. During development, the CPU side can be stood in for by the simulated
-MCU serial tool in [oomwoo-install](https://github.com/makerspet/oomwoo-install).
+The MCU accepts **bounded, expiring** commands (drive setpoints, motor and actuator
+commands), publishes telemetry (encoders, battery and charge state, bumper, cliff,
+wheel drop, motor current), and enforces the health handshake that backs the CPU
+watchdog. During development, the simulated MCU serial tool in
+[oomwoo-install](https://github.com/makerspet/oomwoo-install) can stand in for the board.
 
 ## Toolchain
 
@@ -120,13 +123,12 @@ MCU serial tool in [oomwoo-install](https://github.com/makerspet/oomwoo-install)
   make -C mcu            # build/robot/u13.bin, u28.bin and dock.bin
   make -C mcu test       # host tests of the shared logic
   ```
-- **Protocol core (`src/`, `tests/`):** portable C11, tested on the host; the PlatformIO
-  Nucleo-G474 harness below is from the STM32 bring-up.
+- **Protocol core (`src/`, `tests/`):** portable C11, tested on the host.
 
-## Current protocol bring-up
+## Protocol core
 
-The first milestone-2 slice is intentionally independent of motors and the
-board HAL:
+The CPU-link protocol is portable C, independent of motors and the board HAL, and is
+reused by the U13 ↔ U28 link:
 
 - heap-free C frame encoder/decoder and CRC-16/CCITT-FALSE
 - bounded incremental UART decoder with corruption and receive-gap recovery
@@ -134,16 +136,16 @@ board HAL:
 - all 23 canonical wire-v1 vectors imported from the accepted interface contract
 - CPU ingress gate that dispatches only CRC-, direction-, and payload-valid
   messages
-- reconnect-safe `MCU_HELLO` identity service on the Nucleo G474RE harness
+- reconnect-safe `MCU_HELLO` identity service
 - native Unity tests plus strict C11/C++17 sanitizer conformance tests
-- pinned PlatformIO cross-builds for both versions on the Cortex-M4F target
 
 ```bash
 python -m pip install platformio==6.1.19
 pio test -e native -e native_v2
-pio pkg install -e nucleo_g474re
-pio run -e nucleo_g474re -e nucleo_g474re_v2
 ```
+
+The `nucleo_g474re` PlatformIO environments are left over from the STM32 bring-up;
+they still build the identity harness but aren't the target any more.
 
 See [CPU/MCU protocol bring-up](docs/protocol-bringup.md) and the
 [CPU ingress gate](docs/cpu-ingress.md) for memory ownership, failure behavior,
@@ -155,37 +157,32 @@ explicitly tested framing override while the payload-version decision is
 tracked in
 [`oomwoo-firmware#1`](https://github.com/makerspet/oomwoo-firmware/issues/1).
 
-> The identity harness is only a protocol bench tool. It does not acknowledge
-> commands, implement a CPU watchdog, or authorize any actuator.
+## Request for contribution: bring-up milestones
 
-## Request for contribution — bring-up milestones
+Phased, each testable on WCH's evaluation boards before the robot board exists
+(details in the [firmware plan](docs/firmware-plan.md#milestones)):
 
-Phased, each testable on the bench before the board even exists (start on a
-Nucleo-G474, move to the real board when it's fabbed):
-
-1. **Blink + SWD + identity handshake** on a G473 dev board.
-2. **CPU serial link** — framing, typed ingress, and identity are in bring-up; the
-   health/watchdog handshake and hardware loopback still remain.
-3. **One drive motor, closed loop** — H-bridge PWM + encoder capture + velocity PID
-   in the real-time core. This is the pattern every other motor follows.
-4. **All actuators** — fan (BLDC + FG), brushes, LiDAR spin, pump, mop motors/servos,
-   each with current sense.
-5. **All sensors** — cliff/dock/side IR (ADC), bumpers, wheel-drop, IMU (SPI),
-   current channels.
-6. **Safety layer** — ISR-level cliff/bumper/wheel-drop stop, overcurrent limiting,
-   IWDG, CPU watchdog/reset; **measure and document** each cutoff's worst-case
-   reaction time; hazard note.
-7. **Charging supervisor** — power-path charger control, 0.5C cap, input DPM,
-   insufficient-charger handling.
-8. **Integration** — run end-to-end against the CPU (or the simulated MCU serial
-   tool) driving the ROS 2 hardware bridge.
+1. **EVT bring-up:** console, clocks, IWDG reset, WDI toggling, the U13 ↔ U28 link
+   between the two dev boards, the power-button state machine.
+2. **USB HS on U13:** CDC, then the phone protocol (ingress, identity, heartbeat),
+   then UVC with the DVP camera.
+3. **Sensors:** VL53L7, the IMU FIFO with timestamps, the VL53L0X, LiDAR packet
+   parsing with timestamps.
+4. **Motion:** encoder speed, a wheel PID loop in a timer interrupt, odometry,
+   per-motor current limits, staggered motor starts and the total-current budget.
+5. **Power:** USB-C source/sink switching, the dock beacon budget, NTC limits, then the
+   PD power-role swap.
+6. **Updates:** U13 flashes U28 over USART2; U13 jumps to its own USB bootloader on
+   command.
+7. **Safety review:** measured worst-case reaction times for cliff, drop, bumper and
+   watchdog, plus a hazard note.
 
 ## Acceptance criteria
 
 - **Deterministic real-time core** — measured, documented worst-case reaction time
   for each safety cutoff.
-- **Safety is layer-independent** — a deliberately hung Arduino-level task must
-  *not* defeat a cliff-stop, overcurrent cutoff, or the CPU watchdog. Demonstrate it.
+- **Safety is independent of feature code** — a deliberately hung main-loop feature
+  must *not* defeat a cliff stop, overcurrent cutoff, or the CPU watchdog. Demonstrate it.
 - **Implements the io-board-interface serial contract** — loopback + integration
   tested.
 - **Every actuator and sensor exercised on the bench**, documented, reproducible by
@@ -196,13 +193,15 @@ Nucleo-G474, move to the real board when it's fabbed):
 
 ## References
 
-- Board: [oomwoo-io-board](https://github.com/makerspet/oomwoo-io-board) · [SPEC.md](https://github.com/makerspet/oomwoo-io-board/blob/main/docs/SPEC.md)
+- Board: [oomwoo-pcb](https://github.com/makerspet/oomwoo-pcb) · [SPEC.md](https://github.com/makerspet/oomwoo-pcb/blob/main/docs/SPEC.md) · [mcu-ch32v307.md](https://github.com/makerspet/oomwoo-pcb/blob/main/docs/mcu-ch32v307.md)
 - CPU↔MCU contract: [io-board-interface RFC](https://github.com/makerspet/oomwoo/tree/main/contributions/io-board-interface)
 - System architecture: [ARCHITECTURE.md §5.4](https://github.com/makerspet/oomwoo/blob/main/docs/ARCHITECTURE.md)
-- [STM32duino](https://github.com/stm32duino/Arduino_Core_STM32) · [STM32FreeRTOS](https://github.com/stm32duino/STM32FreeRTOS)
+- Set-up guide: [OOMWOO firmware: set up, build, flash and bring up the CH32 MCUs](https://makerspet.com/blog/oomwoo-firmware-ch32-setup-build-flash/)
+- [WCH CH32V307 SDK and examples](https://github.com/openwch/ch32v307) · [CH32L103](https://github.com/openwch/ch32l103)
 - [Project Discussions](https://github.com/makerspet/oomwoo/discussions) · [Discord](https://discord.gg/3y2JKz5T25)
 
 ## License
 
-[Apache License 2.0](LICENSE). Contributions are made on that basis; safety-critical
-firmware additionally passes maintainer safety review before merge.
+[Apache License 2.0](LICENSE). The WCH SDK files are fetched at build time and carry
+WCH's own terms. Contributions are made on that basis; safety-critical firmware
+additionally passes maintainer safety review before merge.
