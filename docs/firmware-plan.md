@@ -279,6 +279,15 @@ Motion commands expire after their time window (500 ms by default, 5 s maximum).
 - LD14P motor-PWM behaviour.
 - Bumper emitter duty per unit.
 
+## Arduino version (pilot, 2026-11-25)
+
+Goal: a hackable firmware people can open, change and upload from the Arduino IDE. WCH's official Arduino core supports all three chips (CH32V307VCT6, CH32L103C8T6, CH32V003F4) and is built on the same WCH peripheral library, so the code moves over rather than being rewritten. The pilot is U28 ([arduino/README.md](../arduino/README.md)):
+
+- **Board definition** `arduino/hardware/oomwoo/ch32v`: references WCH's core and tools and adds a U28 variant (WCH's EVT variant defines only 22 of the 37 pins and puts `Serial` on USART1, which is the LEDs and the clean button here).
+- **Library** `arduino/libraries/OOMWOO`: generated copies of the portable code (`tools/sync_arduino_lib.py`; `make -C mcu test` fails if they drift), so the Arduino and plain-C builds share the same tested logic.
+- **Sketch** `examples/U28`: `loop()` holds the hackable parts (LEDs, readings, torch, USB-C role, STATUS frames). The safety parts (power latch and button, charger status, the lines into the sensor rail, the 2.2 A charge current, the watchdog) run from a 1 kHz TIM2 interrupt; the watchdog is fed there only while `loop()` also runs.
+- **Next:** run it on the CH32L103 evaluation board against U13's plain-C build, measure the core's overhead, then decide on U13 (USB high speed, camera) and the dock (16 KB flash).
+
 ## Milestones
 
 1. **EVT bring-up:**

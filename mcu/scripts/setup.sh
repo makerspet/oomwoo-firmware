@@ -7,10 +7,12 @@
 #   - wlink (WCH-LinkE) and wchisp (bootloaders) in ~/opt/bin
 #   - udev rules for the probes and bootloaders (native Linux only)
 #   - a PATH block in ~/.bashrc
-# then builds both images and runs the host tests.
+#   - with --arduino: arduino-cli and WCH's Arduino core (for arduino/)
+# then builds the images and runs the host tests.
 #
 #   mcu/scripts/setup.sh            # everything
 #   mcu/scripts/setup.sh --no-build # skip the test build
+#   mcu/scripts/setup.sh --arduino  # also the Arduino toolchain, and build the U28 sketch
 #
 # Safe to run again: each step skips what is already in place.
 set -euo pipefail
@@ -19,7 +21,14 @@ here="$(cd "$(dirname "$0")/.." && pwd)"
 prefix="${PREFIX:-$HOME/opt}"
 bindir="$prefix/bin"
 build=1
-[ "${1:-}" = "--no-build" ] && build=0
+arduino=0
+for arg in "$@"; do
+  case "$arg" in
+    --no-build) build=0 ;;
+    --arduino) arduino=1 ;;
+    *) echo "unknown option: $arg"; exit 1 ;;
+  esac
+done
 
 say() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
 
@@ -102,6 +111,25 @@ else
   echo "mcu/scripts/setup-windows.ps1 tools, or attach the probe with usbipd-win."
 fi
 
+if [ "$arduino" = 1 ]; then
+  say "Arduino (arduino-cli + WCH core)"
+  if [ ! -x "$bindir/arduino-cli" ]; then
+    tmp="$(mktemp -d)"
+    curl -fsSL --retry 5 -o "$tmp/a.tgz" \
+      https://github.com/arduino/arduino-cli/releases/download/v1.6.0/arduino-cli_1.6.0_Linux_64bit.tar.gz
+    tar -xzf "$tmp/a.tgz" -C "$tmp" arduino-cli
+    install -m 755 "$tmp/arduino-cli" "$bindir/arduino-cli"
+    rm -rf "$tmp"
+  fi
+  "$bindir/arduino-cli" version
+  url=https://github.com/openwch/board_manager_files/raw/main/package_ch32v_index.json
+  "$bindir/arduino-cli" config init >/dev/null 2>&1 || true
+  "$bindir/arduino-cli" config get board_manager.additional_urls | grep -qF "$url" ||
+    "$bindir/arduino-cli" config add board_manager.additional_urls "$url"
+  "$bindir/arduino-cli" core update-index
+  "$bindir/arduino-cli" core install WCH:ch32v@1.0.7 # ~240 MB compiler on the first run
+fi
+
 say "PATH"
 marker="# >>> oomwoo-mcu >>>"
 if grep -qF "$marker" "$HOME/.bashrc" 2>/dev/null; then
@@ -125,5 +153,9 @@ if [ "$build" = 1 ]; then
   echo
   echo "Images: $here/build/robot/u13.bin, $here/build/robot/u28.bin, $here/build/robot/dock.bin,"
   echo "        $here/build/evt/u13.bin, $here/build/evt/u28.bin (evaluation boards)"
+  if [ "$arduino" = 1 ]; then
+    "$here/../arduino/build.sh" robot
+    "$here/../arduino/build.sh" evt
+  fi
 fi
 say "Done"

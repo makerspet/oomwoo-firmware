@@ -53,8 +53,8 @@ in the PCB repo.
 **The rule that makes this safe:** the safety core is **structurally isolated** from
 feature code. A bug or an infinite loop in a new feature **cannot** defeat a cliff
 stop, an overcurrent cutoff, or the CPU watchdog: those live in interrupts and in
-hardware watchdogs that the main loop can't starve. The STM32-era STM32duino +
-FreeRTOS layering no longer applies.
+hardware watchdogs that the main loop can't starve. The Arduino version keeps the
+same rule: its safety tick runs from a hardware timer, so `loop()` is free to hack.
 
 ## Safety (non-negotiable, CE-oriented)
 
@@ -123,6 +123,9 @@ watchdog. During development, the simulated MCU serial tool in
   make -C mcu            # build/robot/u13.bin, u28.bin and dock.bin
   make -C mcu test       # host tests of the shared logic
   ```
+- **Arduino (`arduino/`, pilot):** the U28 firmware as an Arduino sketch on WCH's official core,
+  with an OOMWOO board variant and an OOMWOO library (the same portable code). Hack `loop()`;
+  the safety parts run from a timer interrupt. See [arduino/README.md](arduino/README.md).
 - **Protocol core (`src/`, `tests/`):** portable C11, tested on the host.
 
 ## Protocol core

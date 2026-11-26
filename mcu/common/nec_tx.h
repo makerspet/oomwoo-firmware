@@ -5,7 +5,15 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define NEC_TX_SEGMENTS 67u /* leader mark + space, 32 x (mark + space), stop mark */
 
 /* Fills seg[0..66]; even indices are marks, odd indices spaces. */
 void nec_tx_frame(uint32_t frame, uint16_t seg[NEC_TX_SEGMENTS]);
+
+#ifdef __cplusplus
+}
+#endif

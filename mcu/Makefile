@@ -129,6 +129,7 @@ test:
 	@mkdir -p $(BUILD)
 	$(HOSTCC) -std=c11 -Wall -Wextra -Werror -pedantic -fsanitize=address,undefined -I$(COMMON) 	  -I$(REPO)/include $(filter-out $(COMMON)/cli.c,$(LOGIC_SRCS)) $(PROTO) $(REPO)/tests/mcu_logic_test.c 	  -o $(BUILD)/mcu_logic_test -lm
 	$(BUILD)/mcu_logic_test
+	python3 $(REPO)/tools/sync_arduino_lib.py --check
 
 clean:
 	rm -rf $(BUILD)

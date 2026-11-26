@@ -1,0 +1,59 @@
+/*
+ * OOMWOO main-phone board, U28 (CH32L103C8T6): peripheral pin maps. Derived
+ * from WCH's CH32L103C8T6 EVT variant (Copyright (c) 2021 Nanjing Qinheng
+ * Microelectronics Co., Ltd., BSD 3-Clause). Only the functions the board
+ * uses are listed, so analogWrite()/Serial cannot grab a pin wired elsewhere.
+ */
+#include "Arduino.h"
+#include "PeripheralPins.h"
+
+#ifdef ADC_MODULE_ENABLED
+WEAK const PinMap PinMap_ADC[] = {
+  {PA_0, ADC1, CH_PIN_DATA_EXT(CH_MODE_INPUT, CH_CNF_INPUT_ANALOG, 0, AFIO_NONE, 0)},
+  {PA_1, ADC1, CH_PIN_DATA_EXT(CH_MODE_INPUT, CH_CNF_INPUT_ANALOG, 0, AFIO_NONE, 1)},
+  {PA_4, ADC1, CH_PIN_DATA_EXT(CH_MODE_INPUT, CH_CNF_INPUT_ANALOG, 0, AFIO_NONE, 4)},
+  {PA_5, ADC1, CH_PIN_DATA_EXT(CH_MODE_INPUT, CH_CNF_INPUT_ANALOG, 0, AFIO_NONE, 5)},
+  {PA_6, ADC1, CH_PIN_DATA_EXT(CH_MODE_INPUT, CH_CNF_INPUT_ANALOG, 0, AFIO_NONE, 6)},
+  {PA_7, ADC1, CH_PIN_DATA_EXT(CH_MODE_INPUT, CH_CNF_INPUT_ANALOG, 0, AFIO_NONE, 7)},
+  {PB_0, ADC1, CH_PIN_DATA_EXT(CH_MODE_INPUT, CH_CNF_INPUT_ANALOG, 0, AFIO_NONE, 8)},
+  {PB_1, ADC1, CH_PIN_DATA_EXT(CH_MODE_INPUT, CH_CNF_INPUT_ANALOG, 0, AFIO_NONE, 9)},
+  {NC,   NP,   0}
+};
+#endif
+
+#ifdef I2C_MODULE_ENABLED
+WEAK const PinMap PinMap_I2C_SDA[] = {
+  {PB_11, I2C2, CH_PIN_DATA(CH_MODE_OUTPUT_50MHz, CH_CNF_OUTPUT_AFOD, NOPULL, AFIO_NONE)},
+  {NC,    NP,   0}
+};
+WEAK const PinMap PinMap_I2C_SCL[] = {
+  {PB_10, I2C2, CH_PIN_DATA(CH_MODE_OUTPUT_50MHz, CH_CNF_OUTPUT_AFOD, NOPULL, AFIO_NONE)},
+  {NC,    NP,   0}
+};
+#endif
+
+#ifdef TIM_MODULE_ENABLED
+WEAK const PinMap PinMap_TIM[] = {
+  {PA_8, TIM1, CH_PIN_DATA_EXT(CH_MODE_OUTPUT_50MHz, CH_CNF_OUTPUT_AFPP, NOPULL, AFIO_Remap_TIM1_DISABLE, 1)}, /* LED-HOME */
+  {PA_9, TIM1, CH_PIN_DATA_EXT(CH_MODE_OUTPUT_50MHz, CH_CNF_OUTPUT_AFPP, NOPULL, AFIO_Remap_TIM1_DISABLE, 2)}, /* LED-PWR */
+  {PB_8, TIM4, CH_PIN_DATA_EXT(CH_MODE_OUTPUT_50MHz, CH_CNF_OUTPUT_AFPP, NOPULL, AFIO_Remap_TIM4_DISABLE, 3)}, /* TORCH */
+  {NC,   NP,   0}
+};
+#endif
+
+#ifdef UART_MODULE_ENABLED
+WEAK const PinMap PinMap_UART_TX[] = {
+  {PA_2, USART2, CH_PIN_DATA(CH_MODE_OUTPUT_50MHz, CH_CNF_OUTPUT_AFPP, 0, AFIO_NONE)},
+  {NC,   NP,     0}
+};
+WEAK const PinMap PinMap_UART_RX[] = {
+  {PA_3, USART2, CH_PIN_DATA(CH_MODE_INPUT, CH_CNF_INPUT_PUPD, PULLUP, AFIO_NONE)},
+  {NC,   NP,     0}
+};
+WEAK const PinMap PinMap_UART_RTS[] = {
+  {NC, NP, 0}
+};
+WEAK const PinMap PinMap_UART_CTS[] = {
+  {NC, NP, 0}
+};
+#endif

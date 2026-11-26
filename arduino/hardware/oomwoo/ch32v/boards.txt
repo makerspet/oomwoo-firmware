@@ -1,0 +1,38 @@
+# OOMWOO boards for WCH's Arduino core (Boards Manager package "WCH:ch32v").
+# This platform only adds board variants; the core, compiler and upload tools
+# come from the WCH package, which must be installed.
+
+menu.target=Hardware
+menu.upload_method=Upload method
+
+##############################################################################
+u28.name=OOMWOO main board U28 (CH32L103C8T6, power/UI)
+u28.build.core=WCH:arduino
+u28.build.board=OOMWOO_U28
+u28.build.variant=OOMWOO_U28
+u28.build.variant_h=variant_OOMWOO_U28.h
+u28.build.mcu=QingKe-V4C
+u28.build.series=CH32L10x
+u28.build.chip=CH32L10x
+u28.build.march=rv32imacxw
+u28.build.mabi=ilp32
+u28.build.math_lib_gcc=-lm
+u28.build.IQ_math_RV32=
+u28.build.ch_extra_lib=-lprintf
+# No crystal on U28: 96 MHz from the internal oscillator.
+u28.build.flags.clock=-DSYSCLK_FREQ_96MHz_HSI=96000000 -DF_CPU=96000000
+u28.build.flags.optimize=-Os
+u28.build.flags.debug=-g -DNDEBUG
+u28.build.flags.ldflags=--specs=nano.specs --specs=nosys.specs
+u28.upload.maximum_size=65536
+u28.upload.maximum_data_size=20480
+
+u28.menu.target.robot=OOMWOO main board
+u28.menu.target.robot.build.extra_flags=
+u28.menu.target.evt=WCH CH32L103C8T6 evaluation board
+u28.menu.target.evt.build.extra_flags=-DOOMWOO_EVT
+
+u28.menu.upload_method.swdMethod=WCH-LinkE (SWD on J1 pins 10/11)
+u28.menu.upload_method.swdMethod.upload.tool=WCH:WCH_linkE
+u28.menu.upload_method.ispMethod=Bootloader (USART2)
+u28.menu.upload_method.ispMethod.upload.tool=WCH:wchisp
