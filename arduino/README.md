@@ -28,4 +28,4 @@ From a terminal: `mcu/scripts/setup.sh --arduino` installs arduino-cli and the W
 
 The safety parts run from a hardware timer, not from `loop()`, so a sketch that blocks, calls `delay()` or crashes cannot hold the power latch or leave the camera reset released. The watchdog is fed from that timer only while `loop()` also runs: if `loop()` stops for 100 ms, U28 resets (the power latch holds in hardware through the reset).
 
-Spare U28 pins for your own hardware: PB12, PD0 and PD1 on J1 (pins 7, 8, 9), PC14 and PC15 on J13 (pins 2, 3; weak pins, inputs or LEDs to ground only).
+Spare U28 pins for your own hardware: PB12, PD0 and PD1 on J1 (pins 7, 8, 9), PC15 on J13 (pin 3; a weak pin, input or an LED to ground only). PC14 is the clean button since 2026-11-27.

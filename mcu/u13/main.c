@@ -179,6 +179,7 @@ static void control_tick(void) {
     c.torch_pct = s_sensors_up ? s_torch_pct : 0u;
     c.led_home = MCU_LINK_LED_AUTO;
     c.led_power = MCU_LINK_LED_AUTO;
+    c.led_clean = MCU_LINK_LED_AUTO;
     c.usb_mode = MCU_LINK_USB_SINK_DATA;
     c.seq = s_ctl_seq++;
     link_send(&c);

@@ -1,12 +1,12 @@
 // OOMWOO main board, U28 (CH32L103C8T6): the power/UI companion MCU.
 //
 // Board: "OOMWOO main board U28" (see arduino/README.md). U28 handles the
-// power button and latch, the clean/home buttons and their LEDs, the charger
+// power button and latch, the clean/home/power buttons and their LEDs, the charger
 // status, the slow analog inputs, the torch, USB-C roles, and the link to U13.
 //
 // The parts that keep the robot safe run from a timer interrupt in safety.cpp,
 // so loop() is yours to change: LED patterns, extra uses for the spare pins
-// (PB12, PC14, PC15, PD0, PD1), new readings to report. If loop() stops
+// (PB12, PC15, PD0, PD1), new readings to report. If loop() stops
 // running for 100 ms, the watchdog resets U28.
 #include "u28.h"
 
@@ -33,6 +33,7 @@ static uint8_t pattern(uint8_t p, uint32_t ms) {
 static void update_leds(uint32_t now) {
   uint8_t home = MCU_LINK_LED_OFF;
   uint8_t power = MCU_LINK_LED_ON;
+  uint8_t clean = digitalRead(PIN_MCU2_CLEAN_BTN_N) == LOW ? MCU_LINK_LED_ON : MCU_LINK_LED_OFF; // press feedback
   const uint8_t pwr = safety_power_state();
   if (pwr == MCU_LINK_PWR_OFF) power = MCU_LINK_LED_OFF;
   if (!link_alive() && pwr == MCU_LINK_PWR_RUN) power = MCU_LINK_LED_BLINK_SLOW; // U13 silent
@@ -47,10 +48,12 @@ static void update_leds(uint32_t now) {
   if (link_alive() && pwr == MCU_LINK_PWR_RUN) { // U13 (or the phone) may override
     if (c.led_home != MCU_LINK_LED_AUTO) home = c.led_home;
     if (c.led_power != MCU_LINK_LED_AUTO) power = c.led_power;
+    if (c.led_clean != MCU_LINK_LED_AUTO) clean = c.led_clean;
   }
   if (safety_long_press()) power = MCU_LINK_LED_BLINK_FAST; // "let go now"
   analogWrite(PIN_MCU2_LED_HOME, pattern(home, now));
   analogWrite(PIN_MCU2_LED_PWR, pattern(power, now));
+  analogWrite(PIN_MCU2_LED_CLEAN, pattern(clean, now));
 }
 
 // ---------------------------------------------------------------- analog

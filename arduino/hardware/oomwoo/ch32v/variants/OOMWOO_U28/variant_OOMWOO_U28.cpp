@@ -19,7 +19,7 @@ const PinName digitalPin[] = {
   PB_1,   /* D9  A9  LDR */
   PA_8,   /* D10     LED-HOME (TIM1 CH1) */
   PA_9,   /* D11     LED-PWR (TIM1 CH2) */
-  PA_10,  /* D12     ~CLEAN-BTN */
+  PA_10,  /* D12     LED-CLEAN (TIM1 CH3) */
   PA_11,  /* D13     ~HOME-BTN */
   PA_12,  /* D14     PWR-BTN-SENSE */
   PA_13,  /* D15     SWDIO */
@@ -40,7 +40,7 @@ const PinName digitalPin[] = {
   PB_14,  /* D30     SIDE-PROXI-CE-R */
   PB_15,  /* D31     USB_PWR_EN */
   PC_13,  /* D32     CHG-I-HI */
-  PC_14,  /* D33     spare, J13 pin 2 */
+  PC_14,  /* D33     ~CLEAN-BTN */
   PC_15,  /* D34     spare, J13 pin 3 */
   PD_0,   /* D35     spare, J1 pin 8 */
   PD_1,   /* D36     spare, J1 pin 9 */

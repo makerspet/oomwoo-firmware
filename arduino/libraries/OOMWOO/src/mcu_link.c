@@ -74,6 +74,7 @@ void mcu_link_control_pack(const mcu_link_control_t *c, uint8_t out[MCU_LINK_CON
   out[3] = c->led_power;
   out[4] = c->usb_mode;
   out[5] = c->seq;
+  out[6] = c->led_clean;
 }
 
 bool mcu_link_control_unpack(const uint8_t *in, size_t len, mcu_link_control_t *c) {
@@ -85,8 +86,9 @@ bool mcu_link_control_unpack(const uint8_t *in, size_t len, mcu_link_control_t *
   c->led_power = in[3];
   c->usb_mode = in[4];
   c->seq = in[5];
+  c->led_clean = in[6];
   if (c->torch_pct > 100u || c->led_home > MCU_LINK_LED_BREATHE ||
-      c->led_power > MCU_LINK_LED_BREATHE || c->usb_mode > MCU_LINK_USB_SOURCE_CHARGE ||
+      c->led_power > MCU_LINK_LED_BREATHE || c->led_clean > MCU_LINK_LED_BREATHE || c->usb_mode > MCU_LINK_USB_SOURCE_CHARGE ||
       (c->flags & 0xE0u) != 0u) {
     memset(c, 0, sizeof(*c));
     return false;

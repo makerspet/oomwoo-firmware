@@ -167,13 +167,17 @@ static void test_link(void) {
   CHECK(!mcu_link_status_unpack(buf, sizeof(buf), &r));
 
   mcu_link_control_t c = {MCU_LINK_CTL_CAM_RUN | MCU_LINK_CTL_SENSORS_ON, 40, MCU_LINK_LED_BREATHE,
-                          MCU_LINK_LED_ON, MCU_LINK_USB_SOURCE_CHARGE, 200};
+                          MCU_LINK_LED_ON, MCU_LINK_USB_SOURCE_CHARGE, 200, MCU_LINK_LED_BLINK_SLOW};
   mcu_link_control_t rc;
   uint8_t cb[MCU_LINK_CONTROL_SIZE];
   mcu_link_control_pack(&c, cb);
   CHECK(mcu_link_control_unpack(cb, sizeof(cb), &rc) && memcmp(&c, &rc, sizeof(c)) == 0);
   cb[1] = 101; /* torch over 100 % */
   CHECK(!mcu_link_control_unpack(cb, sizeof(cb), &rc));
+  mcu_link_control_pack(&c, cb);
+  cb[6] = 6; /* bad clean-LED pattern */
+  CHECK(!mcu_link_control_unpack(cb, sizeof(cb), &rc));
+  CHECK(!mcu_link_control_unpack(cb, sizeof(cb) - 1u, &rc)); /* old 6-byte CONTROL */
 
   /* through the real framing */
   uint8_t frame[64];

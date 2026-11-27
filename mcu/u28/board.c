@@ -12,6 +12,7 @@ static const pin_init_t k_safe[] = {
     /* Outputs: everything off. PWR-HOLD is set before this table runs. */
     {PIN_INIT(PIN_MCU2_LED_HOME), false, PM_OUT_PP},
     {PIN_INIT(PIN_MCU2_LED_PWR), false, PM_OUT_PP},
+    {PIN_INIT(PIN_MCU2_LED_CLEAN), false, PM_OUT_PP},
     {PIN_INIT(PIN_MCU2_TORCH), false, PM_OUT_PP},          /* R257 pull-down too */
     {PIN_INIT(PIN_MCU2_CAM_RESET), false, PM_OUT_PP},      /* camera held in reset (R244) */
     {PIN_INIT(PIN_MCU2_SIDE_PROXI_CE_R), false, PM_OUT_PP},/* VL53L0X XSHUT low: off */
@@ -20,7 +21,7 @@ static const pin_init_t k_safe[] = {
     {PIN_INIT(PIN_MCU2_CHG_I_HI), false, PM_OUT_PP_2M},    /* 1.2 A charging (PC13: 2 MHz) */
 
     /* Inputs */
-    {PIN_INIT(PIN_MCU2_CLEAN_BTN_N), true, PM_IN_PULL},  /* to GND when pressed */
+    {PIN_INIT(PIN_MCU2_CLEAN_BTN_N), true, PM_IN_PULL},  /* PC14, to GND when pressed */
     {PIN_INIT(PIN_MCU2_HOME_BTN_N), true, PM_IN_PULL},
 #ifdef BOARD_EVT
     /* Evaluation board: no R173 (and PA12 is its USB D+): pull up internally. */
@@ -50,7 +51,6 @@ static const pin_init_t k_safe[] = {
 
     /* Spares (J1, J13) */
     {PIN_INIT(PIN_MCU2_MCU2_PB12), false, PM_IN_PULL},
-    {PIN_INIT(PIN_MCU2_MCU2_PC14), false, PM_IN_PULL},
     {PIN_INIT(PIN_MCU2_MCU2_PC15), false, PM_IN_PULL},
 };
 
@@ -105,6 +105,7 @@ void board_pwm_init(void) {
   TIM_TimeBaseInit(TIM1, &tb);
   oc_pwm(TIM1, 1);
   oc_pwm(TIM1, 2);
+  oc_pwm(TIM1, 3);
   TIM_CtrlPWMOutputs(TIM1, ENABLE);
   TIM_Cmd(TIM1, ENABLE);
 
@@ -116,6 +117,7 @@ void board_pwm_init(void) {
 
   pin_mode(PIN(PIN_MCU2_LED_HOME), PM_AF_PP);
   pin_mode(PIN(PIN_MCU2_LED_PWR), PM_AF_PP);
+  pin_mode(PIN(PIN_MCU2_LED_CLEAN), PM_AF_PP);
   pin_mode(PIN(PIN_MCU2_TORCH), PM_AF_PP);
 }
 
@@ -125,6 +127,10 @@ void led_home_set(uint16_t permille) {
 
 void led_power_set(uint16_t permille) {
   TIM_SetCompare2(TIM1, (uint16_t)((permille > 1000u ? 1000u : permille) * LED_PERIOD / 1000u));
+}
+
+void led_clean_set(uint16_t permille) {
+  TIM_SetCompare3(TIM1, (uint16_t)((permille > 1000u ? 1000u : permille) * LED_PERIOD / 1000u));
 }
 
 void torch_set(uint8_t pct) {

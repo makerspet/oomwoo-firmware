@@ -36,6 +36,7 @@ int32_t board_temp_c10(void);
 
 void led_home_set(uint16_t permille);
 void led_power_set(uint16_t permille);
+void led_clean_set(uint16_t permille);
 void torch_set(uint8_t pct);
 
 void pwr_hold(bool on);

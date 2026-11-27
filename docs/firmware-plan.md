@@ -144,7 +144,7 @@ tests/mcu_logic_test.c     host tests (ASan + UBSan)
 **U13 ↔ U28 link:**
 - UART8 (PE14/PE15) to USART2 (PA3/PA2), 1 Mbit/s.
 - Frames reuse the phone protocol's "OW" framing with message types 0xC001 (STATUS, U28 → U13) and 0xC002 (CONTROL, U13 → U28). Each side sends every 10 ms.
-- CONTROL is also U13's heartbeat.
+- CONTROL is also U13's heartbeat. Its payload is 7 bytes since 2026-11-27: flags, torch %, home LED, power LED, USB mode, seq, clean LED (byte 6, for the third button LED; AUTO lights it while the clean button is held). Update U13 and U28 together: a 6-byte CONTROL is rejected.
 - STATUS carries:
   - battery, DC-in and VBUS voltages;
   - raw NTC, battery ID, LDR and floor Hall readings;

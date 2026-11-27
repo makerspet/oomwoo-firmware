@@ -92,7 +92,7 @@ typedef struct {
 #define MCU_LINK_CTL_RAILS_OFF 0x08u    /* ack of OFF_REQUEST: U13's rails are off */
 #define MCU_LINK_CTL_SENSORS_ON 0x10u   /* VSENS-3V3 is up: U28 may drive pins into sensor-rail parts */
 
-/* LED patterns for CONTROL.led_home / led_power */
+/* LED patterns for CONTROL.led_home / led_power / led_clean */
 typedef enum {
   MCU_LINK_LED_AUTO = 0, /* U28 decides (power on, charge state, errors) */
   MCU_LINK_LED_OFF = 1,
@@ -109,9 +109,10 @@ typedef struct {
   uint8_t led_power; /* mcu_link_led_t */
   uint8_t usb_mode;  /* mcu_link_usb_mode_t */
   uint8_t seq;       /* incremented by U13 on every frame */
+  uint8_t led_clean; /* mcu_link_led_t (byte 6, added 2026-11-27) */
 } mcu_link_control_t;
 
-#define MCU_LINK_CONTROL_SIZE 6u
+#define MCU_LINK_CONTROL_SIZE 7u
 
 void mcu_link_status_pack(const mcu_link_status_t *s, uint8_t out[MCU_LINK_STATUS_SIZE]);
 bool mcu_link_status_unpack(const uint8_t *in, size_t len, mcu_link_status_t *s);

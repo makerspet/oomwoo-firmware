@@ -122,6 +122,7 @@ static uint16_t pattern(uint8_t p, uint32_t ms) {
 static void leds_update(uint32_t now, bool alive) {
   uint8_t home = MCU_LINK_LED_OFF;
   uint8_t power = MCU_LINK_LED_ON;
+  uint8_t clean = clean_button_pressed() ? MCU_LINK_LED_ON : MCU_LINK_LED_OFF; /* press feedback */
 
   if (s_pwr.state == MCU_LINK_PWR_OFF) power = MCU_LINK_LED_OFF;
   if (!alive && s_pwr.state == MCU_LINK_PWR_RUN) power = MCU_LINK_LED_BLINK_SLOW; /* U13 silent */
@@ -135,10 +136,12 @@ static void leds_update(uint32_t now, bool alive) {
   if (alive && s_pwr.state == MCU_LINK_PWR_RUN) {
     if (s_ctl.led_home != MCU_LINK_LED_AUTO) home = s_ctl.led_home;
     if (s_ctl.led_power != MCU_LINK_LED_AUTO) power = s_ctl.led_power;
+    if (s_ctl.led_clean != MCU_LINK_LED_AUTO) clean = s_ctl.led_clean;
   }
   if (s_pwr.feedback || s_pwr.state == MCU_LINK_PWR_OFF_REQUEST) power = MCU_LINK_LED_BLINK_FAST;
   led_home_set(pattern(home, now));
   led_power_set(pattern(power, now));
+  led_clean_set(pattern(clean, now));
 }
 
 /* ---------------------------------------------------------------- tick */

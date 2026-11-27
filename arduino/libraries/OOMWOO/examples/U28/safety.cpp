@@ -52,7 +52,7 @@ void safety_begin() {
   // Everything else off.
   const uint32_t low_outputs[] = {PIN_MCU2_TORCH, PIN_MCU2_CAM_RESET, PIN_MCU2_SIDE_PROXI_CE_R,
                                   PIN_MCU2_USB_PWR_EN, PIN_MCU2_CHG_I_HI, PIN_MCU2_LED_HOME,
-                                  PIN_MCU2_LED_PWR};
+                                  PIN_MCU2_LED_PWR, PIN_MCU2_LED_CLEAN};
   for (uint32_t p : low_outputs) {
     digitalWrite(p, LOW);
     pinMode(p, OUTPUT);
