@@ -187,11 +187,11 @@
 #define PIN_MCU2_NRST               PC13
 #define PIN_MCU2_NRST_PORT          GPIOC
 #define PIN_MCU2_NRST_NUM           13
-/* PC14: U13 pin 8, net /CAM-SCL */
+/* PC14: U13 pin 8, net /MCU/CAM-SCL */
 #define PIN_CAM_SCL                 PC14
 #define PIN_CAM_SCL_PORT            GPIOC
 #define PIN_CAM_SCL_NUM             14
-/* PC15: U13 pin 9, net /CAM-SDA */
+/* PC15: U13 pin 9, net /MCU/CAM-SDA */
 #define PIN_CAM_SDA                 PC15
 #define PIN_CAM_SDA_PORT            GPIOC
 #define PIN_CAM_SDA_NUM             15
@@ -429,11 +429,11 @@
 #define PIN_MCU2_CAM_RESET               PB9
 #define PIN_MCU2_CAM_RESET_PORT          GPIOB
 #define PIN_MCU2_CAM_RESET_NUM           9
-/* PB10: U28 pin 21, net /CAM-SCL */
+/* PB10: U28 pin 21, net /MCU/CAM-SCL */
 #define PIN_MCU2_CAM_SCL                 PB10
 #define PIN_MCU2_CAM_SCL_PORT            GPIOB
 #define PIN_MCU2_CAM_SCL_NUM             10
-/* PB11: U28 pin 22, net /CAM-SDA */
+/* PB11: U28 pin 22, net /MCU/CAM-SDA */
 #define PIN_MCU2_CAM_SDA                 PB11
 #define PIN_MCU2_CAM_SDA_PORT            GPIOB
 #define PIN_MCU2_CAM_SDA_NUM             11
